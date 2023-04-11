@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+button.p-button {
+    padding: 0.50rem 0.75rem !important;
+}
+
+button.p-button-icon-only {
+    width: 2.5rem !important;
+    padding: 0.25rem 0 !important;
+}
