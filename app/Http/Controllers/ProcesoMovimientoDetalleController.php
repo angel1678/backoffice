@@ -13,6 +13,6 @@ class ProcesoMovimientoDetalleController extends Controller
      */
     public function index(Proceso $proceso, ProcesoMovimiento $movimiento): JsonResponse
     {
-        return response()->json($movimiento->detalle);
+        return response()->json($movimiento->detalle()->orderBy('fecha', 'desc')->get());
     }
 }
