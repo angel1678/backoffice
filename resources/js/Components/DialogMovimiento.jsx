@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import ReactHtmlParser from '@orrisroot/react-html-parser';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -17,7 +16,6 @@ const DialogMovimiento = ({ proceso, model = [], visible, onHide }) => {
   const classBody = '!text-center';
 
   const handleDetalle = async (movimiento) => {
-    console.log(route('proceso.movimiento.show', movimiento));
     router.visit(route('proceso.movimiento.show', movimiento));
   };
 

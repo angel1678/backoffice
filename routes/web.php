@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Proceso\MovimientoDetalleController;
+use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
 use App\Http\Controllers\ProcesoController;
 use App\Http\Controllers\ProcesoDetalleLastUpdateController;
 use App\Http\Controllers\ProcesoDetenidoController;
@@ -38,11 +39,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/setting', [SettingController::class, 'edit'])->name('setting.edit');
     Route::patch('/setting', [SettingController::class, 'update'])->name('setting.update');
 
-    Route::resource('/proceso/movimiento', MovimientoDetalleController::class, ['as' => 'proceso'])->only('show');
-
     Route::get('/proceso-last-update', [ProcesoDetalleLastUpdateController::class, 'index'])->name('proceso-last-update.index');
     Route::get('/proceso-detenido', [ProcesoDetenidoController::class, 'index'])->name('proceso-detenido.index');
     Route::post('/proceso/batch', [ProcesoController::class, 'batchStore'])->name('proceso.batchStore');
+    Route::resource('/proceso/movimiento', MovimientoDetalleController::class, ['as' => 'proceso'])->only('show');
+
+    Route::get('/proceso/{proceso}/user', [ProcesoUserController::class, 'index'])->name('proceso.user.index');
+    Route::post('/proceso/{proceso}/user', [ProcesoUserController::class, 'store'])->name('proceso.user.store');
+    Route::delete('/proceso/{proceso}/user/{user}', [ProcesoUserController::class, 'destroy'])->name('proceso.user.destroy');
     Route::get('/proceso/{proceso}/movimiento/{movimiento}', [ProcesoMovimientoDetalleController::class, 'index'])->name('proceso.movimiento.detalle');
     Route::get('/proceso/{proceso}/movimiento', [ProcesoMovimientoController::class, 'index'])->name('proceso.movimiento');
     Route::resource('/proceso', ProcesoController::class)->except('show');

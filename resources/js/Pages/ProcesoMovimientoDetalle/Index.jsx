@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { InputText } from 'primereact/inputtext';
 import { ScrollPanel } from 'primereact/scrollpanel';
+import { Button } from 'primereact/button';
 
-export default function ProcesoMovimientoDetalle({ movimiento, detalle, auth, errors }) {
+import DialogAddUser from './Partials/DialogAddUser';
+import Comments from './Partials/Comments';
+
+export default function ProcesoMovimientoDetalle({movimiento, detalle, users, associates, auth, errors }) {
+  const [visible, setVisible] = useState(false);
 
   return (
     <AuthenticatedLayout
@@ -13,6 +17,15 @@ export default function ProcesoMovimientoDetalle({ movimiento, detalle, auth, er
       header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Procesos Judiciales - Detalle Movimiento</h2>}
     >
       <Head title="Procesos Judiciales" />
+
+      <DialogAddUser
+        procesoId={movimiento.proceso_id}
+        users={users}
+        associates={associates}
+        visible={visible}
+        onHide={() => setVisible(false)}
+      />
+
       <div className="flex m-2">
         <div className="bg-white rounded-md mr-1 w-[25rem]">
           <div className="font-bold text-lg border-b px-3 py-2">
@@ -43,6 +56,15 @@ export default function ProcesoMovimientoDetalle({ movimiento, detalle, auth, er
               <div className="font-semibold text-sm">Demandado / Procesado</div>
               <div>{movimiento.demandado_procesado}</div>
             </div>
+            <div className="flex flex-col mb-2">
+              <div className="flex justify-between items-center">
+                <div className="font-semibold text-sm">Usuarios involucrados</div>
+                <Button icon="pi pi-plus" text rounded className="!h-10" onClick={() => setVisible(true)} />
+              </div>
+              <div>
+                {associates.map(i => i.name).join(', ')}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -53,16 +75,12 @@ export default function ProcesoMovimientoDetalle({ movimiento, detalle, auth, er
           <div>
             <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 14rem)' }} >
               {
-                detalle.map(item => (
-                  <div className="px-3 pt-3 pb-2 border-t">
+                detalle.map((item, index) => (
+                  <div key={index} className="px-3 pt-3 pb-2 border-t">
                     <div className="font-semibold text-sm mb-1">
                       {item.fecha} - {item.titulo}
                     </div>
-                    <div className="text-sm ml-1.5">{item.comentario}</div>
-
-                    <div className="mt-3">
-                      <InputText className="h-7 text-sm w-full" />
-                    </div>
+                    <Comments procesoId={movimiento.proceso_id} comentarios={item.comentarios} />
                   </div>
                 ))
               }
