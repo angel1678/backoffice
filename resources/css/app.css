@@ -10,3 +10,8 @@ button.p-button-icon-only {
     width: 2.5rem !important;
     padding: 0.25rem 0 !important;
 }
+
+.text-center>.p-column-header-content {
+    text-align: center;
+    justify-content: center;
+}

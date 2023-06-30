@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 
 class Proceso extends Model
 {
@@ -47,5 +50,16 @@ class Proceso extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeUltimaFechaDetalle(Builder $query, $fecha)
+    {
+        $query->join('procesos_movimiento as pm', function (JoinClause $join) {
+            $join->on('procesos.id', '=', 'pm.proceso_id')
+                ->on('pm.id', '=', DB::raw('(select id from procesos_movimiento where proceso_id = procesos.id order by fecha desc limit 1)'));
+        })->join('procesos_detalle as pd', function (JoinClause $join) {
+            $join->on('pm.id', '=', 'pd.movimiento_id')
+                ->on('pd.id', '=', DB::raw('(select id from procesos_detalle where movimiento_id = pm.id order by fecha desc limit 1)'));
+        })->where('pd.fecha', '<=', $fecha)->select('procesos.*');
     }
 }

@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { Link } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link } from '@inertiajs/react';
 
 export default function Authenticated({ auth, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -24,6 +24,12 @@ export default function Authenticated({ auth, header, children }) {
                                 <NavLink href={route('proceso.index')} active={route().current('proceso.index')}>
                                     Procesos Judiciales
                                 </NavLink>
+                                {
+                                  auth.isAdmin &&
+                                  <NavLink href={route('proceso-detenido.index')} active={route().current('proceso-detenido.index')}>
+                                    Procesos Judiciales Detenidos
+                                  </NavLink>
+                                }
                             </div>
                         </div>
 
@@ -56,6 +62,10 @@ export default function Authenticated({ auth, header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        {
+                                          auth.isAdmin &&
+                                          <Dropdown.Link href={route('setting.edit')}>Settings</Dropdown.Link>
+                                        }
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
                                             Log Out
                                         </Dropdown.Link>
@@ -107,6 +117,10 @@ export default function Authenticated({ auth, header, children }) {
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
+                            {
+                              auth.isAdmin &&
+                              <ResponsiveNavLink href={route('setting.edit')}>Settings</ResponsiveNavLink>
+                            }
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">
                                 Log Out
                             </ResponsiveNavLink>

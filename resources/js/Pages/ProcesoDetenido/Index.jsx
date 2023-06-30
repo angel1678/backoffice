@@ -2,23 +2,13 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Head } from '@inertiajs/react';
 import DialogMovimiento from '@/Components/DialogMovimiento';
-import DataTableProceso from '@/Components/DataTableProceso';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import DialogLastUpdate from '@/Components/DialogLastUpdate';
+import DataTableProceso from '@/Components/DataTableProceso';
 
-export default function Proceso({ procesos, auth, errors }) {
+export default function ProcesoDetenido({ procesos, auth, errors }) {
   const [dialog, setDialog] = useState(false);
   const [procesoId, setProcesoId] = useState([]);
   const [movimiento, setMovimiento] = useState([]);
-
-  const [dialogLastUpdate, setDialogLastUpdate] = useState(false);
-  const [lastDetalle, setLastDetalle] = useState([]);
-
-  const handleLastUpdates = async () => {
-    const { data } = await axios.get(route('proceso-last-update.index'));
-    setLastDetalle(data);
-    setDialogLastUpdate(true);
-  };
 
   const handleShowMovimientos = async (id) => {
     const { data } = await axios.get(route('proceso.movimiento', id));
@@ -31,13 +21,11 @@ export default function Proceso({ procesos, auth, errors }) {
     <AuthenticatedLayout
       auth={auth}
       errors={errors}
-      header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Procesos Judiciales</h2>}
+      header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Procesos Judiciales Detenidos</h2>}
     >
-      <Head title="Procesos Judiciales" />
+      <Head title="Procesos Judiciales Detenidos" />
 
       <DialogMovimiento proceso={procesoId} model={movimiento} visible={dialog} onHide={() => setDialog(false)} />
-
-      <DialogLastUpdate isAdmin={auth.isAdmin} model={lastDetalle} visible={dialogLastUpdate} onHide={() => setDialogLastUpdate(false)} />
 
       <div className="py-6">
         <div className="max-w-[96rem] mx-auto sm:px-6 lg:px-8">
@@ -46,9 +34,6 @@ export default function Proceso({ procesos, auth, errors }) {
               <DataTableProceso
                 auth={auth}
                 modal={procesos}
-                isCrud
-                isLastUpdates
-                onLastUpdates={handleLastUpdates}
                 onMovimiento={handleShowMovimientos}
               />
             </div>

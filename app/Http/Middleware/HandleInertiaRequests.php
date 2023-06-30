@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -30,7 +31,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $usersChat = User::select('id', 'name')->get();
+
         return array_merge(parent::share($request), [
+            'chats' => $usersChat,
             'auth' => [
                 'user' => $request->user(),
                 'isAdmin' => $request->user()?->isAn('admin')

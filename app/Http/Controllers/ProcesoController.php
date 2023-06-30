@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Imports\ProcesoImport;
 use App\Models\Proceso;
-use App\Models\ProcesoDetalle;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -57,10 +56,10 @@ class ProcesoController extends Controller
         ]);
 
         if (Proceso::where([
-                ['judicatura_id', $data['judicaturaId']],
-                ['anio_id', $data['anioId']],
-                ['numero_id', $data['numeroId']]
-            ])->exists()) {
+            ['judicatura_id', $data['judicaturaId']],
+            ['anio_id', $data['anioId']],
+            ['numero_id', $data['numeroId']]
+        ])->exists()) {
             return back()
                 ->withInput()
                 ->withErrors([
@@ -93,12 +92,56 @@ class ProcesoController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(Proceso $proceso)
+    {
+        return response()->json($proceso);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Proceso $proceso): Response
+    {
+        $model = [
+            'id' => $proceso->id,
+            'judicaturaId' => $proceso->judicatura_id,
+            'anioId' => $proceso->anio_id,
+            'numeroId' => $proceso->numero_id,
+            'userId' => $proceso->user_id,
+            'activo' => $proceso->activo
+        ];
+
+        $users = User::select('id as value', 'name as label')->get();
+        return Inertia::render('Proceso/Edit', [
+            'users' => $users,
+            'model' => $model
+        ]);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
-    public function update(Proceso $proceso): RedirectResponse
+    public function update(Request $request, Proceso $proceso): RedirectResponse
     {
-        $proceso->activo = !$proceso->activo;
-        $proceso->save();
+        $user = User::find(Auth::id());
+
+        if ($user->isAn('admin')) {
+            $data = $request->validate([
+                'userId' => 'required|exists:users,id',
+                'activo' => 'boolean'
+            ]);
+
+            $proceso->user_id = $data['userId'];
+            $proceso->activo = $data['activo'];
+            $proceso->save();
+        }
+
+        if ($user->isNotAn('admin')) {
+            $proceso->activo = !$proceso->activo;
+            $proceso->save();
+        }
 
         return redirect()->route('proceso.index');
     }
