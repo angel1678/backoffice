@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Proceso;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -15,13 +16,13 @@ class UserController extends Controller
     public function index(Proceso $proceso, Request $request)
     {
         $search = $request->input('search');
-        $associates = $proceso->associates();
+        $associates = $proceso->associates()->where('user_id', '!=', Auth::id());
         if ($search) {
             $associates = $associates->where('name', 'like', "%{$search}%");
         }
 
         return response()->json([
-            'associates' => $associates->select('id', 'name')->get()
+            'associates' => $associates->select('id', 'name', 'nickname')->get()
         ]);
     }
 

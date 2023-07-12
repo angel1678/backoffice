@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Proceso\DetalleComentarioController;
 use App\Http\Controllers\Proceso\MovimientoDetalleController;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
 use App\Http\Controllers\ProcesoController;
@@ -41,7 +42,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/proceso-last-update', [ProcesoDetalleLastUpdateController::class, 'index'])->name('proceso-last-update.index');
     Route::get('/proceso-detenido', [ProcesoDetenidoController::class, 'index'])->name('proceso-detenido.index');
+
     Route::post('/proceso/batch', [ProcesoController::class, 'batchStore'])->name('proceso.batchStore');
+    Route::post('/proceso/detalle/{detalle}/comentario', [DetalleComentarioController::class, 'store'])->name('proceso.detalle.comentario.store');
     Route::resource('/proceso/movimiento', MovimientoDetalleController::class, ['as' => 'proceso'])->only('show');
 
     Route::get('/proceso/{proceso}/user', [ProcesoUserController::class, 'index'])->name('proceso.user.index');

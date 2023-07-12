@@ -34,7 +34,7 @@ export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, o
         />
       }
       {
-        (!auth.isAdmin && isCrud) &&
+        (!auth.isAdmin && isCrud && auth.user.id == data.user_id) &&
         <Button
           icon={classNames('fas fa-md', !data.activo ? 'fa-check' : 'fa-times')}
           className="p-button-secondary h-8"
@@ -44,7 +44,7 @@ export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, o
         />
       }
       {
-        isCrud &&
+        (isCrud && (auth.isAdmin || auth.user.id == data.user_id)) &&
         <Button
           icon="fas fa-trash fa-md"
           className="p-button-danger h-8"

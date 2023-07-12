@@ -45,11 +45,13 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
             return null;
         }
 
-        Proceso::create([
+        $proceso = Proceso::create([
            'judicatura_id'  => $row['judicatura'],
            'anio_id'        => $row['ano'],
            'numero_id'      => $row['numero'],
            'user_id'        => $userId,
         ]);
+
+        $proceso->associates()->attach($userId);
     }
 }

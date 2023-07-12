@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import { Mention } from 'primereact/mention';
+import { Button } from 'primereact/button';
 
-export default function Comments({procesoId, comentarios = []}) {
+export default function Comments({procesoId, detalleId, comentarios = []}) {
   const [suggestions, setSuggestions] = useState([]);
-  const { data, setData, post, reset, processing } = useForm({ comment: "" });
+  const { data, setData, post, reset, processing } = useForm({ comment: '' });
 
   const handleSearch = async (e) => {
     const search = e.query;
@@ -18,41 +19,58 @@ export default function Comments({procesoId, comentarios = []}) {
 
   const itemTemplate = (suggestion) => {
     return (
-        <div className="flex align-items-center">
-            <span className="flex flex-column ml-2">
-                {suggestion.name}
-                {/* <small style={{ fontSize: '.75rem', color: 'var(--text-secondary-color)' }}>@{suggestion.email}</small> */}
-            </span>
-        </div>
+      <div className="flex items-center">
+        <span className="flex flex-col ml-2">
+          {suggestion.name}
+          <small style={{ fontSize: '.75rem', color: 'var(--text-secondary-color)' }}>@{suggestion.nickname}</small>
+        </span>
+      </div>
     );
-  }
+  };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  const handleClick = () => {
+    post(route('proceso.detalle.comentario.store', detalleId), {
+      preserveState: true,
+      onSuccess: () => {
+        reset();
+      }
+    });
+  };
 
   return (
-    <div>
-      <div className="text-sm ml-1.5">
+    <div className="mt-6 border rounded-md p-2">
+      <div className="w-full border-b">Comentarios</div>
+      <div className="text-sm my-3 mr-12">
         {
-          comentarios.map(i => (
-            <span>{i}</span>
+          comentarios.map(item => (
+            <div key={item.id} className="flex gap-4 items-center mb-1 p-2">
+              <div>
+                <i className="pi pi-user text-2xl" />
+              </div>
+              <div>
+                <div>
+                  <span className="font-bold">{item.user_name}</span> - {item.date}
+                </div>
+                <span>{item.description}</span>
+              </div>
+            </div>
           ))
         }
       </div>
-      <div className="mt-3 mr-12">
+      <div className="flex items-center gap-2">
         <Mention
           value={data.comment}
           onChange={e => setData('comment', e.target.value)}
+          field="nickname"
           suggestions={suggestions}
-          onSelect={e => console.log(e.suggestion)}
           onSearch={handleSearch}
-          field="name"
-          rows={1}
+          placeholder="Agregar un comentario ..."
+          rows={2}
           className="w-full"
-          inputClassName="w-full !p-1.5"
+          inputClassName="w-full text-sm !p-1.5"
           itemTemplate={itemTemplate}
         />
+        <Button icon="pi pi-send" className="!h-9" disabled={processing} onClick={handleClick} />
       </div>
     </div>
   );

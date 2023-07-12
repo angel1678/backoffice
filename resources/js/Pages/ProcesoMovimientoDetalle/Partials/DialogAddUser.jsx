@@ -5,7 +5,7 @@ import { Dropdown } from 'primereact/dropdown';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 
-export default function DialogAddUser({visible, onHide, procesoId, users, associates = []}) {
+export default function DialogAddUser({ownerId, visible, onHide, procesoId, users, associates = []}) {
   const { data, setData, errors, post, reset, processing } = useForm({ userId: 0 });
 
   const handleSave = () => {
@@ -61,7 +61,10 @@ export default function DialogAddUser({visible, onHide, procesoId, users, associ
               associates.map(user => (
                 <div key={user.id} className="shadow rounded-md py-2 px-3 my-2 flex justify-between items-center">
                   <span>{user.name}</span>
-                  <Button icon="pi pi-trash" severity="danger" text onClick={() => handleDelete(user.id)} />
+                  {
+                    ownerId != user.id &&
+                    <Button icon="pi pi-trash" severity="danger" text onClick={() => handleDelete(user.id)} />
+                  }
                 </div>
               ))
             }

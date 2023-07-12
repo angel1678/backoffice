@@ -23,7 +23,8 @@ class ProcesoController extends Controller
 
         $query = Proceso::query();
         $query->when($user->isNotAn('admin'), function ($query) use ($user) {
-            return $query->where('user_id', $user->id);
+            return $query->where('user_id', $user->id)
+                ->orWhereRelation('associates', 'user_id', $user->id);
         });
         $query->when($user->isAn('admin'), function ($query) use ($user) {
             return $query->orderBy('user_id');
@@ -67,12 +68,14 @@ class ProcesoController extends Controller
                 ]);
         }
 
-        Proceso::create([
+        $proceso = Proceso::create([
             'judicatura_id' => $data['judicaturaId'],
             'anio_id' => $data['anioId'],
             'numero_id' => $data['numeroId'],
             'user_id' => $userId
         ]);
+
+        $proceso->associates()->attach($userId);
 
         return redirect()->route('proceso.index');
     }
@@ -155,9 +158,15 @@ class ProcesoController extends Controller
         try {
             $movimientos = $proceso->movimientos;
             foreach ($movimientos as $movimiento) {
-                $movimiento->detalle()->delete();
+                $detalles = $movimiento->detalle();
+                foreach ($detalles as $detalle) {
+                    $detalle->comentarios()->delete();
+                    $detalle->delete();
+                }
                 $movimiento->delete();
             }
+
+            $proceso->associates()->detach();
 
             $proceso->delete();
 

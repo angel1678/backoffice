@@ -15,3 +15,7 @@ button.p-button-icon-only {
     text-align: center;
     justify-content: center;
 }
+
+.custom-dropdown > span {
+    padding: 0.50rem 0.50rem;
+}

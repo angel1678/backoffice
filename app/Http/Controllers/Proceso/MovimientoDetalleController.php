@@ -16,10 +16,13 @@ class MovimientoDetalleController extends Controller
     public function show(ProcesoMovimiento $movimiento)
     {
         $users = User::where('id', '<>', Auth::id())->select('id as value', 'name as label')->get();
-        $detalle = $movimiento->detalle()->orderBy('fecha', 'desc')->get();
+        $detalle = $movimiento->detalle()->with('comentarios')->orderBy('fecha', 'desc')->get();
         $associates = $movimiento->proceso->associates()->select('id', 'name')->get();
 
+        $ownerId = $movimiento->proceso->user_id;
+
         return Inertia::render('ProcesoMovimientoDetalle/Index', [
+            'ownerId' => $ownerId,
             'movimiento' => $movimiento,
             'detalle' => $detalle,
             'users' => $users,
