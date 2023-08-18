@@ -20,7 +20,7 @@ const validation = {
 }
 
 export default function CreateContact({ accountId, types = [], locations = [], visible, onHide }) {
-  const { data, setData, errors, post, progress } = useForm({
+  const { data, setData, errors, post, progress, reset } = useForm({
     typeId: 0,
     location: 0,
     value: '',
@@ -35,6 +35,7 @@ export default function CreateContact({ accountId, types = [], locations = [], v
     post(route('coercive.accounts.contacts.store', accountId), {
       preserveState: true,
       onSuccess: (response) => {
+        reset();
         onHide();
       },
     })
