@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Coercive\AccountController as CoerciveAccountController;
+use App\Http\Controllers\Coercive\ContactController as CoerciveContactController;
 use App\Http\Controllers\Proceso\DetalleComentarioController;
 use App\Http\Controllers\Proceso\MovimientoDetalleController;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
@@ -25,7 +27,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return redirect()->route('proceso.index');
+    return redirect()->route('dashboard');
 });
 
 Route::get('/dashboard', function () {
@@ -53,6 +55,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/proceso/{proceso}/movimiento/{movimiento}', [ProcesoMovimientoDetalleController::class, 'index'])->name('proceso.movimiento.detalle');
     Route::get('/proceso/{proceso}/movimiento', [ProcesoMovimientoController::class, 'index'])->name('proceso.movimiento');
     Route::resource('/proceso', ProcesoController::class)->except('show');
+});
+
+Route::middleware('auth')->prefix('coercive')->group(function () {
+    Route::post('/accounts/batch', [CoerciveAccountController::class, 'batchStore'])->name('coercive.accounts.batchStore');
+    Route::get('/accounts/{account}/contacts/create', [CoerciveContactController::class, 'create'])->name('coercive.accounts.contacts.create');
+    Route::post('/accounts/{account}/contacts', [CoerciveContactController::class, 'store'])->name('coercive.accounts.contacts.store');
+    Route::delete('/accounts/{account}/contacts/{contact}', [CoerciveContactController::class, 'destroy'])->name('coercive.accounts.contacts.destroy');
+    Route::resource('/accounts', CoerciveAccountController::class, ['as' => 'coercive']);
 });
 
 require __DIR__ . '/auth.php';

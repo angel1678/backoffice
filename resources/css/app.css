@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+*, html {
+    font-size: 14px;
+}
+
 button.p-button {
     padding: 0.50rem 0.75rem !important;
 }
@@ -18,4 +22,41 @@ button.p-button-icon-only {
 
 .custom-dropdown > span {
     padding: 0.50rem 0.50rem;
+}
+
+.menu-bar {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.menu-bar > .p-menubar-root-list > .p-menuitem > .p-menuitem-link > .p-menuitem-text,
+.menu-bar > .p-menubar-root-list > .p-menuitem > .p-menuitem-link > .p-submenu-icon {
+    color: white !important;
+}
+
+.menu-bar > .p-menubar-root-list > .p-menuitem > .p-menuitem-link:hover,
+.menu-bar > .p-menubar-root-list > .p-menuitem > .p-menuitem-link:focus-within {
+    background-color: rgb(30 64 175) !important;
+}
+
+.menu-bar > .p-menubar-root-list > .p-menuitem > .p-menuitem-link:focus {
+    box-shadow: none !important;
+}
+
+.menu-bar .p-submenu-list {
+    z-index: 100;
+}
+
+.panel .p-panel-header {
+    padding: 0.25rem 0.50rem !important;
+}
+
+.button .p-button-label {
+    font-size: 12px;
+}
+
+.dropdown .p-inputtext,
+.dropdown .p-treeselect-label,
+.dropdown .p-multiselect-items-label {
+    padding: 0.30rem 0.50rem;
 }

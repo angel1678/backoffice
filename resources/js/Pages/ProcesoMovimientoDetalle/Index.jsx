@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Button } from 'primereact/button';
 
 import DialogAddUser from './Partials/DialogAddUser';
 import Comments from './Partials/Comments';
 
-export default function ProcesoMovimientoDetalle({movimiento, detalle, users, associates, auth, ownerId, errors }) {
+export default function ProcesoMovimientoDetalle({ movimiento, detalle, users, associates, auth, ownerId, errors }) {
   const [visible, setVisible] = useState(false);
 
   const header = (
@@ -34,11 +34,11 @@ export default function ProcesoMovimientoDetalle({movimiento, detalle, users, as
       />
 
       <div className="flex m-2">
-        <div className="bg-white rounded-md mr-1 w-[25rem]">
+        <div className="bg-white rounded-md mr-1 w-[30%]">
           <div className="font-bold text-lg border-b px-3 py-2">
             Movimiento - Información
           </div>
-          <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 12.5rem)' }} >
+          <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 6.8rem)' }} >
             <div className="grid p-3">
               <div className="flex flex-col mb-2">
                 <div className="font-semibold text-sm">Fecha</div>
@@ -85,7 +85,7 @@ export default function ProcesoMovimientoDetalle({movimiento, detalle, users, as
             Movimiento - Detalle
           </div>
           <div>
-            <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 12.5rem)' }} >
+            <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 6.8rem)' }} >
               {
                 detalle.map((item, index) => (
                   <div key={index} className="px-3 pt-3 pb-2 border-t">

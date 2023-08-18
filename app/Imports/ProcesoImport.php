@@ -18,14 +18,6 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
     use Importable, SkipsErrors;
 
     /**
-    * @param Collection $collection
-    */
-    public function collection(Collection $collection)
-    {
-        //
-    }
-
-    /**
      * @param Row $row
      */
     public function onRow(Row $row)

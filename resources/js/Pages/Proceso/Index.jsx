@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Head } from '@inertiajs/react';
+import { Panel } from 'primereact/panel';
 import DialogMovimiento from '@/Components/DialogMovimiento';
 import DataTableProceso from '@/Components/DataTableProceso';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import DialogLastUpdate from '@/Components/DialogLastUpdate';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
 
 export default function Proceso({ procesos, auth, errors }) {
   const [dialog, setDialog] = useState(false);
@@ -30,29 +30,25 @@ export default function Proceso({ procesos, auth, errors }) {
   return (
     <AuthenticatedLayout
       auth={auth}
+      title="Procesos Judiciales"
       errors={errors}
-      header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Procesos Judiciales</h2>}
     >
-      <Head title="Procesos Judiciales" />
-
       <DialogMovimiento proceso={procesoId} model={movimiento} visible={dialog} onHide={() => setDialog(false)} />
-
       <DialogLastUpdate isAdmin={auth.isAdmin} model={lastDetalle} visible={dialogLastUpdate} onHide={() => setDialogLastUpdate(false)} />
 
-      <div className="py-6">
-        <div className="max-w-[96rem] mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900">
-              <DataTableProceso
-                auth={auth}
-                modal={procesos}
-                isCrud
-                isLastUpdates
-                onLastUpdates={handleLastUpdates}
-                onMovimiento={handleShowMovimientos}
-              />
-            </div>
-          </div>
+      <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div className="p-2">
+          <Panel header="Filtros" toggleable collapsed className="panel mb-3">
+
+          </Panel>
+          <DataTableProceso
+            auth={auth}
+            modal={procesos}
+            isCrud
+            isLastUpdates
+            onLastUpdates={handleLastUpdates}
+            onMovimiento={handleShowMovimientos}
+          />
         </div>
       </div>
     </AuthenticatedLayout>

@@ -6,7 +6,7 @@ import { DataTable } from 'primereact/datatable';
 import { classNames } from 'primereact/utils';
 
 export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, onLastUpdates, onMovimiento }) {
-  const classButton = 'text-xs font-semibold tracking-widest uppercase h-8';
+  const classButton = 'text-xs h-8 button uppercase';
   const classHeader = 'text-center';
   const classBody = '!text-center';
 
@@ -19,6 +19,7 @@ export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, o
   const handleLastUpdates = () => onLastUpdates && onLastUpdates();
   const handleMovimiento = (id) => onMovimiento && onMovimiento(id);
 
+  const bodyCodigoProceso = (data) => `${data.judicatura_id}-${data.anio_id}-${data.numero_id}`;
   const bodyActivo = (data) => <i className={classNames('fas', data.activo ? 'fa-check' : 'fa-times')}></i>;
   const bodyAcciones = (data) => (
     <div className="flex gap-1 justify-center m-1">
@@ -62,7 +63,7 @@ export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, o
         <div className="flex gap-2">
           {
             isLastUpdates &&
-            <Button icon="fas fa-newspaper fa-lg" className={classNames(classButton, 'p-button-info justify-self-start')} label="Ultimas actualizaciones" onClick={handleLastUpdates} />
+            <Button icon="fas fa-newspaper fa-lg" className={classNames(classButton, 'p-button-info justify-self-start')} label="Ultimas Actualizaciones" onClick={handleLastUpdates} />
           }
         </div>
         <div className="flex gap-2">
@@ -79,9 +80,10 @@ export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, o
           auth.isAdmin &&
           <Column field="user_name" header="Usuario" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
         }
-        <Column field="judicatura_id" header="Codigo de judicatura" headerClassName={classHeader} bodyClassName={classBody} />
+        {/* <Column field="judicatura_id" header="Codigo de judicatura" headerClassName={classHeader} bodyClassName={classBody} />
         <Column field="anio_id" header="Año" headerClassName={classHeader} bodyClassName={classBody} />
-        <Column field="numero_id" header="No. Secuencial" headerClassName={classHeader} bodyClassName={classBody} />
+        <Column field="numero_id" header="No. Secuencial" headerClassName={classHeader} bodyClassName={classBody} /> */}
+        <Column body={bodyCodigoProceso} header="Codigo del Proceso" headerClassName={classHeader} bodyClassName={classBody} />
         <Column field="executed_at" header="Fecha actualización" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
         <Column field="accion_infraccion" header="Estado actual" headerClassName={classHeader} bodyClassName={classBody} />
 
