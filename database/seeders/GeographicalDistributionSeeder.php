@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Enums\GeographicalDistributionType;
 use App\Models\GeographicalDistribution;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class GeographicalDistributionSeeder extends Seeder

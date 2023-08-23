@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { classNames } from 'primereact/utils';
+import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
 
-export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, onLastUpdates, onMovimiento }) {
-  const classButton = 'text-xs h-8 button uppercase';
+const status = [
+  { label: 'Activo', value: '1' },
+  { label: 'Inactivo', value: '0' },
+];
+
+export default function DataTableProceso({ auth, value, filterSearch, filterStatu, rows, first, totalRecords, isLastUpdates, isCrud, onPage, onLastUpdates, onMovimiento }) {
+  const classButton = 'text-xs h-9 button uppercase';
   const classHeader = 'text-center';
   const classBody = '!text-center';
+
+  const [statu, setStatu] = useState(filterStatu);
+  const [search, setSearch] = useState(filterSearch || '');
 
   const handleRefresh = () => router.reload();
   const handleCreate = () => router.visit(route('proceso.create'));
@@ -65,6 +75,31 @@ export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, o
             isLastUpdates &&
             <Button icon="fas fa-newspaper fa-lg" className={classNames(classButton, 'p-button-info justify-self-start')} label="Ultimas Actualizaciones" onClick={handleLastUpdates} />
           }
+          <div>
+            <span className="p-input-icon-right">
+              <i className="pi pi-search" />
+              <InputText
+                className="h-9 block"
+                placeholder="Buscar"
+                value={search}
+                onChange={e => {
+                  setSearch(e.target.value);
+                  onPage(1, statu, e.target.value);
+                }}
+              />
+            </span>
+          </div>
+          <Dropdown
+            className="dropdown"
+            placeholder="Selecione un estado"
+            options={status}
+            showClear
+            value={statu}
+            onChange={(e) => {
+              setStatu(e.value);
+              onPage(1, e.value, search)
+            }}
+          />
         </div>
         <div className="flex gap-2">
           <Button icon="fas fa-refresh fa-lg" className={classNames(classButton, 'p-button-help')} onClick={handleRefresh} />
@@ -75,14 +110,24 @@ export default function DataTableProceso({ auth, modal, isLastUpdates, isCrud, o
         </div>
       </div>
 
-      <DataTable value={modal} scrollable scrollHeight="calc(100vh - 275px)" size="small" emptyMessage="No existen resultados">
+      <DataTable
+        value={value}
+        scrollable
+        scrollHeight="calc(100vh - 275px)"
+        size="small"
+        emptyMessage="No existen resultados"
+
+        lazy
+        paginator
+        rows={rows}
+        first={first}
+        totalRecords={totalRecords}
+        onPage={e => onPage(e.page + 1)}
+      >
         {
           auth.isAdmin &&
           <Column field="user_name" header="Usuario" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
         }
-        {/* <Column field="judicatura_id" header="Codigo de judicatura" headerClassName={classHeader} bodyClassName={classBody} />
-        <Column field="anio_id" header="Año" headerClassName={classHeader} bodyClassName={classBody} />
-        <Column field="numero_id" header="No. Secuencial" headerClassName={classHeader} bodyClassName={classBody} /> */}
         <Column body={bodyCodigoProceso} header="Codigo del Proceso" headerClassName={classHeader} bodyClassName={classBody} />
         <Column field="executed_at" header="Fecha actualización" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
         <Column field="accion_infraccion" header="Estado actual" headerClassName={classHeader} bodyClassName={classBody} />

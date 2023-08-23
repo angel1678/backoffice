@@ -31,12 +31,16 @@ export default function CreateContact({ accountId, types = [], locations = [], v
     setData({ typeId: e.target.value, location: 0, value: '', observation: '' });
   }
 
+  const handleHide = () => {
+    reset();
+    onHide();
+  };
+
   const handleSubmit = () => {
     post(route('coercive.accounts.contacts.store', accountId), {
       preserveState: true,
-      onSuccess: (response) => {
-        reset();
-        onHide();
+      onSuccess: () => {
+        handleHide();
       },
     })
   };

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\CurrencyFormat;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,6 +30,10 @@ class CoerciveAccount extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+    ];
+
+    protected $casts = [
+        'principal_amount' => CurrencyFormat::class,
     ];
 
     protected $appends = [

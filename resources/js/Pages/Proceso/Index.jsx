@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Panel } from 'primereact/panel';
+import { router } from '@inertiajs/react';
 import DialogMovimiento from '@/Components/DialogMovimiento';
 import DataTableProceso from '@/Components/DataTableProceso';
 import DialogLastUpdate from '@/Components/DialogLastUpdate';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
 
-export default function Proceso({ procesos, auth, errors }) {
+export default function Proceso({ procesos, search, statu, auth, errors }) {
   const [dialog, setDialog] = useState(false);
   const [procesoId, setProcesoId] = useState([]);
   const [movimiento, setMovimiento] = useState([]);
@@ -27,6 +27,12 @@ export default function Proceso({ procesos, auth, errors }) {
     setDialog(true);
   };
 
+  const handlePage = (page, statu, search) => {
+    const data = Object.fromEntries(Object.entries({ page, statu, search })
+      .filter(([_, v]) => (v != null && v != '')));
+    router.get(route('proceso.index'), data, { preserveState: true });
+  };
+
   return (
     <AuthenticatedLayout
       auth={auth}
@@ -38,16 +44,20 @@ export default function Proceso({ procesos, auth, errors }) {
 
       <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div className="p-2">
-          <Panel header="Filtros" toggleable collapsed className="panel mb-3">
-
-          </Panel>
           <DataTableProceso
             auth={auth}
-            modal={procesos}
+            value={procesos.data}
             isCrud
             isLastUpdates
             onLastUpdates={handleLastUpdates}
             onMovimiento={handleShowMovimientos}
+
+            filterSearch={search}
+            filterStatu={statu}
+            rows={100}
+            first={procesos.from}
+            totalRecords={procesos.total}
+            onPage={handlePage}
           />
         </div>
       </div>

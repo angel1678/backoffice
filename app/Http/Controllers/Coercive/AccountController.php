@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\CoerciveAccountsImport;
 use App\Models\Client;
 use App\Models\CoerciveAccount;
+use App\Models\CoerciveAccountHistory;
 use App\Models\CoerciveAccountStage;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -21,8 +22,9 @@ class AccountController extends Controller
      */
     public function index(Request $request): Response
     {
-        $user = Auth::user();
+        $user = (object) Auth::user();
         $stage = $request->input('stage');
+        $search = $request->input('search');
 
         $stages = CoerciveAccountStage::where('is_active', true)
             ->select('id as value', 'name as label')
@@ -34,11 +36,15 @@ class AccountController extends Controller
 
         $query = CoerciveAccount::query();
         $query->when($user->isNotAn('admin'), function ($query) use ($user) {
-            return $query->where('executive_id', $user->id);
-        });
-
-        $query->when($request->has('stage'), function ($query) use($stage) {
-            return $query->where('stage_id', $stage);
+            $query->where('executive_id', $user->id);
+        })->when(!empty($stage), function ($query) use($stage) {
+            $query->where('stage_id', $stage);
+        })->when(!empty($search), function ($query) use($search) {
+            $query->where(function ($query) use($search) {
+                $query->where('process', 'like', "%{$search}%")
+                    ->orWhere('identification', 'like', "{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%");
+            });
         });
 
         $accounts = $query->paginate(100);
@@ -46,6 +52,7 @@ class AccountController extends Controller
             'accounts' => $accounts,
             'options' => $options,
             'stage' => $stage,
+            'search' => $search,
         ]);
     }
 
@@ -152,13 +159,15 @@ class AccountController extends Controller
      */
     public function update(Request $request, CoerciveAccount $account)
     {
-        $user = User::find(Auth::id());
+        $user = (object) Auth::user();
         $url = url()->previous();
         $route = app('router')->getRoutes($url)->match(app('request')->create($url))->getName();
+        $hasUpdate = false;
 
         if ($user->isAn('admin') && $route == 'coercive.accounts.index') {
             $account->is_active = !$account->is_active;
             $account->save();
+            $hasUpdate = true;
         }
 
         if ($route == 'coercive.accounts.show') {
@@ -167,6 +176,15 @@ class AccountController extends Controller
             ]);
             $account->stage_id = $data['stageId'];
             $account->save();
+            $hasUpdate = true;
+        }
+
+        if ($hasUpdate) {
+            CoerciveAccountHistory::create([
+                'coercive_account_id' => $account->id,
+                'fields' => $account->getChanges(),
+                'user_id' => $user->id,
+            ]);
         }
 
         return back();

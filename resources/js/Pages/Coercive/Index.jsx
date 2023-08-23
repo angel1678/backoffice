@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { classNames } from 'primereact/utils';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
 import { Dropdown } from 'primereact/dropdown';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { InputText } from 'primereact/inputtext';
+import { classNames } from 'primereact/utils';
+
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
 
 export default function Index({ auth, accounts, options, errors, ...props }) {
   const classButton = 'text-xs h-9 button uppercase';
@@ -15,12 +15,17 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
   const classBody = '!text-center';
 
   const [stage, setStage] = useState(null);
+  const [search, setSearch] = useState('');
 
   const handleRefresh = () => router.reload();
   const handleCreate = () => router.visit(route('coercive.accounts.create'));
   const handleDetalle = (id) => router.visit(route('coercive.accounts.show', id));
   const handleUpdate = (id) => router.put(route('coercive.accounts.update', id));
-  const handlePage = (page, stage) => router.get(route('coercive.accounts.index'), { page, stage }, { preserveState: true });
+  const handlePage = (page, stage, search) => {
+    const data = Object.fromEntries(Object.entries({ page, stage, search })
+      .filter(([_, v]) => v != null && v != ''));
+    router.get(route('coercive.accounts.index'), data, { preserveState: true })
+  };
 
   const bodyAcciones = (data) => (
     <div className="flex gap-1 justify-center m-1">
@@ -39,7 +44,10 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
 
   useEffect(() => {
     setStage(props.stage ? Number(props.stage) : props.stage);
+    setSearch(props.search);
   }, []);
+
+  console.log(accounts);
 
   return (
     <AuthenticatedLayout
@@ -51,6 +59,20 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
         <div className="p-2 text-gray-900">
           <div className="flex justify-between mb-2">
             <div className="flex gap-2">
+              <div>
+                <span className="p-input-icon-right">
+                  <i className="pi pi-search" />
+                  <InputText
+                    className="h-9 block"
+                    placeholder="Buscar"
+                    value={search}
+                    onChange={e => {
+                      setSearch(e.target.value);
+                      handlePage(1, stage, e.target.value)
+                    }}
+                  />
+                </span>
+              </div>
               <Dropdown
                 className="dropdown"
                 placeholder="Selecione una etapa"
@@ -59,7 +81,7 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
                 value={stage}
                 onChange={(e) => {
                   setStage(e.value);
-                  handlePage(1, e.value)
+                  handlePage(1, e.value, search)
                 }}
               />
             </div>
@@ -80,16 +102,11 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
 
             dataKey="id"
             lazy
-            // loading={loading}
             paginator
             rows={100}
             first={accounts.from}
             totalRecords={accounts.total}
             onPage={e => handlePage(e.page + 1)}
-
-          // filters={filters}
-          // filterDisplay="row"
-          // globalFilterFields={['process', 'identification', 'name', 'executive_name']}
           >
             <Column field="process" header="Proceso" />
             <Column field="identification" header="Ci / RUC" />

@@ -17,22 +17,37 @@ class ProcesoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $user = User::find(Auth::id());
+        $user = (object) Auth::user();
+        $statu = $request->input('statu');
+        $search = $request->input('search');
 
         $query = Proceso::query();
         $query->when($user->isNotAn('admin'), function ($query) use ($user) {
-            return $query->where('user_id', $user->id)
-                ->orWhereRelation('associates', 'user_id', $user->id);
+            $query->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhereRelation('associates', 'user_id', $user->id);
+            });
+        })->when($statu != null, function ($query) use ($statu) {
+            $query->where('activo', $statu);
+        })->when(!empty($search), function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('judicatura_id', 'like', "{$search}%")
+                    ->orWhere('anio_id', 'like', "{$search}%")
+                    ->orWhere('numero_id', 'like', "{$search}%")
+                    ->orWhere('accion_infraccion', 'like', "{$search}%");
+            });
+        })->when($user->isAn('admin'), function ($query) use ($user) {
+            $query->orderBy('user_id');
         });
-        $query->when($user->isAn('admin'), function ($query) use ($user) {
-            return $query->orderBy('user_id');
-        });
-        $procesos = $query->get();
+
+        $procesos = $query->paginate(100);
 
         return Inertia::render('Proceso/Index', [
             'procesos' => $procesos,
+            'search' => $search,
+            'statu' => $statu,
         ]);
     }
 
@@ -49,7 +64,7 @@ class ProcesoController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $userId = Auth::user()->id;
+        $userId = Auth::id();
         $data = $request->validate([
             'judicaturaId' => 'required|max:5',
             'anioId' => 'required|max:4',

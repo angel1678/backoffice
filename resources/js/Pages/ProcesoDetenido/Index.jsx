@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { router } from '@inertiajs/react';
 import DialogMovimiento from '@/Components/DialogMovimiento';
 import DataTableProceso from '@/Components/DataTableProceso';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
 
-export default function ProcesoDetenido({ procesos, auth, errors }) {
+export default function ProcesoDetenido({ procesos, search, statu, auth, errors }) {
   const [dialog, setDialog] = useState(false);
   const [procesoId, setProcesoId] = useState([]);
   const [movimiento, setMovimiento] = useState([]);
@@ -15,6 +16,14 @@ export default function ProcesoDetenido({ procesos, auth, errors }) {
     setMovimiento(data);
     setDialog(true);
   };
+
+  const handlePage = (page, statu, search) => {
+    const data = Object.fromEntries(Object.entries({ page, statu, search })
+      .filter(([_, v]) => v != null && v != ''));
+    router.get(route('proceso-detenido.index'), data, { preserveState: true });
+  };
+
+  console.log(procesos);
 
   return (
     <AuthenticatedLayout
@@ -27,8 +36,15 @@ export default function ProcesoDetenido({ procesos, auth, errors }) {
         <div className="p-2">
           <DataTableProceso
             auth={auth}
-            modal={procesos}
+            value={procesos.data}
             onMovimiento={handleShowMovimientos}
+
+            filterSearch={search}
+            filterStatu={statu}
+            rows={100}
+            first={procesos.from}
+            totalRecords={procesos.total}
+            onPage={handlePage}
           />
         </div>
       </div>
