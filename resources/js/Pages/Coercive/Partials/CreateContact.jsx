@@ -21,14 +21,14 @@ const validation = {
 
 export default function CreateContact({ accountId, types = [], locations = [], visible, onHide }) {
   const { data, setData, errors, post, progress, reset } = useForm({
-    typeId: 0,
-    location: 0,
+    typeId: null,
+    location: null,
     value: '',
     observation: '',
   });
 
   const handleChangeTypeContact = (e) => {
-    setData({ typeId: e.target.value, location: 0, value: '', observation: '' });
+    setData({ typeId: e.target.value, location: null, value: '', observation: '' });
   }
 
   const handleHide = () => {
@@ -78,10 +78,10 @@ export default function CreateContact({ accountId, types = [], locations = [], v
         </div>
         {[5, 6].includes(data.typeId) &&
           <div>
-            <InputLabel htmlFor="localidad" value="Localidad" />
+            <InputLabel htmlFor="location" value="Localidad" />
 
             <TreeSelect
-              id="localidad"
+              id="location"
               className="mt-1 w-full dropdown"
               filter
               options={locations}
@@ -90,7 +90,7 @@ export default function CreateContact({ accountId, types = [], locations = [], v
               onChange={(e) => setData('location', e.value)}
             />
 
-            <InputError message={errors.localidad} className="mt-2" />
+            <InputError message={errors.location} className="mt-2" />
           </div>
         }
         <div>
@@ -106,7 +106,7 @@ export default function CreateContact({ accountId, types = [], locations = [], v
             maxLength={validation[data.typeId]?.maxLength || 300}
           />
 
-          <InputError message={errors.valor} className="mt-2" />
+          <InputError message={errors.value} className="mt-2" />
         </div>
         <div>
           <InputLabel htmlFor="observation" value="Observación" />
