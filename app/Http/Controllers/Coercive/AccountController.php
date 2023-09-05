@@ -196,7 +196,12 @@ class AccountController extends Controller
                     $hasUpdate = true;
 
                     if (in_array($data['stageId'], [2, 3])) {
-                        Mail::to('stalin.arechuac@gmail.com')
+                        $contact = $account->contacts()
+                            ->where('type_id', 4)
+                            ->where('is_active', true)
+                            ->first();
+
+                        Mail::to($contact->data->value)
                                 ->send(new CoerciveAccountMail($data['stageId'], $account));
                     }
                 }
