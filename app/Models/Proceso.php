@@ -35,12 +35,18 @@ class Proceso extends Model
     ];
 
     protected $appends = [
-        'user_name'
+        'user_name',
+        'codigo_proceso'
     ];
+
+    protected function getCodigoProcesoAttribute()
+    {
+        return "{$this->judicatura_id}-{$this->anio_id}-{$this->numero_id}";
+    }
 
     protected function getUserNameAttribute()
     {
-        return $this->user->name;
+        return $this->user?->name;
     }
 
     public function movimientos(): HasMany

@@ -13,7 +13,7 @@ const status = [
 ];
 
 export default function DataTableProceso({ auth, value, filterSearch, filterStatu, rows, first, totalRecords, isLastUpdates, isCrud, onPage, onLastUpdates, onMovimiento }) {
-  const classButton = 'text-xs h-9 button uppercase';
+  const classButton = '!text-sm h-9 uppercase';
   const classHeader = 'text-center';
   const classBody = '!text-center';
 
@@ -29,7 +29,6 @@ export default function DataTableProceso({ auth, value, filterSearch, filterStat
   const handleLastUpdates = () => onLastUpdates && onLastUpdates();
   const handleMovimiento = (id) => onMovimiento && onMovimiento(id);
 
-  const bodyCodigoProceso = (data) => `${data.judicatura_id}-${data.anio_id}-${data.numero_id}`;
   const bodyActivo = (data) => <i className={classNames('fas', data.activo ? 'fa-check' : 'fa-times')}></i>;
   const bodyAcciones = (data) => (
     <div className="flex gap-1 justify-center m-1">
@@ -90,7 +89,6 @@ export default function DataTableProceso({ auth, value, filterSearch, filterStat
             </span>
           </div>
           <Dropdown
-            className="dropdown"
             placeholder="Selecione un estado"
             options={status}
             showClear
@@ -115,6 +113,7 @@ export default function DataTableProceso({ auth, value, filterSearch, filterStat
         scrollable
         scrollHeight="calc(100vh - 275px)"
         size="small"
+        showGridlines
         emptyMessage="No existen resultados"
 
         lazy
@@ -128,11 +127,11 @@ export default function DataTableProceso({ auth, value, filterSearch, filterStat
           auth.isAdmin &&
           <Column field="user_name" header="Usuario" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
         }
-        <Column body={bodyCodigoProceso} header="Codigo del Proceso" headerClassName={classHeader} bodyClassName={classBody} />
-        <Column field="executed_at" header="Fecha actualización" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
+        <Column field="codigo_proceso" header="Codigo del Proceso" headerClassName={classNames(classHeader, 'w-72')} bodyClassName={classBody} />
+        <Column field="executed_at" header="Fecha actualización" headerClassName={classNames(classHeader, 'w-72')} bodyClassName={classBody} />
         <Column field="accion_infraccion" header="Estado actual" headerClassName={classHeader} bodyClassName={classBody} />
 
-        <Column body={bodyActivo} header="Activo" headerClassName={classHeader} bodyClassName={classBody} />
+        <Column body={bodyActivo} header="Activo" headerClassName={"classHeader"} bodyClassName={classBody} />
         <Column body={bodyAcciones} header="Acciones" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
       </DataTable>
     </>

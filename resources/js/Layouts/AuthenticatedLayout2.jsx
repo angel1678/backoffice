@@ -16,8 +16,13 @@ export default function Authenticated({ auth, title, header, children }) {
         { label: 'Coactiva', route: 'coercive.accounts.index', command },
       ]
     },
-    { label: 'Reporteria' },
-    { label: 'Gestíon' },
+    { label: 'Reporteria', route: 'process.report.index', command },
+    { label: 'Gestíon', route: 'management.index', command },
+    {
+      label: 'Sistemas', items: [
+        { label: 'Cliente', route: 'system.client.index', command }
+      ]
+    },
   ];
 
   return (
@@ -34,7 +39,20 @@ export default function Authenticated({ auth, title, header, children }) {
         <div className="flex justify-between w-full">
           <Menubar model={items} className="menu-bar" />
           <div className="flex items-center p-1">
-            <div className="text-white mr-3"><i className="pi pi-user mr-2" /> {auth.user.name}</div>
+            <Link
+              href={route('profile.edit')}
+              className="flex justify-center items-center p-3 py-2 text-white rounded-md hover:bg-blue-800 active:bg-blue-900">
+              <div className="text-white"><i className="pi pi-user mr-2" />{auth.user.name}</div>
+            </Link>
+            {auth.isAdmin &&
+              <Link
+                href={route('setting.edit')}
+                data-pr-tooltip="Configuraciones"
+                data-pr-position="left"
+                className="flex justify-center items-center p-3 text-white rounded-md hover:bg-blue-800 active:bg-blue-900 tooltip-general">
+                <i className="pi pi-cog" />
+              </Link>
+            }
             <Link
               href={route('logout')}
               method="post"

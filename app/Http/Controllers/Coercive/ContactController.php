@@ -9,6 +9,7 @@ use App\Models\CoerciveAccountContact;
 use App\Models\GeographicalDistribution;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ContactController extends Controller
 {

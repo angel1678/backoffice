@@ -11,11 +11,14 @@ import CreateContact from './Partials/CreateContact';
 import DeleteContact from './Partials/DeleteContact';
 import { useEffect } from 'react';
 import InputError from '@/Components/InputError';
+import { InputText } from 'primereact/inputtext';
 
 export default function Show({ auth, account, contacts, ...props }) {
   const [options, setOptions] = useState({ types: [], locations: [], stages: [] });
   const [contactId, setContactId] = useState(undefined);
-  const { data, setData, errors, put, progress } = useForm({ stageId: account.stage_id });
+  const { data, setData, errors, put, progress } = useForm({
+    stageId: account.stage_id, name: account.name
+  });
 
   const [visibleAddDialog, setVisibleAddDialog] = useState(false);
   const [visibleDeleteDialog, setVisibleDeleteDialog] = useState(false);
@@ -44,7 +47,7 @@ export default function Show({ auth, account, contacts, ...props }) {
   };
 
   const handleSubmit = () => {
-    put(route('coercive.accounts.update', account.id));
+    put(route('coercive.accounts.update', account.id), { preserveState: true });
   };
 
   const bodyData = ({ type_id, data }) =>
@@ -98,21 +101,27 @@ export default function Show({ auth, account, contacts, ...props }) {
               </div>
               <div className="flex flex-col mb-3">
                 <div className="font-semibold text-base">Nombre</div>
-                <div>{account.name}</div>
+
+                <InputText
+                  id="name"
+                  className="p-1.5 px-2 w-1/2"
+                  value={data.name}
+                  onChange={e => setData('name', e.target.value)}
+                />
+
+                <InputError message={errors.name} />
               </div>
               <div className="flex flex-col mb-3">
                 <div className="font-semibold text-base">Etapa</div>
 
-                <div className="w-1/2">
-                  <Dropdown
-                    id="stage_id"
-                    className="dropdown mt-1 w-full"
-                    placeholder={account.stage}
-                    options={options.stages}
-                    value={data.stageId}
-                    onChange={(e) => setData('stageId', e.value)}
-                  />
-                </div>
+                <Dropdown
+                  id="stage_id"
+                  className="dropdown mt-1 w-1/2"
+                  placeholder={account.stage}
+                  options={options.stages}
+                  value={data.stageId}
+                  onChange={(e) => setData('stageId', e.value)}
+                />
 
                 <InputError message={errors.stageId} />
               </div>

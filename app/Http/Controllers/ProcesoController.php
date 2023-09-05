@@ -33,12 +33,10 @@ class ProcesoController extends Controller
             $query->where('activo', $statu);
         })->when(!empty($search), function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->where('judicatura_id', 'like', "{$search}%")
-                    ->orWhere('anio_id', 'like', "{$search}%")
-                    ->orWhere('numero_id', 'like', "{$search}%")
+                $query->whereRaw("CONCAT(judicatura_id, '-', anio_id, '-', numero_id) like '{$search}%'")
                     ->orWhere('accion_infraccion', 'like', "{$search}%");
             });
-        })->when($user->isAn('admin'), function ($query) use ($user) {
+        })->when($user->isAn('admin'), function ($query) {
             $query->orderBy('user_id');
         });
 

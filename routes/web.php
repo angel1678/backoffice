@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\Coactiva\DetalleController as CoactivaDetalleController;
+use App\Http\Controllers\CoactivaController;
+
 use App\Http\Controllers\Coercive\AccountController as CoerciveAccountController;
 use App\Http\Controllers\Coercive\ContactController as CoerciveContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\Proceso\DetalleComentarioController;
 use App\Http\Controllers\Proceso\MovimientoDetalleController;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
@@ -11,6 +16,7 @@ use App\Http\Controllers\ProcesoDetenidoController;
 use App\Http\Controllers\ProcesoMovimientoController;
 use App\Http\Controllers\ProcesoMovimientoDetalleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,9 +36,7 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -55,6 +59,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/proceso/{proceso}/movimiento/{movimiento}', [ProcesoMovimientoDetalleController::class, 'index'])->name('proceso.movimiento.detalle');
     Route::get('/proceso/{proceso}/movimiento', [ProcesoMovimientoController::class, 'index'])->name('proceso.movimiento');
     Route::resource('/proceso', ProcesoController::class)->except('show');
+
+    Route::get('/management', [ManagementController::class, 'index'])->name('management.index');
+});
+
+Route::middleware('auth')->prefix('process')->group(function () {
+    Route::get('/report', [ReportController::class, 'index'])->name('process.report.index');
 });
 
 Route::middleware('auth')->prefix('coercive')->group(function () {

@@ -33,7 +33,7 @@ class CoerciveAccount extends Model
     ];
 
     protected $casts = [
-        'principal_amount' => CurrencyFormat::class,
+        // 'principal_amount' => CurrencyFormat::class,
     ];
 
     protected $appends = [

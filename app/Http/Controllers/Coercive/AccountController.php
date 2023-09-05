@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Coercive;
 
+use App\Casts\CurrencyFormat;
 use App\Http\Controllers\Controller;
 use App\Imports\CoerciveAccountsImport;
+use App\Mail\CoerciveAccountMail;
 use App\Models\Client;
 use App\Models\CoerciveAccount;
 use App\Models\CoerciveAccountHistory;
@@ -12,6 +14,8 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,7 +49,9 @@ class AccountController extends Controller
                     ->orWhere('identification', 'like', "{$search}%")
                     ->orWhere('name', 'like', "%{$search}%");
             });
-        });
+        })->withCasts([
+            'principal_amount' => CurrencyFormat::class
+        ]);
 
         $accounts = $query->paginate(100);
         return Inertia::render('Coercive/Index', [
@@ -126,6 +132,10 @@ class AccountController extends Controller
      */
     public function show(CoerciveAccount $account)
     {
+        $account->mergeCasts([
+            'principal_amount' => CurrencyFormat::class,
+        ]);
+
         $stages = CoerciveAccountStage::where('is_active', true)
             ->select('id as value', 'name as label')
             ->get();
@@ -164,29 +174,46 @@ class AccountController extends Controller
         $route = app('router')->getRoutes($url)->match(app('request')->create($url))->getName();
         $hasUpdate = false;
 
-        if ($user->isAn('admin') && $route == 'coercive.accounts.index') {
-            $account->is_active = !$account->is_active;
-            $account->save();
-            $hasUpdate = true;
-        }
+        DB::beginTransaction();
+        try {
+            if ($user->isAn('admin') && $route == 'coercive.accounts.index') {
+                $account->is_active = !$account->is_active;
+                $account->save();
+                $hasUpdate = true;
+            }
 
-        if ($route == 'coercive.accounts.show') {
-            $data = $request->validate([
-                'stageId' => 'required',
-            ]);
-            $account->stage_id = $data['stageId'];
-            $account->save();
-            $hasUpdate = true;
-        }
+            if ($route == 'coercive.accounts.show') {
+                $data = $request->validate([
+                    'stageId' => 'required',
+                    'name' => 'required',
+                ]);
 
-        if ($hasUpdate) {
-            CoerciveAccountHistory::create([
-                'coercive_account_id' => $account->id,
-                'fields' => $account->getChanges(),
-                'user_id' => $user->id,
-            ]);
-        }
+                $account->name = $data['name'];
+                $account->stage_id = $data['stageId'];
 
+                if ($account->isDirty()) {
+                    $account->save();
+                    $hasUpdate = true;
+
+                    if (in_array($data['stageId'], [2, 3])) {
+                        Mail::to('stalin.arechuac@gmail.com')
+                                ->send(new CoerciveAccountMail($data['stageId'], $account));
+                    }
+                }
+            }
+
+            if ($hasUpdate) {
+                CoerciveAccountHistory::create([
+                    'coercive_account_id' => $account->id,
+                    'fields' => $account->getChanges(),
+                    'user_id' => $user->id,
+                ]);
+            }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
         return back();
     }
 

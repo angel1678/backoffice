@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "barryvdh/laravel-dompdf": "^2.0",
         "bensampo/laravel-enum": "^6.6",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.3",
@@ -13,7 +14,9 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "maatwebsite/excel": "^3.1",
+        "rmunate/spell-number": "^3.2",
         "silber/bouncer": "^1.0",
+        "tavo1987/ec-validador-cedula-ruc": "^1.0",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('coercive_account_stages', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id')->primary();
             $table->string('name', 100);
             $table->boolean('with_notification')->default(false);
             $table->boolean('is_active')->default(true);

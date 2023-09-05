@@ -10,7 +10,7 @@ import { classNames } from 'primereact/utils';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
 
 export default function Index({ auth, accounts, options, errors, ...props }) {
-  const classButton = 'text-xs h-9 button uppercase';
+  const classButton = '!text-sm h-9 uppercase';
   const classHeader = 'text-center';
   const classBody = '!text-center';
 
