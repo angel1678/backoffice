@@ -4,6 +4,8 @@ use App\Http\Controllers\Coactiva\DetalleController as CoactivaDetalleController
 use App\Http\Controllers\CoactivaController;
 
 use App\Http\Controllers\Coercive\AccountController as CoerciveAccountController;
+use App\Http\Controllers\Coercive\AccountExportController as CoerciveAccountExportController;
+use App\Http\Controllers\Coercive\ClientController as CoerciveClientController;
 use App\Http\Controllers\Coercive\ContactController as CoerciveContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManagementController;
@@ -68,11 +70,14 @@ Route::middleware('auth')->prefix('process')->group(function () {
 });
 
 Route::middleware('auth')->prefix('coercive')->group(function () {
+    Route::get('/accounts/export', [CoerciveAccountExportController::class, 'index'])->name('coercive.accounts.export');
     Route::post('/accounts/batch', [CoerciveAccountController::class, 'batchStore'])->name('coercive.accounts.batchStore');
     Route::get('/accounts/{account}/contacts/create', [CoerciveContactController::class, 'create'])->name('coercive.accounts.contacts.create');
     Route::post('/accounts/{account}/contacts', [CoerciveContactController::class, 'store'])->name('coercive.accounts.contacts.store');
     Route::delete('/accounts/{account}/contacts/{contact}', [CoerciveContactController::class, 'destroy'])->name('coercive.accounts.contacts.destroy');
     Route::resource('/accounts', CoerciveAccountController::class, ['as' => 'coercive']);
+
+    Route::resource('/clients', CoerciveClientController::class, ['as' => 'coercive']);
 });
 
 require __DIR__ . '/auth.php';

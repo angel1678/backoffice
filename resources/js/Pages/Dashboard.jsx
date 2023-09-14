@@ -8,10 +8,10 @@ import { router } from '@inertiajs/react';
 
 export default function Dashboard({ auth, movimientos = [], errors }) {
   const classHeader = 'text-center';
-  const classBody = '!text-center';
+  const classBody = '!text-center text-sm text-black';
 
   const headerMovimientos = (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 text-blue-800 font-bold text-base">
       <Badge value={movimientos.length} /> <span>Nuevos Movimientos</span>
     </div>
   );

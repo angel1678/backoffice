@@ -2,8 +2,13 @@
 
 namespace App\Imports;
 
-use App\Models\Client;
+use App\Mail\CoerciveAccountMail;
 use App\Models\CoerciveAccount;
+use App\Models\CoerciveAccountStage;
+use App\Models\CoerciveClient;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
@@ -20,7 +25,14 @@ class CoerciveAccountsImport implements OnEachRow, WithHeadingRow, SkipsOnError,
 
     public function __construct($cliendId)
     {
-        $this->client = Client::find($cliendId);
+        $this->client = CoerciveClient::find($cliendId);
+    }
+
+    public function empty($row)
+    {
+        return empty($row->cedularuc) ||
+            empty($row->nombre_cliente) ||
+            empty($row->proceso);
     }
 
     /**
@@ -28,17 +40,37 @@ class CoerciveAccountsImport implements OnEachRow, WithHeadingRow, SkipsOnError,
      */
     public function onRow(Row $row)
     {
-        // $rowIndex = $row->getIndex();
-        $row      = $row->toArray();
-        // $userId = Auth::user()->id;
+        $rowIndex = $row->getIndex();
+        $row      = (object) $row->toArray();
+        $userId   = Auth::id();
 
-        $this->client->accounts()->create([
-            'process' => $row['proceso'],
-            'identification' => $row['cedularuc'],
-            'name' => $row['nombre_cliente'],
-            'stage' => $row['etapa'],
-            'principal_amount' => (double) $row['capital'],
+        if ($this->empty($row)) {
+            return null;
+        }
+
+        $stages = CoerciveAccountStage::where(DB::raw('upper(name)'), 'like', "%{$row->etapa}%")->get();
+        $stageId = count($stages) > 0 ? $stages->first()->id : null;
+
+        $account = $this->client->accounts()->create([
+            'process' => $row->proceso,
+            'identification' => $row->cedularuc,
+            'name' => $row->nombre_cliente,
+            'stage' => $row->etapa,
+            'stage_id' => $stageId,
+            'principal_amount' => (double) $row->capital,
         ]);
+
+        // if (in_array($stageId, [2, 3])) {
+        //     $contact = $account->contacts()
+        //         ->where('is_active', true)
+        //         ->where('type_id', 4)
+        //         ->first();
+
+        //     if (!empty($contact)) {
+        //         Mail::to($contact->data->value)
+        //             ->send(new CoerciveAccountMail($stageId, $account));
+        //     }
+        // }
     }
 
     public function sheets(): array

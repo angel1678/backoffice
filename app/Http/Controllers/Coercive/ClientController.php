@@ -1,23 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\System;
+namespace App\Http\Controllers\Coercive;
 
 use App\Http\Controllers\Controller;
-use App\Models\Client;
+use App\Models\CoerciveClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class ClientController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index()
     {
-        $clients = Client::all();
+        $query = CoerciveClient::query();
+        $clients = $query->paginate(100);
 
-        return Inertia::render('System/Client/Index', [
+        return Inertia::render('CoerciveClient/Index', [
             'clients' => $clients,
         ]);
     }
@@ -27,7 +28,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('CoerciveClient/Create');
     }
 
     /**
@@ -35,7 +36,17 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string|max:300',
+        ]);
+
+        CoerciveClient::create([
+            ...$data,
+            'user_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('coercive.clients.index');
     }
 
     /**

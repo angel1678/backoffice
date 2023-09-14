@@ -131,7 +131,7 @@ export default function DataTableProceso({ auth, value, filterSearch, filterStat
         <Column field="executed_at" header="Fecha actualización" headerClassName={classNames(classHeader, 'w-72')} bodyClassName={classBody} />
         <Column field="accion_infraccion" header="Estado actual" headerClassName={classHeader} bodyClassName={classBody} />
 
-        <Column body={bodyActivo} header="Activo" headerClassName={"classHeader"} bodyClassName={classBody} />
+        <Column body={bodyActivo} header="Activo" headerClassName={classHeader} bodyClassName={classBody} />
         <Column body={bodyAcciones} header="Acciones" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
       </DataTable>
     </>

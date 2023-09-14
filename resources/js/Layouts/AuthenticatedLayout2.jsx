@@ -13,16 +13,16 @@ export default function Authenticated({ auth, title, header, children }) {
       label: 'Portafolio', items: [
         { label: 'Procesos Judiciales', route: 'proceso.index', command },
         { label: 'Procesos Judiciales Detenidos', route: 'proceso-detenido.index', command, visible: auth.isAdmin },
-        { label: 'Coactiva', route: 'coercive.accounts.index', command },
+        {
+          label: 'Coactiva', items: [
+            { label: 'Cliente', route: 'coercive.clients.index', visible: auth.isAdmin, command },
+            { label: 'Procesos de Coactiva', route: 'coercive.accounts.index', command }
+          ]
+        },
       ]
     },
     { label: 'Reporteria', route: 'process.report.index', command },
     { label: 'Gestíon', route: 'management.index', command },
-    {
-      label: 'Sistemas', items: [
-        { label: 'Cliente', route: 'system.client.index', command }
-      ]
-    },
   ];
 
   return (

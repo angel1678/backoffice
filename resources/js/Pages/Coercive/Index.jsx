@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { router } from '@inertiajs/react';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -14,18 +15,31 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
   const classHeader = 'text-center';
   const classBody = '!text-center';
 
-  const [stage, setStage] = useState(null);
-  const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState({
+    client: props?.client ? Number(props?.client) : null,
+    stage: props?.stage ? Number(props?.stage) : null,
+    search: props?.search
+  });
+
+  const routeDownload = () => {
+    const data = Object.fromEntries(Object.entries(filters)
+      .filter(([_, v]) => v != null && v != ''));
+    return route('coercive.accounts.export', data);
+  };
 
   const handleRefresh = () => router.reload();
   const handleCreate = () => router.visit(route('coercive.accounts.create'));
   const handleDetalle = (id) => router.visit(route('coercive.accounts.show', id));
   const handleUpdate = (id) => router.put(route('coercive.accounts.update', id));
-  const handlePage = (page, stage, search) => {
-    const data = Object.fromEntries(Object.entries({ page, stage, search })
+  const handlePage = (page) => {
+    const data = Object.fromEntries(Object.entries({ page, ...filters })
       .filter(([_, v]) => v != null && v != ''));
     router.get(route('coercive.accounts.index'), data, { preserveState: true })
   };
+
+  const handleChange = (e) => {
+    setFilters(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
+  }
 
   const bodyAcciones = (data) => (
     <div className="flex gap-1 justify-center m-1">
@@ -43,11 +57,8 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
   );
 
   useEffect(() => {
-    setStage(props.stage ? Number(props.stage) : props.stage);
-    setSearch(props.search);
-  }, []);
-
-  console.log(accounts);
+    handlePage(1);
+  }, [filters]);
 
   return (
     <AuthenticatedLayout
@@ -65,30 +76,40 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
                   <InputText
                     className="h-9 block"
                     placeholder="Buscar"
-                    value={search}
-                    onChange={e => {
-                      setSearch(e.target.value);
-                      handlePage(1, stage, e.target.value)
-                    }}
+                    name="search"
+                    value={filters.search}
+                    onChange={handleChange}
                   />
                 </span>
               </div>
               <Dropdown
-                className="dropdown"
+                className="w-72"
                 placeholder="Selecione una etapa"
                 options={options?.stages}
                 showClear
-                value={stage}
-                onChange={(e) => {
-                  setStage(e.value);
-                  handlePage(1, e.value, search)
-                }}
+                name="stage"
+                value={filters.stage}
+                onChange={handleChange}
+              />
+              <Dropdown
+                className="w-72"
+                placeholder="Selecione un cliente"
+                options={options?.clients}
+                showClear
+                name="client"
+                value={filters.client}
+                onChange={handleChange}
               />
             </div>
             <div className="flex gap-2">
               <Button icon="fas fa-refresh fa-lg" className={classNames(classButton, 'p-button-help')} onClick={handleRefresh} />
               {auth.isAdmin &&
-                <Button icon="fas fa-plus fa-lg" className={classButton} label="Agregar" onClick={handleCreate} />
+                <>
+                  <Button icon="fas fa-plus fa-lg" className={classButton} label="Agregar" onClick={handleCreate} />
+                  <form action={routeDownload()}>
+                    <Button icon="fas fa-download fa-lg" className={classButton} label="Descargar" type="submit" />
+                  </form>
+                </>
               }
             </div>
           </div>
@@ -108,15 +129,16 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
             totalRecords={accounts.total}
             onPage={e => handlePage(e.page + 1)}
           >
+            <Column field="client_name" header="Cliente" />
             <Column field="process" header="Proceso" />
             <Column field="identification" header="Ci / RUC" />
-            <Column field="name" header="Proceso" />
+            <Column field="name" header="Nombre del deudor" />
             <Column field="principal_amount" header="Capital" />
-            <Column field="stage_name" header="Etapa" />
+            <Column field="stage_name" header="Etapa" headerClassName={classNames(classHeader, 'w-72')} />
             {auth.isAdmin &&
               <Column field="executive_name" header="Ejecutivo" />
             }
-            <Column body={({ is_active }) => is_active ? 'Activo' : 'Inactivo'} header="Etapa" />
+            <Column body={({ is_active }) => is_active ? 'Activo' : 'Inactivo'} header="Estado" />
             <Column body={bodyAcciones} header="Acciones" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
           </DataTable>
         </div>

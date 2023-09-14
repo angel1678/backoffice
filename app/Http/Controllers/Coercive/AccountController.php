@@ -6,10 +6,10 @@ use App\Casts\CurrencyFormat;
 use App\Http\Controllers\Controller;
 use App\Imports\CoerciveAccountsImport;
 use App\Mail\CoerciveAccountMail;
-use App\Models\Client;
 use App\Models\CoerciveAccount;
 use App\Models\CoerciveAccountHistory;
 use App\Models\CoerciveAccountStage;
+use App\Models\CoerciveClient;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,14 +28,20 @@ class AccountController extends Controller
     {
         $user = (object) Auth::user();
         $stage = $request->input('stage');
-        $search = $request->input('search');
+        $search = $request->input('search', '');
+        $client = $request->input('client');
 
         $stages = CoerciveAccountStage::where('is_active', true)
             ->select('id as value', 'name as label')
             ->get();
 
+        $clients = CoerciveClient::where('is_active', true)
+            ->select('id as value', 'name as label')
+            ->get();
+
         $options = [
-            'stages' => $stages
+            'stages' => $stages,
+            'clients' => $clients,
         ];
 
         $query = CoerciveAccount::query();
@@ -43,6 +49,8 @@ class AccountController extends Controller
             $query->where('executive_id', $user->id);
         })->when(!empty($stage), function ($query) use($stage) {
             $query->where('stage_id', $stage);
+        })->when(!empty($client), function ($query) use($client) {
+            $query->where('client_id', $client);
         })->when(!empty($search), function ($query) use($search) {
             $query->where(function ($query) use($search) {
                 $query->where('process', 'like', "%{$search}%")
@@ -59,6 +67,7 @@ class AccountController extends Controller
             'options' => $options,
             'stage' => $stage,
             'search' => $search,
+            'client' => $client,
         ]);
     }
 
@@ -67,7 +76,7 @@ class AccountController extends Controller
      */
     public function create()
     {
-        $clients = Client::where('is_active', true)
+        $clients = CoerciveClient::where('is_active', true)
             ->select('id as value', 'name as label')
             ->get();
         $executives = User::whereIs('lawyer')
@@ -197,12 +206,14 @@ class AccountController extends Controller
 
                     if (in_array($data['stageId'], [2, 3])) {
                         $contact = $account->contacts()
-                            ->where('type_id', 4)
                             ->where('is_active', true)
+                            ->where('type_id', 4)
                             ->first();
 
-                        Mail::to($contact->data->value)
+                        if (!empty($contact)) {
+                            Mail::to($contact->data->value)
                                 ->send(new CoerciveAccountMail($data['stageId'], $account));
+                        }
                     }
                 }
             }

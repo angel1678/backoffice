@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('coercive_clients', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
             $table->string('description', 300)->nullable();
             $table->boolean('is_active')->default(true);
+            $table->bigInteger('user_id');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('coercive_clients');
     }
 };

@@ -20,6 +20,7 @@ class CoerciveAccount extends Model
         'identification',
         'name',
         'stage',
+        'stage_id',
         'principal_amount',
         'observation',
         'aforementioned',
@@ -38,7 +39,8 @@ class CoerciveAccount extends Model
 
     protected $appends = [
         'executive_name',
-        'stage_name'
+        'stage_name',
+        'client_name',
     ];
 
     public function getExecutiveNameAttribute()
@@ -51,6 +53,11 @@ class CoerciveAccount extends Model
         return Str::upper($this->coerciveStage->name ?? $this->stage);
     }
 
+    public function getClientNameAttribute()
+    {
+        return $this->client->name;
+    }
+
     public function executive(): BelongsTo
     {
         return $this->belongsTo(User::class, 'executive_id');
@@ -58,11 +65,16 @@ class CoerciveAccount extends Model
 
     public function contacts(): HasMany
     {
-        return $this->HasMany(CoerciveAccountContact::class);
+        return $this->hasMany(CoerciveAccountContact::class);
     }
 
     public function coerciveStage()
     {
         return $this->belongsTo(CoerciveAccountStage::class, 'stage_id', 'id');
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(CoerciveClient::class);
     }
 }

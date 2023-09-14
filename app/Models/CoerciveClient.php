@@ -6,15 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Client extends Model
+class CoerciveClient extends Model
 {
     use HasFactory;
 
-    protected $table = 'clients';
+    protected $table = 'coercive_clients';
 
     protected $fillable = [
         'name',
         'description',
+        'user_id',
     ];
 
     protected $hidden = [
@@ -24,6 +25,6 @@ class Client extends Model
 
     public function accounts(): HasMany
     {
-        return $this->hasMany(CoerciveAccount::class);
+        return $this->hasMany(CoerciveAccount::class, 'client_id');
     }
 }
