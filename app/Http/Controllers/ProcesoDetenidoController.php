@@ -22,7 +22,7 @@ class ProcesoDetenidoController extends Controller
         $tiempoCasoDetenido = Configuracion::getParam('proceso', 'casos_detenidos')->first();
         $query = Proceso::query();
 
-        $query->when(!empty($statu), function ($query) use ($statu) {
+        $query->when($statu != null, function ($query) use ($statu) {
             $query->where('activo', $statu);
         })->when(!empty($search), function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
