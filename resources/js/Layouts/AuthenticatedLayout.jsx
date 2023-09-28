@@ -1,141 +1,105 @@
-import { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import PropTypes from 'prop-types';
+
+import { Menubar } from 'primereact/menubar';
+
 import ApplicationLogo from '@/Components/ApplicationLogo';
+import BackButton from '@/Components/BackButton';
+import BreadCrumb from '@/Components/BreadCrumb';
 import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import Icon from '@/Components/Icon';
 
-export default function Authenticated({ auth, header, children }) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+export default function Authenticated({
+  auth, title, errors, children, breadCrumb, urlBack
+}) {
 
-    return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="shrink-0 flex items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
+  const command = (data) => router.visit(route(data.item.route));
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink href={route('proceso.index')} active={route().current('proceso.index')}>
-                                    Procesos Judiciales
-                                </NavLink>
-                                {
-                                  auth.isAdmin &&
-                                  <NavLink href={route('proceso-detenido.index')} active={route().current('proceso-detenido.index')}>
-                                    Procesos Judiciales Detenidos
-                                  </NavLink>
-                                }
-                            </div>
-                        </div>
+  const items = [
+    { label: 'Inicio', className: 'font-semibold', icon: (<Icon name="home" className="h-6 mr-2" />), route: 'dashboard', command },
+    {
+      label: 'Judicial', className: 'font-semibold', icon: (<Icon name="judicial" className="h-6 mr-2" />), items: [
+        { label: 'Activo', route: 'proceso.index', command },
+        { label: 'Detenido', route: 'proceso-detenido.index', command, visible: auth.isAdmin },
+      ]
+    },
+    { label: 'Coactiva', className: 'font-semibold', icon: (<Icon name="coactiva" className="h-6 mr-2" />), route: 'coercive.clients.index', command },
+    { label: 'Reporteria', className: 'font-semibold', icon: (<Icon name="reporteria" className="h-6 mr-2" />), route: 'process.report.index', command },
+    { label: 'Gestíon', className: 'font-semibold', route: 'management.index', command },
+  ];
 
-                        <div className="hidden sm:flex sm:items-center sm:ml-6">
-                            <div className="ml-3 relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                {auth.user.name}
+  return (
+    <div className="min-h-screen bg-fondo">
+      <Head title={title} />
 
-                                                <svg
-                                                    className="ml-2 -mr-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        {
-                                          auth.isAdmin &&
-                                          <Dropdown.Link href={route('setting.edit')}>Settings</Dropdown.Link>
-                                        }
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-mr-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                            >
-                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div className="pt-4 pb-1 border-t border-gray-200">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-gray-800">
-                                {auth.user.name}
-                            </div>
-                            <div className="font-medium text-sm text-gray-500">{auth.user.email}</div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
-                            {
-                              auth.isAdmin &&
-                              <ResponsiveNavLink href={route('setting.edit')}>Settings</ResponsiveNavLink>
-                            }
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button">
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
-                </header>
-            )}
-
-            <main>{children}</main>
+      <section className="flex bg-loyalis h-14">
+        <div className="flex items-center justify-center text-white w-56">
+          <div className="flex gap-2 items-center">
+            <ApplicationLogo className="block h-auto w-auto fill-current text-white" />
+          </div>
         </div>
-    );
+        <div className="flex justify-between w-full">
+          <Menubar model={items} />
+          <div className="flex items-center p-1 gap-1">
+            <div className="flex justify-center items-center p-3 text-white rounded-md hover:bg-blue-800 active:bg-blue-900">
+              <Icon name="notificacion" className="h-6" />
+            </div>
+            <div className="relative">
+              <Dropdown>
+                <Dropdown.Trigger>
+                  <span className="inline-flex rounded-md">
+                    <button
+                      type="button"
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white rounded-md hover:bg-blue-800 active:bg-blue-900 focus:outline-none transition ease-in-out duration-150"
+                    >
+                      <Icon name="perfil" className="h-6" />
+                      <span className="ml-3 mr-1">
+                        {auth.user.name}
+                      </span>
+                      <i className="pi pi-angle-down" />
+                    </button>
+                  </span>
+                </Dropdown.Trigger>
+
+                <Dropdown.Content>
+                  <Dropdown.Link href={route('profile.edit')} className="!text-base">Mi Información</Dropdown.Link>
+                  {auth.isAdmin &&
+                    <Dropdown.Link href={route('setting.edit')} className="!text-base">Configuración</Dropdown.Link>
+                  }
+                  <Dropdown.Link href={route('logout')} className="!text-base" method="post" as="button">
+                    Cerrar Sesión
+                  </Dropdown.Link>
+                </Dropdown.Content>
+              </Dropdown>
+            </div>
+          </div>
+        </div>
+      </section >
+      <main className="mt-3 px-3">
+        <div className="mb-6">
+          {breadCrumb.length > 0 && <BreadCrumb items={breadCrumb} />}
+
+          {urlBack && (
+            <BackButton onClick={() => router.visit(urlBack)} />
+          )}
+        </div>
+
+        {children}
+      </main>
+    </div >
+  );
 }
+
+Authenticated.propTypes = {
+  auth: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
+  breadCrumb: PropTypes.array,
+  errors: PropTypes.object,
+  hiddenBreadCrumb: PropTypes.bool,
+  urlBack: PropTypes.string,
+}
+
+Authenticated.defaultProps = {
+  breadCrumb: [],
+  hiddenBreadCrumb: false,
+};

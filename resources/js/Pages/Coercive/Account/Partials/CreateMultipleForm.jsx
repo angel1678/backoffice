@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useForm } from '@inertiajs/react';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 
 import InputError from '@/Components/InputError';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 
-const CreateMultipleForm = ({ className, clients, executives, onErrors }) => {
+export default function CreateMultipleForm({ className, clientId, executives, onErrors }) {
   const { data, setData, errors, post, progress } = useForm({
-    clientId: 0,
     fileAccounts: null,
     executiveIds: [],
   });
@@ -18,7 +17,7 @@ const CreateMultipleForm = ({ className, clients, executives, onErrors }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    post(route('coercive.accounts.batchStore'), {
+    post(route('coercive.clients.accounts.batchStore', clientId), {
       preserveState: true,
       onError: (errors) => onErrors && onErrors(errors)
     })
@@ -41,20 +40,6 @@ const CreateMultipleForm = ({ className, clients, executives, onErrors }) => {
       </header>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-        <div>
-          <InputLabel htmlFor="clientId" value="Cliente" />
-
-          <Dropdown
-            id="clientId"
-            className="mt-1 w-full dropdown"
-            options={clients}
-            value={data.clientId}
-            onChange={(e) => setData('clientId', e.target.value)}
-            required
-          />
-
-          <InputError message={errors.clientId} className="mt-2" />
-        </div>
         <div>
           <InputLabel htmlFor="fileAccounts" value="Archivo a procesar" />
 
@@ -98,4 +83,10 @@ const CreateMultipleForm = ({ className, clients, executives, onErrors }) => {
   )
 }
 
-export default CreateMultipleForm;
+CreateMultipleForm.propTypes = {
+  className: PropTypes.string,
+  clientId: PropTypes.number.isRequired,
+  executives: PropTypes.array.isRequired,
+  onErrors: PropTypes.func
+}
+

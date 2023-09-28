@@ -15,6 +15,7 @@ class CoerciveClient extends Model
     protected $fillable = [
         'name',
         'description',
+        'image',
         'user_id',
     ];
 
@@ -26,5 +27,10 @@ class CoerciveClient extends Model
     public function accounts(): HasMany
     {
         return $this->hasMany(CoerciveAccount::class, 'client_id');
+    }
+
+    public function stages(): HasMany
+    {
+        return $this->hasMany(CoerciveAccountStage::class, 'client_id');
     }
 }

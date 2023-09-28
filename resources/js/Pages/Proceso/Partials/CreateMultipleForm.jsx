@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from '@inertiajs/react';
-import { Button } from 'primereact/button';
 import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
+import PrimaryButton from '@/Components/PrimaryButton';
+import TextInput from '@/Components/TextInput';
 
 const CreateMultipleForm = ({ className, onErrors }) => {
   const { data, setData, errors, post, progress } = useForm({
@@ -62,7 +62,7 @@ const CreateMultipleForm = ({ className, onErrors }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button icon="fas fa-save fa-lg" label="Guardar" className="text-xs font-semibold tracking-widest uppercase" />
+          <PrimaryButton icon="fas fa-save fa-lg" label="Guardar" />
         </div>
       </form>
     </section>

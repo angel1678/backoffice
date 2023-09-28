@@ -8,12 +8,13 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 
 export default function CreateSingleForm({ className, onErrors }) {
-  const { data, setData, errors, post } = useForm({ name: '', description: '' });
+  const { data, setData, errors, post, progress } = useForm({ name: '', description: '', image: undefined });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     post(route('coercive.clients.store'), {
+      forceFormData: true,
       preserveScroll: true,
       preserveState: true,
       onError: (errors) => onErrors && onErrors(errors)
@@ -57,6 +58,26 @@ export default function CreateSingleForm({ className, onErrors }) {
           />
 
           <InputError message={errors.description} className="mt-2" />
+        </div>
+
+        <div>
+          <InputLabel htmlFor="image" value="Imagen" />
+
+          <TextInput
+            id="image"
+            className="mt-1 block w-full"
+            onChange={(e) => setData('image', e.target.files[0])}
+            type="file"
+            required
+          />
+
+          {progress && (
+            <progress value={progress.percentage} max="100">
+              {progress.percentage}%
+            </progress>
+          )}
+
+          <InputError message={errors.image} className="mt-2" />
         </div>
 
         <div className="flex items-center gap-4">

@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import UpdateInformationForm from './Partials/UpdateInformationForm';
 
 export default function Edit({ auth, model }) {

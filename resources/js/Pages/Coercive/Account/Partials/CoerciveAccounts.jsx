@@ -8,7 +8,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Index({ auth, accounts, options, errors, ...props }) {
   const classButton = '!text-sm h-9 uppercase';
@@ -20,12 +20,6 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
     stage: props?.stage ? Number(props?.stage) : null,
     search: props?.search
   });
-
-  const routeDownload = () => {
-    const data = Object.fromEntries(Object.entries(filters)
-      .filter(([_, v]) => v != null && v != ''));
-    return route('coercive.accounts.export', data);
-  };
 
   const handleRefresh = () => router.reload();
   const handleCreate = () => router.visit(route('coercive.accounts.create'));
@@ -106,7 +100,12 @@ export default function Index({ auth, accounts, options, errors, ...props }) {
               {auth.isAdmin &&
                 <>
                   <Button icon="fas fa-plus fa-lg" className={classButton} label="Agregar" onClick={handleCreate} />
-                  <form action={routeDownload()}>
+                  <form action={route('coercive.accounts.export')} method='get'>
+                    {
+                      Object.keys(filters).map(key => (
+                        <input type="hidden" name={key} value={filters[key]} />
+                      ))
+                    }
                     <Button icon="fas fa-download fa-lg" className={classButton} label="Descargar" type="submit" />
                   </form>
                 </>

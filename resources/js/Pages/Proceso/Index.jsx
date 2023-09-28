@@ -4,9 +4,14 @@ import { router } from '@inertiajs/react';
 import DialogMovimiento from '@/Components/DialogMovimiento';
 import DataTableProceso from '@/Components/DataTableProceso';
 import DialogLastUpdate from '@/Components/DialogLastUpdate';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Proceso({ procesos, search, statu, auth, errors }) {
+  const breadCrumb = [
+    { label: 'Judicial', icon: 'judicial' },
+    { label: 'Activo' }
+  ];
+
   const [dialog, setDialog] = useState(false);
   const [procesoId, setProcesoId] = useState([]);
   const [movimiento, setMovimiento] = useState([]);
@@ -38,6 +43,7 @@ export default function Proceso({ procesos, search, statu, auth, errors }) {
       auth={auth}
       title="Procesos Judiciales"
       errors={errors}
+      breadCrumb={breadCrumb}
     >
       <DialogMovimiento proceso={procesoId} model={movimiento} visible={dialog} onHide={() => setDialog(false)} />
       <DialogLastUpdate isAdmin={auth.isAdmin} model={lastDetalle} visible={dialogLastUpdate} onHide={() => setDialogLastUpdate(false)} />

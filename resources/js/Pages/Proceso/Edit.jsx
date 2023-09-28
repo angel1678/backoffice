@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import EditSingleForm from './Partials/EditSingleForm';
 
 export default function Edit(props) {
@@ -16,6 +16,7 @@ export default function Edit(props) {
     <AuthenticatedLayout
       auth={props.auth}
       header={header}
+      urlBack={route('proceso.index')}
     >
       <Head title="Procesos Judiciales" />
 

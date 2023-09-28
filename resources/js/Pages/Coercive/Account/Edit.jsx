@@ -1,19 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { router, useForm } from '@inertiajs/react';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
 import { ScrollPanel } from 'primereact/scrollpanel';
 
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/InputError';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CreateContact from './Partials/CreateContact';
 import DeleteContact from './Partials/DeleteContact';
-import { useEffect } from 'react';
-import InputError from '@/Components/InputError';
-import { InputText } from 'primereact/inputtext';
 
-export default function Show({ auth, account, contacts, ...props }) {
+export default function Edit({ auth, client, account, contacts, ...props }) {
   const [options, setOptions] = useState({ types: [], locations: [], stages: [] });
   const [contactId, setContactId] = useState(undefined);
   const { data, setData, errors, put, progress } = useForm({
@@ -47,7 +47,7 @@ export default function Show({ auth, account, contacts, ...props }) {
   };
 
   const handleSubmit = () => {
-    put(route('coercive.accounts.update', account.id), { preserveState: true });
+    put(route('coercive.clients.accounts.update', [client.id, account.id]), { preserveState: true });
   };
 
   const bodyData = ({ type_id, data }) =>
@@ -68,6 +68,7 @@ export default function Show({ auth, account, contacts, ...props }) {
       auth={auth}
       title="Procesos Judiciales"
       errors={errors}
+      urlBack={route('coercive.clients.accounts.index', client.id)}
     >
       <CreateContact
         accountId={account.id}
@@ -84,13 +85,13 @@ export default function Show({ auth, account, contacts, ...props }) {
         onHide={() => setVisibleDeleteDialog(false)}
       />
 
-      <div className="flex m-2">
-        <div className="bg-white rounded-md mr-1 w-1/2">
-          <div className="font-bold text-lg border-b px-3 py-2">
-            Cuenta - Información
+      <div className="flex gap-4">
+        <div className="bg-white rounded-lg shadow-lg w-2/5 px-4 py-2">
+          <div className="flex justify-between items-center border-b-2 h-12">
+            <span className="font-bold text-lg">Cuenta</span>
           </div>
-          <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 6.8rem)' }} >
-            <div className="grid p-3">
+          <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 13.5rem)' }} >
+            <div className="grid py-3">
               <div className="flex flex-col mb-3">
                 <div className="font-semibold text-base">Proceso</div>
                 <div>{account.process}</div>
@@ -104,7 +105,7 @@ export default function Show({ auth, account, contacts, ...props }) {
 
                 <InputText
                   id="name"
-                  className="p-1.5 px-2 w-1/2"
+                  className="mt-1 w-full"
                   value={data.name}
                   onChange={e => setData('name', e.target.value)}
                 />
@@ -116,7 +117,7 @@ export default function Show({ auth, account, contacts, ...props }) {
 
                 <Dropdown
                   id="stage_id"
-                  className="dropdown mt-1 w-1/2"
+                  className="mt-1 w-full"
                   placeholder={account.stage}
                   options={options.stages}
                   value={data.stageId}
@@ -131,11 +132,9 @@ export default function Show({ auth, account, contacts, ...props }) {
               </div>
             </div>
             <div>
-              <Button
-                className="text-xs h-9 button uppercase"
+              <PrimaryButton
                 label="Guardar"
                 icon="pi pi-save"
-                iconPos="right"
                 disabled={!data.stageId || progress}
                 onClick={handleSubmit}
               />
@@ -143,14 +142,16 @@ export default function Show({ auth, account, contacts, ...props }) {
           </ScrollPanel>
         </div>
 
-        <div className="bg-white rounded-md w-1/2">
-          <div className="font-bold text-lg border-b px-3 py-2">
-            Contactos
+        <div className="bg-white rounded-lg shadow-lg w-3/5 px-4 py-2">
+          <div className="flex justify-between items-center border-b-2 h-12">
+            <span className="font-bold text-lg">Información</span>
+            <PrimaryButton
+              icon="pi pi-plus"
+              className="text-xs h-9 button uppercase"
+              onClick={handleShowAddContact}
+            />
           </div>
           <div className="mt-2">
-            <div className="flex justify-end">
-              <Button icon="pi pi-plus" className="text-xs h-9 button uppercase" onClick={handleShowAddContact} />
-            </div>
             <DataTable
               value={contacts}
               showGridlines

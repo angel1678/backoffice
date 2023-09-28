@@ -3,9 +3,14 @@ import axios from 'axios';
 import { router } from '@inertiajs/react';
 import DialogMovimiento from '@/Components/DialogMovimiento';
 import DataTableProceso from '@/Components/DataTableProceso';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function ProcesoDetenido({ procesos, search, statu, auth, errors }) {
+  const breadCrumb = [
+    { label: 'Judicial', icon: 'judicial' },
+    { label: 'Detenido' }
+  ];
+
   const [dialog, setDialog] = useState(false);
   const [procesoId, setProcesoId] = useState([]);
   const [movimiento, setMovimiento] = useState([]);
@@ -23,13 +28,12 @@ export default function ProcesoDetenido({ procesos, search, statu, auth, errors 
     router.get(route('proceso-detenido.index'), data, { preserveState: true });
   };
 
-  console.log(procesos);
-
   return (
     <AuthenticatedLayout
       auth={auth}
       title="Procesos Judiciales Detenidos"
       errors={errors}
+      breadCrumb={breadCrumb}
     >
       <DialogMovimiento proceso={procesoId} model={movimiento} visible={dialog} onHide={() => setDialog(false)} />
       <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">

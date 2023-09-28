@@ -8,33 +8,10 @@ html {
     font-size: 14px;
 }
 
-.menu-bar {
+.p-menubar {
+    @apply bg-loyalis;
+
     .p-submenu-list {
         z-index: 100;
     }
 }
-
-.p-dropdown {
-    .p-dropdown-clear-icon {
-        right: 2rem;
-    }
-    .p-inputtext, .p-treeselect-label {
-        padding: 0.25rem 0.75rem;
-    }
-    .p-dropdown-trigger, .p-treeselect-trigger {
-        width: 2rem;
-    }
-}
-
-// .datatable-page {
-//     div.p-datatable-wrapper {
-//         height: 100vh;
-//         border: 1px solid #f4f4f5;
-//     }
-// }
-
-// .panel-dropdown {
-//     .p-treeselect-filter {
-//         height: 2rem !important;
-//     }
-// }

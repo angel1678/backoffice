@@ -13,6 +13,7 @@ export default defineConfig({
         copy({
           targets: [
               { src: './resources/sass/theme/tailwind/fonts/**/*', dest: 'public/fonts' },
+              { src: './resources/image/**/*', dest: 'public/img' },
           ]
       })
     ],

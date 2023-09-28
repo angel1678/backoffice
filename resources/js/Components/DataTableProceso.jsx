@@ -7,13 +7,15 @@ import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 
+import SecondaryButton from './SecondaryButton';
+import PrimaryButton from './PrimaryButton';
+
 const status = [
   { label: 'Activo', value: '1' },
   { label: 'Inactivo', value: '0' },
 ];
 
 export default function DataTableProceso({ auth, value, filterSearch, filterStatu, rows, first, totalRecords, isLastUpdates, isCrud, onPage, onLastUpdates, onMovimiento }) {
-  const classButton = '!text-sm h-9 uppercase';
   const classHeader = 'text-center';
   const classBody = '!text-center';
 
@@ -72,13 +74,17 @@ export default function DataTableProceso({ auth, value, filterSearch, filterStat
         <div className="flex gap-2">
           {
             isLastUpdates &&
-            <Button icon="fas fa-newspaper fa-lg" className={classNames(classButton, 'p-button-info justify-self-start')} label="Ultimas Actualizaciones" onClick={handleLastUpdates} />
+            <SecondaryButton
+              icon="fas fa-newspaper"
+              label="Ultimas Actualizaciones"
+              onClick={handleLastUpdates}
+            />
           }
           <div>
             <span className="p-input-icon-right">
               <i className="pi pi-search" />
               <InputText
-                className="h-9 block"
+                className="block"
                 placeholder="Buscar"
                 value={search}
                 onChange={e => {
@@ -100,10 +106,10 @@ export default function DataTableProceso({ auth, value, filterSearch, filterStat
           />
         </div>
         <div className="flex gap-2">
-          <Button icon="fas fa-refresh fa-lg" className={classNames(classButton, 'p-button-help')} onClick={handleRefresh} />
+          <SecondaryButton icon="fas fa-refresh" onClick={handleRefresh} />
           {
             isCrud &&
-            <Button icon="fas fa-plus fa-lg" className={classButton} label="Agregar" onClick={handleCreate} />
+            <PrimaryButton icon="fas fa-plus" label="Agregar" onClick={handleCreate} />
           }
         </div>
       </div>

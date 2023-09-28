@@ -48,15 +48,21 @@ class CoerciveAccountsImport implements OnEachRow, WithHeadingRow, SkipsOnError,
             return null;
         }
 
-        $stages = CoerciveAccountStage::where(DB::raw('upper(name)'), 'like', "%{$row->etapa}%")->get();
-        $stageId = count($stages) > 0 ? $stages->first()->id : null;
+        // $stages = $this->client->stages()
+        //     ->where(DB::raw('upper(name)'), 'like', "%{$row->etapa}%")
+        //     ->get();
+        // $stageId = count($stages) > 0 ? $stages->first()->id : function () {
+
+        // };
+
+        $stage = CoerciveAccountStage::findByNameOrCreate($this->client->id, $row->etapa);
 
         $account = $this->client->accounts()->create([
             'process' => $row->proceso,
             'identification' => $row->cedularuc,
             'name' => $row->nombre_cliente,
             'stage' => $row->etapa,
-            'stage_id' => $stageId,
+            'stage_id' => $stage->id,
             'principal_amount' => (double) $row->capital,
         ]);
 

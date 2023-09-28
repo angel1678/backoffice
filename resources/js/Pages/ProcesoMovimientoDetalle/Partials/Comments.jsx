@@ -1,20 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import { Mention } from 'primereact/mention';
-import { Button } from 'primereact/button';
+import Icon from '@/Components/Icon';
+import PrimaryButton from '@/Components/PrimaryButton';
 
-export default function Comments({procesoId, detalleId, comentarios = []}) {
+export default function Comments({ procesoId, detalleId, comentarios = [] }) {
   const [suggestions, setSuggestions] = useState([]);
   const { data, setData, post, reset, processing } = useForm({ comment: '' });
 
   const handleSearch = async (e) => {
-    const search = e.query;
     const { data } = await axios.get(route('proceso.user.index', procesoId), {
-      params: {search}
+      params: { search: e.query }
     });
-
-    setSuggestions(data.associates);
+    setSuggestions(data.associates)
   };
 
   const itemTemplate = (suggestion) => {
@@ -38,18 +37,19 @@ export default function Comments({procesoId, detalleId, comentarios = []}) {
   };
 
   return (
-    <div className="mt-6 border rounded-md p-2">
-      <div className="w-full border-b">Comentarios</div>
-      <div className="text-sm my-3 mr-12">
+    <div className="mt-6">
+      <div>
         {
           comentarios.map(item => (
-            <div key={item.id} className="flex gap-4 items-center mb-1 p-2">
+            <div key={item.id} className="flex gap-4 items-center px-2 py-4 border-t-2">
               <div>
-                <i className="pi pi-user text-2xl" />
+                <div className="bg-[#808080] p-2 rounded-full">
+                  <Icon name="perfil" className="h-8" />
+                </div>
               </div>
               <div>
-                <div>
-                  <span className="font-bold">{item.user_name}</span> - {item.date}
+                <div className="font-semibold">
+                  {item.user_name} - {item.date}
                 </div>
                 <span>{item.description}</span>
               </div>
@@ -57,7 +57,7 @@ export default function Comments({procesoId, detalleId, comentarios = []}) {
           ))
         }
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 border-t-2 pt-2">
         <Mention
           value={data.comment}
           onChange={e => setData('comment', e.target.value)}
@@ -66,11 +66,11 @@ export default function Comments({procesoId, detalleId, comentarios = []}) {
           onSearch={handleSearch}
           placeholder="Agregar un comentario ..."
           rows={2}
-          className="w-full"
-          inputClassName="w-full text-sm !p-1.5"
+          className="w-full mt-1"
+          inputClassName="w-full !border-none text-sm !p-1.5"
           itemTemplate={itemTemplate}
         />
-        <Button icon="pi pi-send" className="!h-9" disabled={processing} onClick={handleClick} />
+        <PrimaryButton icon="pi pi-send" disabled={processing} onClick={handleClick} />
       </div>
     </div>
   );

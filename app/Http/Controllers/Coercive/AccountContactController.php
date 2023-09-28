@@ -11,7 +11,7 @@ use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class ContactController extends Controller
+class AccountContactController extends Controller
 {
     /**
      * Display a listing of the resource.

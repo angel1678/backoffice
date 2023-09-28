@@ -1,15 +1,15 @@
 import { useState } from 'react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import CreateMultipleForm from './Partials/CreateMultipleForm';
 
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
-import CreateSingleForm from './Partials/CreateSingleForm';
-
-export default function Create(props) {
+export default function Create({ auth, clientId, executives }) {
   const [errors, setErrors] = useState(undefined);
 
   return (
     <AuthenticatedLayout
-      auth={props.auth}
-      title="Cliente de Coactiva"
+      auth={auth}
+      title="Procesos Judiciales"
+      urlBack={route('coercive.clients.accounts.index', clientId)}
     >
       <div className="py-2">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -24,9 +24,11 @@ export default function Create(props) {
             </div>
           }
 
-          <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+          <div className="p-4 sm:p-8 bg-white shadow-lg sm:rounded-lg">
             <div className="max-w-xl">
-              <CreateSingleForm
+              <CreateMultipleForm
+                clientId={clientId}
+                executives={executives}
                 onErrors={setErrors}
               />
             </div>

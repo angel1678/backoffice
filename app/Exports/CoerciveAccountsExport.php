@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Casts\CurrencyFormat;
+use App\Casts\Json;
 use App\Models\CoerciveAccount;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -10,14 +11,29 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class CoerciveAccountsExport implements FromCollection, WithMapping, WithHeadings
 {
-    public function __construct(
-        protected $cliendId,
-        protected $stageId,
-        protected $search
-    ) { }
+    protected $cliendId;
+    protected $stageId;
+    protected $search;
+
+    public function __construct($cliendId, $stageId, $search)
+    {
+        $this->cliendId = $cliendId;
+        $this->stageId = $stageId;
+        $this->search = $search;
+    }
 
     public function map($account): array
     {
+        $phonesContact = $account->contacts()
+            ->where('is_active', true)
+            ->whereIn('type_id', [1, 2, 3])
+            ->pluck('data');
+
+        $emailsContact = $account->contacts()
+            ->where('is_active', true)
+            ->where('type_id', 4)
+            ->pluck('data');
+
         return [
             $account->client_name,
             $account->process,
@@ -26,6 +42,12 @@ class CoerciveAccountsExport implements FromCollection, WithMapping, WithHeading
             $account->stage_name,
             $account->principal_amount,
             $account->observation,
+            $phonesContact[0]->value ?? '',
+            $phonesContact[1]->value ?? '',
+            $phonesContact[2]->value ?? '',
+            $emailsContact[0]->value ?? '',
+            $emailsContact[1]->value ?? '',
+            $emailsContact[2]->value ?? '',
         ];
     }
 
@@ -38,7 +60,13 @@ class CoerciveAccountsExport implements FromCollection, WithMapping, WithHeading
             'Deudor',
             'Etapa',
             'Capital',
-            'Observacion'
+            'Observacion',
+            'Telefono_1',
+            'Telefono_2',
+            'Telefono_3',
+            'Correo_1',
+            'Correo_2',
+            'Correo_3',
         ];
     }
 

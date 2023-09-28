@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Button } from 'primereact/button';
 
@@ -21,6 +21,7 @@ export default function ProcesoMovimientoDetalle({ movimiento, detalle, users, a
       auth={auth}
       errors={errors}
       header={header}
+      urlBack={route('proceso.index')}
     >
       <Head title="Procesos Judiciales" />
 
@@ -33,12 +34,12 @@ export default function ProcesoMovimientoDetalle({ movimiento, detalle, users, a
         onHide={() => setVisible(false)}
       />
 
-      <div className="flex m-2">
-        <div className="bg-white rounded-md mr-1 w-[30%]">
-          <div className="font-bold text-lg border-b px-3 py-2">
-            Movimiento - Información
+      <div className="flex gap-4">
+        <div className="bg-white rounded-lg shadow-lg w-[30%] px-4 py-2">
+          <div className="font-bold text-lg border-b-2 px-3 py-2">
+            Información
           </div>
-          <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 6.8rem)' }} >
+          <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 13.8rem)' }} >
             <div className="grid p-3">
               <div className="flex flex-col mb-2">
                 <div className="font-semibold text-sm">Fecha</div>
@@ -80,23 +81,25 @@ export default function ProcesoMovimientoDetalle({ movimiento, detalle, users, a
           </ScrollPanel>
         </div>
 
-        <div className="bg-white rounded-md w-full">
-          <div className="font-bold text-lg border-b px-3 py-2">
-            Movimiento - Detalle
+        <div className="rounded-lg shadow-lg w-full px-4 py-2 bg-[#DBECFE] border-[#1F57D6] border">
+          <div className="font-bold text-lg px-3 py-2">
+            Detalle
           </div>
           <div>
-            <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 6.8rem)' }} >
-              {
-                detalle.map((item, index) => (
-                  <div key={index} className="px-3 pt-3 pb-2 border-t">
-                    <div className="font-semibold text-sm mb-1">
-                      {item.fecha} - {item.titulo}
+            <ScrollPanel style={{ width: '100%', height: 'calc(100vh - 13.8rem)' }} >
+              <div className="flex flex-col gap-4">
+                {
+                  detalle.map((item, index) => (
+                    <div key={index} className="px-3 pt-3 pb-2 bg-white rounded-lg shadow-md">
+                      <div className="font-semibold text-sm mb-1">
+                        {item.fecha} - {item.titulo}
+                      </div>
+                      <div className="text-sm ml-1.5">{item.comentario}</div>
+                      <Comments procesoId={movimiento.proceso_id} detalleId={item.id} comentarios={item.comentarios} />
                     </div>
-                    <div className="text-sm ml-1.5">{item.comentario}</div>
-                    <Comments procesoId={movimiento.proceso_id} detalleId={item.id} comentarios={item.comentarios} />
-                  </div>
-                ))
-              }
+                  ))
+                }
+              </div>
             </ScrollPanel>
           </div>
         </div>

@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Chart } from 'primereact/chart';
 import { ScrollPanel } from 'primereact/scrollpanel';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Filters from './Partials/Filters';
+
+const breadCrumb = [
+  { label: 'Reporte', icon: 'reporteria' }
+];
 
 export default function Dashboard({ auth, errors }) {
   const [frozenCases, setFrozenCases] = useState({});
@@ -54,11 +58,7 @@ export default function Dashboard({ auth, errors }) {
     setChartOptions(options);
   }, []);
   return (
-    <AuthenticatedLayout
-      auth={auth}
-      title="Dashboard"
-      errors={errors}
-    >
+    <AuthenticatedLayout auth={auth} title="Dashboard" breadCrumb={breadCrumb} errors={errors}>
       <div className="mx-2">
         <Filters className="mb-6" />
         <ScrollPanel style={{ height: 'calc(100vh - 9rem)' }}>

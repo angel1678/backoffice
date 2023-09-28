@@ -3,7 +3,7 @@ import { useForm } from '@inertiajs/react';
 import { Editor } from "primereact/editor";
 import { InputText } from "primereact/inputtext";
 import { Panel } from 'primereact/panel';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import { ScrollPanel } from 'primereact/scrollpanel';

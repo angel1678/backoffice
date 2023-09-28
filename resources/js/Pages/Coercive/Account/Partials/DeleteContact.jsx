@@ -40,7 +40,7 @@ export default function DeleteContact({ accountId, contactId, visible, onHide })
         <div>
           <div className="text-lg">¿Esta seguro de eliminar el contacto?</div>
           <span className="text-sm">
-            En caso de ser afirmativo debe ingresar un observación.
+            En caso de ser afirmativo debe ingresar una observación.
           </span>
         </div>
         <div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout2';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CreateSingleForm from './Partials/CreateSingleForm';
 import CreateMultipleForm from './Partials/CreateMultipleForm';
 
@@ -11,6 +11,7 @@ export default function Create(props) {
     <AuthenticatedLayout
       auth={props.auth}
       title="Procesos Judiciales"
+      urlBack={route('proceso.index')}
     >
       <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         {

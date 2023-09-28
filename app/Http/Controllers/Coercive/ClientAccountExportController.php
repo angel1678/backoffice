@@ -4,20 +4,20 @@ namespace App\Http\Controllers\Coercive;
 
 use App\Exports\CoerciveAccountsExport;
 use App\Http\Controllers\Controller;
+use App\Models\CoerciveClient;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
-class AccountExportController extends Controller
+class ClientAccountExportController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, CoerciveClient $client)
     {
-        $client = $request->input('client');
         $stage = $request->input('stage');
         $search = $request->input('search', '');
 
-        return Excel::download(new CoerciveAccountsExport($client, $stage, $search), 'coactiva.xlsx');
+        return Excel::download(new CoerciveAccountsExport($client->id, $stage, $search), 'coactiva.xlsx');
     }
 }

@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             ConfiguracionSeeder::class,
             TypeSeeder::class,
             GeographicalDistributionSeeder::class,
-            CoerciveAccountStageSeeder::class,
+            // CoerciveAccountStageSeeder::class,
         ]);
     }
 }

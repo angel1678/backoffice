@@ -27,8 +27,11 @@ class AdminCreate extends Command
      */
     public function handle(): void
     {
+        $nickname = User::whereNickName($this->argument('name'));
+
         $user = User::create([
             'name' => $this->argument('name'),
+            'nickname' => $nickname,
             'email' => $this->argument('email'),
             'password' => Hash::make($this->argument('password')),
         ]);

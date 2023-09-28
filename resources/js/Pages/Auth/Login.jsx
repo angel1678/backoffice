@@ -84,7 +84,7 @@ export default function Login({ status, canResetPassword }) {
           >
             Register
           </Link>
-          <div>
+          <div className="flex items-center">
             {canResetPassword && (
               <Link
                 href={route('password.request')}
@@ -95,7 +95,7 @@ export default function Login({ status, canResetPassword }) {
             )}
 
             <PrimaryButton className="ml-4" disabled={processing}>
-              Log in
+              Iniciar Sesion
             </PrimaryButton>
           </div>
         </div>

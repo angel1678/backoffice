@@ -2,23 +2,26 @@
 
 namespace App\Http\Controllers\Coercive;
 
-use App\Http\Controllers\Controller;
-use App\Models\CoerciveClient;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\CoerciveClient;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class ClientController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
         $query = CoerciveClient::query();
-        $clients = $query->paginate(100);
+        $clients = $query->get();
 
-        return Inertia::render('CoerciveClient/Index', [
+        return Inertia::render('Coercive/Client/Index', [
             'clients' => $clients,
         ]);
     }
@@ -26,58 +29,35 @@ class ClientController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
-        return Inertia::render('CoerciveClient/Create');
+        return Inertia::render('Coercive/Client/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $data = (object) $request->validate([
             'name' => 'required|string|max:100',
             'description' => 'nullable|string|max:300',
+            'image' => 'file',
         ]);
 
+        $file = $request->file('image');
+        $fileName = Str::uuid();
+        $extension = $file->getClientOriginalExtension();
+        $fileName = $fileName.'.'.$extension;
+        $file->storeAs('coercive/client', $fileName);
+
         CoerciveClient::create([
-            ...$data,
+            'name' => $data->name,
+            'description' => $data->description,
+            'image' => $fileName,
             'user_id' => Auth::id(),
         ]);
 
-        return redirect()->route('coercive.clients.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return back();
     }
 }
