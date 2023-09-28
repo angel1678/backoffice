@@ -25,7 +25,7 @@ export default function Authenticated({
     },
     { label: 'Coactiva', className: 'font-semibold', icon: (<Icon name="coactiva" className="h-6 mr-2" />), route: 'coercive.clients.index', command },
     { label: 'Reporteria', className: 'font-semibold', icon: (<Icon name="reporteria" className="h-6 mr-2" />), route: 'process.report.index', command },
-    { label: 'Gestíon', className: 'font-semibold', route: 'management.index', command },
+    { label: 'GestÃ­on', className: 'font-semibold', route: 'management.index', command },
   ];
 
   return (
@@ -62,12 +62,12 @@ export default function Authenticated({
                 </Dropdown.Trigger>
 
                 <Dropdown.Content>
-                  <Dropdown.Link href={route('profile.edit')} className="!text-base">Mi Información</Dropdown.Link>
+                  <Dropdown.Link href={route('profile.edit')} className="!text-base">Mi InformaciÃ³n</Dropdown.Link>
                   {auth.isAdmin &&
-                    <Dropdown.Link href={route('setting.edit')} className="!text-base">Configuración</Dropdown.Link>
+                    <Dropdown.Link href={route('setting.edit')} className="!text-base">ConfiguraciÃ³n</Dropdown.Link>
                   }
                   <Dropdown.Link href={route('logout')} className="!text-base" method="post" as="button">
-                    Cerrar Sesión
+                    Cerrar SesiÃ³n
                   </Dropdown.Link>
                 </Dropdown.Content>
               </Dropdown>
