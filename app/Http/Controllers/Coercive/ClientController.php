@@ -49,7 +49,7 @@ class ClientController extends Controller
         $fileName = Str::uuid();
         $extension = $file->getClientOriginalExtension();
         $fileName = $fileName.'.'.$extension;
-        $file->storeAs('coercive/client', $fileName);
+        $file->storeAs("coercive/client/{$fileName}");
 
         CoerciveClient::create([
             'name' => $data->name,
