@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import * as dayjs from 'dayjs';
+// import * as dayjs from 'dayjs';
 
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -7,7 +7,7 @@ import { DataTable } from 'primereact/datatable';
 import { classNames } from 'primereact/utils';
 
 import Icon from '@/Components/Icon';
-import dateFormatLong from '@/Helper/dateFormatLong';
+// import dateFormatLong from '@/Helper/dateFormatLong';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 const breadCrumb = [
@@ -15,7 +15,7 @@ const breadCrumb = [
 ];
 
 export default function Dashboard({ auth, movimientos = [], errors }) {
-  const dateNow = dayjs();
+//  const dateNow = dayjs();
   const classHeader = 'text-center';
   const classBody = '!text-center text-sm text-black';
 
@@ -40,7 +40,7 @@ export default function Dashboard({ auth, movimientos = [], errors }) {
     <AuthenticatedLayout auth={auth} title="Dashboard" breadCrumb={breadCrumb} errors={errors}>
       <div className="flex flex-col gap-2">
         <div className="flex flex-col justify-center bg-blue-700 h-36 p-8 w-full rounded-xl text-white">
-          <span className="text-xl font-thin mb-2">{dateFormatLong(dateNow)}</span>
+          {/* <span className="text-xl font-thin mb-2">{dateFormatLong(dateNow)}</span> */}
           <span className="text-3xl font-semibold">¡Bienvenido {auth.user.name}!</span>
         </div>
         <div className="bg-white shadow-lg h-full w-1/2 p-4 rounded-xl" style={{ height: 'calc(100vh - 18.5rem)' }}>
