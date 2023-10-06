@@ -11,8 +11,8 @@ export default function Create({ auth, clientId, executives }) {
       title="Procesos Judiciales"
       urlBack={route('coercive.clients.accounts.index', clientId)}
     >
-      <div className="py-2">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+      <div className="flex">
+        <div className="mx-auto space-y-6 w-[40rem]">
           {
             errors &&
             <div className="bg-red-200 sm:rounded-lg w-full p-4">
@@ -24,14 +24,12 @@ export default function Create({ auth, clientId, executives }) {
             </div>
           }
 
-          <div className="p-4 sm:p-8 bg-white shadow-lg sm:rounded-lg">
-            <div className="max-w-xl">
-              <CreateMultipleForm
-                clientId={clientId}
-                executives={executives}
-                onErrors={setErrors}
-              />
-            </div>
+          <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <CreateMultipleForm
+              clientId={clientId}
+              executives={executives}
+              onErrors={setErrors}
+            />
           </div>
         </div>
       </div>

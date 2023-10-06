@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Button } from 'primereact/button';
@@ -10,21 +9,13 @@ import Comments from './Partials/Comments';
 export default function ProcesoMovimientoDetalle({ movimiento, detalle, users, associates, auth, ownerId, errors }) {
   const [visible, setVisible] = useState(false);
 
-  const header = (
-    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-      <Link href={route('proceso.index')} className="underline decoration-solid">Procesos Judiciales</Link> \ Detalle Movimiento
-    </h2>
-  );
-
   return (
     <AuthenticatedLayout
       auth={auth}
       errors={errors}
-      header={header}
+      title="Procesos Judiciales"
       urlBack={route('proceso.index')}
     >
-      <Head title="Procesos Judiciales" />
-
       <DialogAddUser
         ownerId={ownerId}
         procesoId={movimiento.proceso_id}

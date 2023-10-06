@@ -1,8 +1,8 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
-import { Button } from 'primereact/button';
 import { InputNumber } from 'primereact/inputnumber';
+import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 
@@ -50,7 +50,11 @@ export default function UpdateInformationForm({ model = {}, className }) {
         }
 
         <div className="flex items-center gap-4">
-          <Button icon="fas fa-save fa-lg" label="Actualizar" disabled={processing} className="text-xs font-semibold tracking-widest uppercase" />
+          <PrimaryButton
+            icon="fas fa-save fa-lg"
+            label="Actualizar"
+            disabled={processing}
+          />
 
           <Transition
             show={recentlySuccessful}

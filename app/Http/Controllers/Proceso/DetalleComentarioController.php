@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Proceso;
 
-use App\Http\Controllers\Controller;
-use App\Models\ProcesoDetalle;
-use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use App\Notifications\CommentNotification;
+use App\Rules\NickNameRule;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ProcesoDetalle;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class DetalleComentarioController extends Controller
 {
@@ -23,14 +28,35 @@ class DetalleComentarioController extends Controller
      */
     public function store(Request $request, ProcesoDetalle $detalle): RedirectResponse
     {
-        $request->validate([
+        $data = (object) $request->validate([
             'comment' => 'required|string',
+            'nicksName' => [
+                'required',
+                new NickNameRule
+            ],
         ]);
 
-        $detalle->comentarios()->create([
-            'description' => $request->comment,
-            'user_id' => Auth::id(),
-        ]);
+        DB::beginTransaction();
+        try {
+            $comment = $detalle->comentarios()->create([
+                'description' => $data->comment,
+                'user_id' => Auth::id(),
+            ]);
+
+            collect($data->nicksName)->each(function ($nickname) use ($comment) {
+                $user = User::where('nickname', Str::replace('@', '', $nickname))->first();
+                $comment->menciones()->create([
+                    'user_id' => $user->id,
+                ]);
+
+                //TODO: Enviar notificaciones por usuario.
+                $user->notify(new CommentNotification('Te mencionaron en un comentario'));
+            });
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
 
         return back();
     }

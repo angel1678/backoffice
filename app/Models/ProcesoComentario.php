@@ -46,4 +46,9 @@ class ProcesoComentario extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function menciones()
+    {
+        return $this->hasMany(ProcesoComentarioMencion::class, 'comentario_id');
+    }
 }

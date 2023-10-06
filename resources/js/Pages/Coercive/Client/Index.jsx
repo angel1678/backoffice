@@ -25,13 +25,15 @@ export default function Index({ auth, clients, errors }) {
               />
             ))
           }
-          <ImageButton
-            className="!bg-[#DBECFE]"
-            image="/img/circle-add.svg"
-            imageAlt="Agregar"
-            linkName="Agregar nuevo"
-            linkHref={route('coercive.clients.create')}
-          />
+          {auth.isAdmin &&
+            <ImageButton
+              className="!bg-[#DBECFE]"
+              image="/img/circle-add.svg"
+              imageAlt="Agregar"
+              linkName="Agregar nuevo"
+              linkHref={route('coercive.clients.create')}
+            />
+          }
         </div>
       </div>
     </AuthenticatedLayout>

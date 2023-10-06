@@ -6,6 +6,7 @@ use App\Http\Controllers\Coercive\ClientController as CoerciveClientController;
 use App\Http\Controllers\Coercive\AccountContactController as CoerciveAccountContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManagementController;
+use App\Http\Controllers\Proceso\AccountExportController as JudiciaryAccountExportController;
 use App\Http\Controllers\Proceso\DetalleComentarioController;
 use App\Http\Controllers\Proceso\MovimientoDetalleController;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
@@ -45,12 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/setting', [SettingController::class, 'update'])->name('setting.update');
 
     Route::get('/proceso-last-update', [ProcesoDetalleLastUpdateController::class, 'index'])->name('proceso-last-update.index');
+    Route::get('/proceso-detenido/export', [JudiciaryAccountExportController::class, 'index'])->name('proceso-detenido.export');
     Route::get('/proceso-detenido', [ProcesoDetenidoController::class, 'index'])->name('proceso-detenido.index');
 
     Route::post('/proceso/batch', [ProcesoController::class, 'batchStore'])->name('proceso.batchStore');
     Route::post('/proceso/detalle/{detalle}/comentario', [DetalleComentarioController::class, 'store'])->name('proceso.detalle.comentario.store');
     Route::resource('/proceso/movimiento', MovimientoDetalleController::class, ['as' => 'proceso'])->only('show');
 
+    Route::get('/proceso/export', [JudiciaryAccountExportController::class, 'index'])->name('proceso.export');
     Route::get('/proceso/{proceso}/user', [ProcesoUserController::class, 'index'])->name('proceso.user.index');
     Route::post('/proceso/{proceso}/user', [ProcesoUserController::class, 'store'])->name('proceso.user.store');
     Route::delete('/proceso/{proceso}/user/{user}', [ProcesoUserController::class, 'destroy'])->name('proceso.user.destroy');

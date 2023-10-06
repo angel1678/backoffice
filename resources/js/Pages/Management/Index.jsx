@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Editor } from "primereact/editor";
 import { InputText } from "primereact/inputtext";
@@ -48,7 +48,6 @@ export default function Index({ auth, ...props }) {
             value={data.name}
             onChange={(e) => setData('name', e.target.value)}
             required
-            isFocused
           />
 
           <InputError message={errors.fileProcesos} className="mt-2" />

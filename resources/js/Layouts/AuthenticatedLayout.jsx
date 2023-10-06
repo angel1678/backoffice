@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
 import { Head, router } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 
 import { Menubar } from 'primereact/menubar';
+import { ScrollPanel } from 'primereact/scrollpanel';
 
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import BackButton from '@/Components/BackButton';
@@ -12,6 +14,7 @@ import Icon from '@/Components/Icon';
 export default function Authenticated({
   auth, title, errors, children, breadCrumb, urlBack
 }) {
+  const [notifications, setNotifications] = useState([]);
 
   const command = (data) => router.visit(route(data.item.route));
 
@@ -41,8 +44,27 @@ export default function Authenticated({
         <div className="flex justify-between w-full">
           <Menubar model={items} />
           <div className="flex items-center p-1 gap-1">
-            <div className="flex justify-center items-center p-3 text-white rounded-md hover:bg-blue-800 active:bg-blue-900">
-              <Icon name="notificacion" className="h-6" />
+            <div className="relative">
+              <Dropdown>
+                <Dropdown.Trigger>
+                  <span className="inline-flex rounded-md">
+                    <button
+                      type="button"
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white rounded-md hover:bg-blue-800 active:bg-blue-900 focus:outline-none transition ease-in-out duration-150"
+                    >
+                      <Icon name="notificacion" className="h-6" />
+                      {notifications.length > 0 && (
+                        <span>{notifications.length}</span>
+                      )}
+                    </button>
+                  </span>
+                </Dropdown.Trigger>
+                <Dropdown.Content className="w-[20rem] bg-white">
+                  <ScrollPanel style={{ width: '100%', maxHeight: '20rem' }}>
+
+                  </ScrollPanel>
+                </Dropdown.Content>
+              </Dropdown>
             </div>
             <div className="relative">
               <Dropdown>
@@ -75,7 +97,7 @@ export default function Authenticated({
           </div>
         </div>
       </section >
-      <main className="mt-3 px-3">
+      <main className="mt-[1.75rem] px-[2.75rem]">
         <div className="mb-6">
           {breadCrumb.length > 0 && <BreadCrumb items={breadCrumb} />}
 

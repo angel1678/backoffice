@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { router } from '@inertiajs/react';
-import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dropdown } from 'primereact/dropdown';
@@ -12,7 +11,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Index({ auth, client, accounts, options, errors, ...props }) {
-  const classHeader = 'text-center';
+  const classHeader = '!text-center text-lg';
   const classBody = '!text-center';
 
   const breadCrumb = [
@@ -47,15 +46,19 @@ export default function Index({ auth, client, accounts, options, errors, ...prop
   const bodyAcciones = (data) => (
     <div className="flex gap-1 justify-center m-1">
       {auth.isAdmin &&
-        <Button
-          icon={classNames('fas fa-md', !data.is_active ? 'fa-check' : 'fa-times')}
-          className="p-button-secondary h-8"
+        <SecondaryButton
+          severe="help"
+          icon={classNames('fas fa-lg', !data.is_active ? 'fa-check' : 'fa-times')}
           onClick={() => handleUpdate(data.id)}
           tooltip={!data.is_active ? 'Activar' : 'Inactivar'}
           tooltipOptions={{ position: 'bottom' }}
         />
       }
-      <Button icon="fas fa-folder fa-md" className="p-button-info h-8" onClick={() => handleDetalle(data.id)} />
+      <SecondaryButton
+        severe="info"
+        icon="fas fa-folder fa-lg"
+        onClick={() => handleDetalle(data.id)}
+      />
     </div>
   );
 
@@ -70,7 +73,7 @@ export default function Index({ auth, client, accounts, options, errors, ...prop
       errors={errors}
       breadCrumb={breadCrumb}
     >
-      <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+      <div>
         <div className="p-2 text-gray-900">
           <div className="flex justify-between mb-2">
             <div className="flex gap-2">
@@ -113,32 +116,34 @@ export default function Index({ auth, client, accounts, options, errors, ...prop
               }
             </div>
           </div>
-          <DataTable
-            value={accounts.data}
-            scrollable
-            scrollHeight="calc(100vh - 16.5rem)"
-            size="small"
-            emptyMessage="No existen resultados"
+          <div className="bg-white overflow-hidden shadow-md rounded-xl mt-4 pt-4 px-4">
+            <DataTable
+              value={accounts.data}
+              scrollable
+              scrollHeight="calc(100vh - 19rem)"
+              size="small"
+              emptyMessage="No existen resultados"
 
-            dataKey="id"
-            lazy
-            paginator
-            rows={100}
-            first={accounts.from}
-            totalRecords={accounts.total}
-            onPage={e => handlePage(e.page + 1)}
-          >
-            <Column field="process" header="Proceso" />
-            <Column field="identification" header="Ci / RUC" />
-            <Column field="name" header="Nombre del deudor" />
-            <Column field="principal_amount" header="Capital" />
-            <Column field="stage_name" header="Etapa" headerClassName={classNames(classHeader, 'w-72')} />
-            {auth.isAdmin &&
-              <Column field="executive_name" header="Ejecutivo" />
-            }
-            <Column body={({ is_active }) => is_active ? 'Activo' : 'Inactivo'} header="Estado" />
-            <Column body={bodyAcciones} header="Acciones" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
-          </DataTable>
+              dataKey="id"
+              lazy
+              paginator
+              rows={100}
+              first={accounts.from}
+              totalRecords={accounts.total}
+              onPage={e => handlePage(e.page + 1)}
+            >
+              <Column field="process" header="Proceso" headerClassName={classHeader} />
+              <Column field="identification" header="Ci / RUC" headerClassName={classHeader} />
+              <Column field="name" header="Nombre del deudor" headerClassName={classHeader} />
+              <Column field="principal_amount" header="Capital" headerClassName={classHeader} />
+              <Column field="stage_name" header="Etapa" headerClassName={classNames(classHeader, 'w-72')} />
+              {auth.isAdmin &&
+                <Column field="executive_name" header="Ejecutivo" headerClassName={classHeader} />
+              }
+              <Column body={({ is_active }) => is_active ? 'Activo' : 'Inactivo'} header="Estado" headerClassName={classHeader} />
+              <Column body={bodyAcciones} header="Acciones" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
+            </DataTable>
+          </div>
         </div>
       </div>
     </AuthenticatedLayout>

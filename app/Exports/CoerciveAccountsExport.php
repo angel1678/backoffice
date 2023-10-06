@@ -22,17 +22,30 @@ class CoerciveAccountsExport implements FromCollection, WithMapping, WithHeading
         $this->search = $search;
     }
 
+    protected function getContacts($items, $isAdrress = false)
+    {
+        return collect([0, 1, 2])->map(function ($i) use ($items, $isAdrress) {
+            if ($isAdrress && !empty($items[$i])) {
+                return "{$items[$i]->location} / {$items[$i]->value}";
+            }
+            return $items[$i]->value ?? '';
+        });
+    }
+
     public function map($account): array
     {
-        $phonesContact = $account->contacts()
+        $contacts = $account->contacts()
             ->where('is_active', true)
-            ->whereIn('type_id', [1, 2, 3])
-            ->pluck('data');
+            ->get();
 
-        $emailsContact = $account->contacts()
-            ->where('is_active', true)
-            ->where('type_id', 4)
-            ->pluck('data');
+        $contactsData = [];
+        collect([1, 2, 3, 4, 5, 6])->each(function ($typeId) use ($contacts, &$contactsData) {
+            $values = $contacts->where('type_id', $typeId)->pluck('data');
+            $contactsData = [
+                ...$contactsData,
+                ...$this->getContacts($values, collect([5, 6])->contains($typeId))
+            ];
+        });
 
         return [
             $account->client_name,
@@ -42,12 +55,7 @@ class CoerciveAccountsExport implements FromCollection, WithMapping, WithHeading
             $account->stage_name,
             $account->principal_amount,
             $account->observation,
-            $phonesContact[0]->value ?? '',
-            $phonesContact[1]->value ?? '',
-            $phonesContact[2]->value ?? '',
-            $emailsContact[0]->value ?? '',
-            $emailsContact[1]->value ?? '',
-            $emailsContact[2]->value ?? '',
+            ...$contactsData,
         ];
     }
 
@@ -61,12 +69,24 @@ class CoerciveAccountsExport implements FromCollection, WithMapping, WithHeading
             'Etapa',
             'Capital',
             'Observacion',
-            'Telefono_1',
-            'Telefono_2',
-            'Telefono_3',
+            'TelefonoFijo_1',
+            'TelefonoFijo_2',
+            'TelefonoFijo_3',
+            'TelefonoCelular_1',
+            'TelefonoCelular_2',
+            'TelefonoCelular_3',
+            'TelefonoTrabajo_1',
+            'TelefonoTrabajo_2',
+            'TelefonoTrabajo_3',
             'Correo_1',
             'Correo_2',
             'Correo_3',
+            'DireccionCasa_1',
+            'DireccionCasa_2',
+            'DireccionCasa_3',
+            'DireccionTrabajo_1',
+            'DireccionTrabajo_2',
+            'DireccionTrabajo_3',
         ];
     }
 

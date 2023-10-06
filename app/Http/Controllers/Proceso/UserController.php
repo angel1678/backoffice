@@ -16,13 +16,16 @@ class UserController extends Controller
     public function index(Proceso $proceso, Request $request)
     {
         $search = $request->input('search');
-        $associates = $proceso->associates()->where('user_id', '!=', Auth::id());
-        if ($search) {
-            $associates = $associates->where('name', 'like', "%{$search}%");
-        }
+        $associates = $proceso->associates()
+            ->where('user_id', '!=', Auth::id())
+            ->when(!empty($search), function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->select('id', 'name', 'nickname')
+            ->get();
 
         return response()->json([
-            'associates' => $associates->select('id', 'name', 'nickname')->get()
+            'associates' => $associates
         ]);
     }
 

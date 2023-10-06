@@ -3,11 +3,18 @@ import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import { Mention } from 'primereact/mention';
 import Icon from '@/Components/Icon';
+import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function Comments({ procesoId, detalleId, comentarios = [] }) {
   const [suggestions, setSuggestions] = useState([]);
-  const { data, setData, post, reset, processing } = useForm({ comment: '' });
+  const { data, setData, post, reset, processing, transform, errors } = useForm({ comment: '' });
+
+  transform(data => {
+    const regex = new RegExp(/@[A-z10-9]*/, 'gi');
+    const nicksName = [...data.comment.matchAll(regex)].map(_ => _[0]);
+    return { ...data, nicksName };
+  });
 
   const handleSearch = async (e) => {
     const { data } = await axios.get(route('proceso.user.index', procesoId), {
@@ -58,18 +65,22 @@ export default function Comments({ procesoId, detalleId, comentarios = [] }) {
         }
       </div>
       <div className="flex items-center gap-2 border-t-2 pt-2">
-        <Mention
-          value={data.comment}
-          onChange={e => setData('comment', e.target.value)}
-          field="nickname"
-          suggestions={suggestions}
-          onSearch={handleSearch}
-          placeholder="Agregar un comentario ..."
-          rows={2}
-          className="w-full mt-1"
-          inputClassName="w-full !border-none text-sm !p-1.5"
-          itemTemplate={itemTemplate}
-        />
+        <div className="w-full">
+          <Mention
+            value={data.comment}
+            onChange={e => setData('comment', e.target.value)}
+            field="nickname"
+            suggestions={suggestions}
+            onSearch={handleSearch}
+            placeholder="Agregar un comentario ..."
+            rows={2}
+            className="w-full mt-1"
+            inputClassName="w-full !border-none text-sm !p-1.5"
+            itemTemplate={itemTemplate}
+          />
+          <InputError message={errors.comment} />
+          <InputError message={errors.nicksName} />
+        </div>
         <PrimaryButton icon="pi pi-send" disabled={processing} onClick={handleClick} />
       </div>
     </div>

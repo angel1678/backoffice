@@ -22,8 +22,8 @@ export default function ProcesoDetenido({ procesos, search, statu, auth, errors 
     setDialog(true);
   };
 
-  const handlePage = (page, statu, search) => {
-    const data = Object.fromEntries(Object.entries({ page, statu, search })
+  const handlePage = (page, filters) => {
+    const data = Object.fromEntries(Object.entries({ page, ...filters })
       .filter(([_, v]) => v != null && v != ''));
     router.get(route('proceso-detenido.index'), data, { preserveState: true });
   };
@@ -36,22 +36,18 @@ export default function ProcesoDetenido({ procesos, search, statu, auth, errors 
       breadCrumb={breadCrumb}
     >
       <DialogMovimiento proceso={procesoId} model={movimiento} visible={dialog} onHide={() => setDialog(false)} />
-      <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div className="p-2">
-          <DataTableProceso
-            auth={auth}
-            value={procesos.data}
-            onMovimiento={handleShowMovimientos}
+      <DataTableProceso
+        auth={auth}
+        value={procesos.data}
+        onMovimiento={handleShowMovimientos}
+        urlDownload={route('proceso-detenido.export')}
 
-            filterSearch={search}
-            filterStatu={statu}
-            rows={100}
-            first={procesos.from}
-            totalRecords={procesos.total}
-            onPage={handlePage}
-          />
-        </div>
-      </div>
+        filters={{ search, statu }}
+        rows={100}
+        first={procesos.from}
+        totalRecords={procesos.total}
+        onPage={handlePage}
+      />
     </AuthenticatedLayout>
   );
 }

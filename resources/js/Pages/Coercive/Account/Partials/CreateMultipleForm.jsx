@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from '@inertiajs/react';
-import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 
 import InputError from '@/Components/InputError';
+import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 
@@ -76,7 +76,10 @@ export default function CreateMultipleForm({ className, clientId, executives, on
         </div>
 
         <div className="flex items-center gap-4">
-          <Button icon="fas fa-save fa-lg" label="Guardar" className="text-xs font-semibold tracking-widest uppercase" />
+          <PrimaryButton
+            icon="fas fa-save fa-lg"
+            label="Guardar"
+          />
         </div>
       </form>
     </section>

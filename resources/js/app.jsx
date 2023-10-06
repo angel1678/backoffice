@@ -5,14 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-// import * as dayjs from 'dayjs';
-// import * as weekday from 'dayjs/plugin/weekday';
-// import { es } from "dayjs/locale/es";
-
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
-
-// dayjs.extend(weekday);
-// dayjs.locale("es");
 
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,

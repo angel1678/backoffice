@@ -10,6 +10,19 @@ window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
+ * Day JS
+ */
+
+import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import { es } from 'dayjs/locale/es';
+
+dayjs.extend(weekday);
+dayjs.locale('es');
+
+window.dayjs = dayjs;
+
+/**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
  * allows your team to easily build robust real-time web applications.

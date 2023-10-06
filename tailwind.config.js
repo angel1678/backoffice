@@ -18,6 +18,9 @@ module.exports = {
               'loyalis': '#1A2C5C',
               'fondo': '#EEF7FF',
               'primary-btn': '#0A41BC',
+              'secondary-btn': '#3D8AF4',
+              'info-btn': '#00ADB8',
+              'help-btn': '#808080',
             }
         },
     },

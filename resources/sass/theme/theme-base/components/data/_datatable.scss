@@ -33,9 +33,13 @@
         border: $tableHeaderCellBorder;
         border-width: $tableHeaderCellBorderWidth;
         font-weight: $tableHeaderCellFontWeight;
-        color: $tableHeaderCellTextColor;
+        // color: $tableHeaderCellTextColor;
         background: $tableHeaderCellBg;
         transition: $listItemTransition;
+
+        span {
+            width: 100%;
+        }
     }
 
     .p-datatable-tfoot > tr > td {
@@ -191,13 +195,13 @@
         background: $panelHeaderBg;
     }
 
-    &.p-datatable-scrollable > .p-datatable-wrapper > .p-datatable-table,
-    &.p-datatable-scrollable > .p-datatable-wrapper > .p-virtualscroller > .p-datatable-table {
-        > .p-datatable-thead,
-        > .p-datatable-tfoot {
-            background-color: $tableHeaderCellBg;
-        }
-    }
+    // &.p-datatable-scrollable > .p-datatable-wrapper > .p-datatable-table,
+    // &.p-datatable-scrollable > .p-datatable-wrapper > .p-virtualscroller > .p-datatable-table {
+    //     > .p-datatable-thead,
+    //     > .p-datatable-tfoot {
+    //         background-color: $tableHeaderCellBg;
+    //     }
+    // }
 
     .p-datatable-loading-icon {
         font-size: $loadingIconFontSize;

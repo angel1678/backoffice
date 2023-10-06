@@ -18,22 +18,17 @@ class ProcesoDetenidoController extends Controller
     {
         $statu = $request->input('statu');
         $search = $request->input('search');
-
         $tiempoCasoDetenido = Configuracion::getParam('proceso', 'casos_detenidos')->first();
-        $query = Proceso::query();
 
+        $query = Proceso::query();
         $query->when($statu != null, function ($query) use ($statu) {
             $query->where('activo', $statu);
         })->when(!empty($search), function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->where('judicatura_id', 'like', "{$search}%")
-                    ->orWhere('anio_id', 'like', "{$search}%")
-                    ->orWhere('numero_id', 'like', "{$search}%")
+                $query->whereRaw("CONCAT(judicatura_id, '-', anio_id, '-', numero_id) like '{$search}%'")
                     ->orWhere('procesos.accion_infraccion', 'like', "{$search}%");
             });
-        });
-
-        $query->ultimaFechaDetalle(Carbon::now()->subDays($tiempoCasoDetenido->valor));
+        })->ultimaFechaDetalle(Carbon::now()->subDays($tiempoCasoDetenido->valor));
 
         $procesos = $query->paginate(100);
 

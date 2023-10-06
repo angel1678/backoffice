@@ -7,6 +7,7 @@ import { Dialog } from 'primereact/dialog';
 import { classNames } from 'primereact/utils';
 import DialogMovimientoDetalle from './DialogMovimientoDetalle';
 import { router } from '@inertiajs/react';
+import SecondaryButton from './SecondaryButton';
 
 const DialogMovimiento = ({ proceso, model = [], visible, onHide }) => {
   const [dialog, setDialog] = useState(false);
@@ -27,7 +28,11 @@ const DialogMovimiento = ({ proceso, model = [], visible, onHide }) => {
 
   const bodyAcciones = (data) => (
     <div className="flex gap-1 justify-center">
-      <Button icon="fas fa-folder fa-md" className="p-button-info" onClick={() => handleDetalle(data.id)} />
+      <SecondaryButton
+        severe="info"
+        icon="fas fa-folder fa-md"
+        onClick={() => handleDetalle(data.id)}
+      />
     </div>
   );
 

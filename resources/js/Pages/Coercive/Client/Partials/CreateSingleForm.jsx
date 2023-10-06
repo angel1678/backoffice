@@ -6,6 +6,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
+import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function CreateSingleForm({ className, onErrors }) {
   const { data, setData, errors, post, progress } = useForm({ name: '', description: '', image: undefined });
@@ -81,7 +82,10 @@ export default function CreateSingleForm({ className, onErrors }) {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button icon="fas fa-save fa-lg" label="Guardar" className="text-xs font-semibold tracking-widest uppercase" />
+          <PrimaryButton
+            icon="fas fa-save fa-lg"
+            label="Guardar"
+          />
         </div>
       </form>
     </section>

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useForm } from "@inertiajs/react";
-import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputSwitch } from 'primereact/inputswitch';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
+import PrimaryButton from '@/Components/PrimaryButton';
 
 const EditSingleForm = ({ className, users, model, onErrors }) => {
   const { data, setData, errors, put, processing, recentlySuccessful } = useForm(model);
@@ -109,7 +109,10 @@ const EditSingleForm = ({ className, users, model, onErrors }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button icon="fas fa-save fa-lg" label="Guardar" className="text-xs font-semibold tracking-widest uppercase" />
+          <PrimaryButton
+            icon="fas fa-save fa-lg"
+            label="Guardar"
+          />
         </div>
       </form>
     </section>
