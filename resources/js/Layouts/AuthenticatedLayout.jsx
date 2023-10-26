@@ -49,6 +49,7 @@ export default function Authenticated({
     };
 
   useEffect(() => {
+    console.log('Canal Notificacion');
     Echo.private(`App.Models.User.${auth.user.id}`)
       .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', e => {
         if (e.event === 'CommentNotification') {
