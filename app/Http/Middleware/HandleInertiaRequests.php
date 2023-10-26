@@ -31,13 +31,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $usersChat = User::select('id', 'name')->get();
+        $notifications = $request->user()->unreadNotifications ?? collect([]);
 
         return array_merge(parent::share($request), [
-            'chats' => $usersChat,
             'auth' => [
                 'user' => $request->user(),
-                'isAdmin' => $request->user()?->isAn('admin')
+                'isAdmin' => $request->user()?->isAn('admin'),
+                'notifications' => $notifications->map(fn ($item) => [...$item->data, 'type' => $item->type, 'id' => $item->id]),
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

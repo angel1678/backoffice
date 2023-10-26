@@ -30,7 +30,7 @@ const DialogMovimiento = ({ proceso, model = [], visible, onHide }) => {
     <div className="flex gap-1 justify-center">
       <SecondaryButton
         severe="info"
-        icon="fas fa-folder fa-md"
+        icon="fas fa-folder fa-lg"
         onClick={() => handleDetalle(data.id)}
       />
     </div>

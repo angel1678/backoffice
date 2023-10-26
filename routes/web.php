@@ -18,6 +18,7 @@ use App\Http\Controllers\ProcesoMovimientoDetalleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\User\UserNotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/proceso', ProcesoController::class)->except('show');
 
     Route::get('/management', [ManagementController::class, 'index'])->name('management.index');
+    Route::get('/user/notification/{id}', [UserNotificationController::class, 'show'])->name('user.notification.show');
 });
 
 Route::middleware('auth')->prefix('process')->group(function () {

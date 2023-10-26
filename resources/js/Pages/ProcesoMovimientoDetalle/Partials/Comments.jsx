@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import { Mention } from 'primereact/mention';
 import Icon from '@/Components/Icon';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
+import useNotification from '@/Hook/useNotification';
 
 export default function Comments({ procesoId, detalleId, comentarios = [] }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -47,21 +48,23 @@ export default function Comments({ procesoId, detalleId, comentarios = [] }) {
     <div className="mt-6">
       <div>
         {
-          comentarios.map(item => (
-            <div key={item.id} className="flex gap-4 items-center px-2 py-4 border-t-2">
-              <div>
-                <div className="bg-[#808080] p-2 rounded-full">
-                  <Icon name="perfil" className="h-8" />
+          comentarios.map(item => {
+            return (
+              <div key={item.id} id={`comment_${item.id}`} className="flex gap-4 items-center px-2 py-4 border-t-2">
+                <div>
+                  <div className="bg-[#808080] p-2 rounded-full">
+                    <Icon name="perfil" className="h-8" />
+                  </div>
+                </div>
+                <div>
+                  <div className="font-semibold">
+                    {item.user_name} - {item.date}
+                  </div>
+                  <span>{item.description}</span>
                 </div>
               </div>
-              <div>
-                <div className="font-semibold">
-                  {item.user_name} - {item.date}
-                </div>
-                <span>{item.description}</span>
-              </div>
-            </div>
-          ))
+            )
+          })
         }
       </div>
       <div className="flex items-center gap-2 border-t-2 pt-2">

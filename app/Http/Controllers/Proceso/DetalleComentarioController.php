@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Proceso;
 
+use App\Events\ProcesoDetalleComentarioEvent;
 use App\Models\User;
 use App\Notifications\CommentNotification;
 use App\Rules\NickNameRule;
@@ -43,14 +44,15 @@ class DetalleComentarioController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
-            collect($data->nicksName)->each(function ($nickname) use ($comment) {
+            collect($data->nicksName)->each(function ($nickname) use ($detalle, $comment) {
                 $user = User::where('nickname', Str::replace('@', '', $nickname))->first();
                 $comment->menciones()->create([
                     'user_id' => $user->id,
                 ]);
 
                 //TODO: Enviar notificaciones por usuario.
-                $user->notify(new CommentNotification('Te mencionaron en un comentario'));
+                $user->notify(new CommentNotification($detalle, $comment));
+                broadcast(new ProcesoDetalleComentarioEvent($detalle, $comment))->toOthers();
             });
             DB::commit();
         } catch (\Throwable $th) {

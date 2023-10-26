@@ -1,13 +1,44 @@
-import { useState } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Button } from 'primereact/button';
+import useNotification from '@/Hook/useNotification';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 import DialogAddUser from './Partials/DialogAddUser';
 import Comments from './Partials/Comments';
 
-export default function ProcesoMovimientoDetalle({ movimiento, detalle, users, associates, auth, ownerId, errors }) {
+export default function ProcesoMovimientoDetalle({ movimiento, users, associates, auth, ownerId, errors, ...props }) {
+  const commentId = useNotification(state => state.commentId);
+
   const [visible, setVisible] = useState(false);
+  const [detalle, setDetalle] = useState(props.detalle);
+
+  useEffect(() => {
+    Echo.private(`movimiento_${movimiento.id}`)
+      .listen('ProcesoDetalleComentarioEvent', e => {
+        setDetalle(state => state.map(item => {
+          if (item.id === e.detalle_id) {
+            return { ...item, comentarios: [...item.comentarios, e.comentario] }
+          }
+          return item;
+        }));
+      });
+  }, []);
+
+  useEffect(() => {
+    setDetalle(props.detalle);
+  }, [props.detalle]);
+
+  useLayoutEffect(() => {
+    const commentDiv = document.querySelector(`#comment_${commentId}`);
+    if (commentDiv) {
+      commentDiv.scrollIntoView({ behavior: 'smooth' });
+      commentDiv.classList.add('bg-orange-200');
+      setInterval(() => {
+        commentDiv.classList.remove('bg-orange-200');
+      }, 1000);
+    }
+  }, [commentId]);
 
   return (
     <AuthenticatedLayout

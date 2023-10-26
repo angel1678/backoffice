@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProcesoDetalle extends Model
@@ -18,5 +19,10 @@ class ProcesoDetalle extends Model
     public function comentarios(): HasMany
     {
         return $this->hasMany(ProcesoComentario::class, 'detalle_id', 'id');
+    }
+
+    public function movimiento(): BelongsTo
+    {
+        return $this->belongsTo(ProcesoMovimiento::class, 'movimiento_id');
     }
 }

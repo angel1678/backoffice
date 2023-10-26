@@ -10,11 +10,14 @@ import BackButton from '@/Components/BackButton';
 import BreadCrumb from '@/Components/BreadCrumb';
 import Dropdown from '@/Components/Dropdown';
 import Icon from '@/Components/Icon';
+import useNotification from '@/Hook/useNotification';
+import axios from 'axios';
 
 export default function Authenticated({
   auth, title, errors, children, breadCrumb, urlBack
 }) {
-  const [notifications, setNotifications] = useState([]);
+  const setCommentId = useNotification(state => state.setCommentId);
+  const [notifications, setNotifications] = useState(auth.notifications);
 
   const command = (data) => router.visit(route(data.item.route));
 
@@ -30,6 +33,29 @@ export default function Authenticated({
     { label: 'Reporteria', className: 'font-semibold', icon: (<Icon name="reporteria" className="h-6 mr-2" />), route: 'process.report.index', command },
     { label: 'Gestíon', className: 'font-semibold', route: 'management.index', command },
   ];
+
+  const handleNoification = (notification) =>
+    async (e) => {
+      e.preventDefault();
+      setCommentId(notification.comentarioId);
+      const { data: { success } } = await axios.get(route('user.notification.show', notification.id));
+
+      if (success) {
+        setNotifications(state => state.filter(item => item.id != notification.id));
+        if (window.location.href !== route('proceso.movimiento.show', notification?.movimientoId)) {
+          router.visit(route('proceso.movimiento.show', notification?.movimientoId));
+        }
+      }
+    };
+
+  useEffect(() => {
+    Echo.private(`App.Models.User.${auth.user.id}`)
+      .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', e => {
+        if (e.event === 'CommentNotification') {
+          setNotifications(state => [...state, e]);
+        }
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-fondo">
@@ -53,15 +79,25 @@ export default function Authenticated({
                       className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white rounded-md hover:bg-blue-800 active:bg-blue-900 focus:outline-none transition ease-in-out duration-150"
                     >
                       <Icon name="notificacion" className="h-6" />
-                      {notifications.length > 0 && (
-                        <span>{notifications.length}</span>
+                      {notifications && notifications.length > 0 && (
+                        <span className="bg-orange-400 py-0.5 px-1.5 rounded-full fixed mb-4 ml-3.5">{notifications.length}</span>
                       )}
                     </button>
                   </span>
                 </Dropdown.Trigger>
                 <Dropdown.Content className="w-[20rem] bg-white">
                   <ScrollPanel style={{ width: '100%', maxHeight: '20rem' }}>
-
+                    {
+                      notifications.map(notification => (
+                        <Dropdown.Link
+                          key={notification.id}
+                          className="!text-base ml-2.5"
+                          onClick={handleNoification(notification)}
+                        >
+                          {notification.message}
+                        </Dropdown.Link>
+                      ))
+                    }
                   </ScrollPanel>
                 </Dropdown.Content>
               </Dropdown>
