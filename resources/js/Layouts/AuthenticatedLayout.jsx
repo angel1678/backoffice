@@ -55,7 +55,9 @@ export default function Authenticated({
         if (e.event === 'CommentNotification') {
           setNotifications(state => [...state, e]);
         }
-      });
+      })
+      .subscribed(() => console.log("AuthenticatedLayout subscribed success"))
+      .error(status => console.log("AuthenticatedLayout", status));
   }, []);
 
   return (
