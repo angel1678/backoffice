@@ -49,14 +49,12 @@ export default function Authenticated({
     };
 
   useEffect(() => {
-    console.log('Canal Notificacion');
     Echo.private(`App.Models.User.${auth.user.id}`)
       .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', e => {
         if (e.event === 'CommentNotification') {
           setNotifications(state => [...state, e]);
         }
       })
-      .subscribed(() => console.log("AuthenticatedLayout subscribed success"))
       .error(status => console.log("AuthenticatedLayout", status));
   }, []);
 

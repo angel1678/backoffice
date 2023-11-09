@@ -23,7 +23,6 @@ export default function ProcesoMovimientoDetalle({ movimiento, users, associates
           return item;
         }));
       })
-      .subscribed(() => console.log("ProcesoMovimientoDetalle subscribed success"))
       .error(status => console.log("ProcesoMovimientoDetalle", status));
   }, []);
 
