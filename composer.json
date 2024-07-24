@@ -18,8 +18,10 @@
         "pusher/pusher-php-server": "^7.2",
         "rmunate/spell-number": "^3.2",
         "silber/bouncer": "^1.0",
+        "spatie/laravel-data": "^4.7",
         "tavo1987/ec-validador-cedula-ruc": "^1.0",
-        "tightenco/ziggy": "^1.0"
+        "tightenco/ziggy": "^1.0",
+        "yaza/laravel-google-drive-storage": "^2.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.9",
