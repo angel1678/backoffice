@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Coercive;
 
-use App\Casts\CurrencyFormat;
-use App\Http\Controllers\Controller;
-use App\Imports\CoerciveAccountsImport;
-use App\Mail\CoerciveAccountMail;
-use App\Models\CoerciveAccount;
-use App\Models\CoerciveAccountHistory;
-use App\Models\CoerciveClient;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use App\Casts\CurrencyFormat;
+use App\Models\CoerciveClient;
+use App\Models\CoerciveAccount;
+use App\Mail\CoerciveAccountMail;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\RedirectResponse;
+use App\Models\CoerciveAccountHistory;
+use App\Imports\CoerciveAccountsImport;
 
 class ClientAccountController extends Controller
 {

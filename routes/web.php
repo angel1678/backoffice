@@ -1,25 +1,34 @@
 <?php
 
-use App\Http\Controllers\Coercive\ClientAccountExportController as CoerciveClientAccountExportController;
-use App\Http\Controllers\Coercive\ClientAccountController as CoerciveClientAccountController;
-use App\Http\Controllers\Coercive\ClientController as CoerciveClientController;
-use App\Http\Controllers\Coercive\AccountContactController as CoerciveAccountContactController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ProcesoController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManagementController;
-use App\Http\Controllers\Proceso\AccountExportController as JudiciaryAccountExportController;
-use App\Http\Controllers\Proceso\DetalleComentarioController;
-use App\Http\Controllers\Proceso\MovimientoDetalleController;
-use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
-use App\Http\Controllers\ProcesoController;
-use App\Http\Controllers\ProcesoDetalleLastUpdateController;
 use App\Http\Controllers\ProcesoDetenidoController;
 use App\Http\Controllers\ProcesoMovimientoController;
-use App\Http\Controllers\ProcesoMovimientoDetalleController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\Auth\RegisterCompleteController;
 use App\Http\Controllers\User\UserNotificationController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProcesoDetalleLastUpdateController;
+use App\Http\Controllers\ProcesoMovimientoDetalleController;
+use App\Http\Controllers\Proceso\DetalleComentarioController;
+use App\Http\Controllers\Proceso\MovimientoDetalleController;
+use App\Http\Controllers\Configuration\RoleConfigurationController;
+use App\Http\Controllers\Configuration\UserConfigurationController;
+use App\Http\Controllers\Configuration\IndexConfigurationController;
+use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
+use App\Http\Controllers\Configuration\UserRegisterConfigurationController;
+use App\Http\Controllers\Coercive\ClientController as CoerciveClientController;
+use App\Http\Controllers\Judicial\ClientController as JudicialClientController;
+use App\Http\Controllers\Judicial\ProcesoController as JudicialProcesoController;
+use App\Http\Controllers\Judicial\DashboardController as JudicialDashboardController;
+use App\Http\Controllers\Judicial\NotificationController as JudicialNotificationController;
+use App\Http\Controllers\Coercive\ClientAccountController as CoerciveClientAccountController;
+use App\Http\Controllers\Proceso\AccountExportController as JudiciaryAccountExportController;
+use App\Http\Controllers\Coercive\AccountContactController as CoerciveAccountContactController;
+use App\Http\Controllers\Coercive\ClientAccountExportController as CoerciveClientAccountExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +45,50 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+Route::prefix('register')
+    ->group(function () {
+        Route::get('complete', [RegisterCompleteController::class, 'edit'])
+            ->middleware('signed')
+            ->name('register.complete');
+
+        Route::put('complete/{user}', [RegisterCompleteController::class, 'update'])
+            ->name('register.complete.update');
+    });
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')
+    ->prefix('judicial')
+    ->group(function () {
+        Route::get('dashboard', JudicialDashboardController::class)
+            ->name('judicial.dashboard');
+
+        Route::post('notification', JudicialNotificationController::class)
+            ->name('judicial.notification');
+
+        Route::resource('proceso', JudicialProcesoController::class)
+            ->names('judicial.proceso')
+            ->except('show');
+
+        Route::resource('client', JudicialClientController::class)
+            ->names('judicial.client')
+            ->except('show');
+    });
+
+Route::middleware('auth')->prefix('configuration')->group(function () {
+    Route::get('/user/{user}/register', UserRegisterConfigurationController::class)
+        ->name('configuration.user.register');
+
+    Route::resource('user', UserConfigurationController::class)
+        ->names('configuration.user');
+
+    Route::resource('role', RoleConfigurationController::class)
+        ->names('configuration.role')
+        ->parameters(['role' => 'user']);
+
+    Route::get('/', IndexConfigurationController::class)
+        ->name('configuration.index');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
