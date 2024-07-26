@@ -23,7 +23,7 @@ class UserRegisterConfigurationController extends Controller
             $user->password = Hash::make(Str::random(24));
             $user->save();
 
-            Mail::to('stalin.arechuac@gmail.com')
+            Mail::to($user->email)
                 ->send(new UserRegisterMail($user));
 
             DB::commit();
