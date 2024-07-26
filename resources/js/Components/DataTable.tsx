@@ -31,7 +31,7 @@ export default function DataTable({ children, hiddenButtons, hiddenHeader, scrol
 
   return (
     <>
-      {hiddenHeader && (
+      {!hiddenHeader && (
         <div className="flex justify-between">
           <label className="font-bold text-2xl">{title}</label>
           <div>
