@@ -1,21 +1,26 @@
 import React, { FormEvent } from 'react';
 import { Errors } from '@inertiajs/core';
 import { useForm } from '@inertiajs/react';
+import { Dropdown } from 'primereact/dropdown';
+
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { DropdownType } from '@/types';
 
 type Props = {
   className?: string;
+  clients?: DropdownType[];
   onErrors: (errors: Errors) => void;
 }
 
 type State = {
-  fileProcesos: File | null
+  fileProcesos: File | null;
+  clientId?: number;
 }
 
-const CreateMultipleForm = ({ className, onErrors }: Props) => {
+const CreateMultipleForm = ({ className, clients, onErrors }: Props) => {
   const { data, setData, errors, post, progress } = useForm<State>({
     fileProcesos: null,
   });
@@ -31,15 +36,30 @@ const CreateMultipleForm = ({ className, onErrors }: Props) => {
 
   return (
     <section className={className}>
-      <header>
-        <h2 className="text-lg font-medium text-gray-900">Proceso Masivo de la Judicatura</h2>
-
-        <p className="mt-1 text-sm text-gray-600">
-          Agregar nuevos procesos de la judicatura mediante archivo de excel.
-        </p>
+      <header className="flex justify-between">
+        <h2 className="text-lg font-medium text-gray-900">Registro de carga masiva</h2>
+        <div className="flex gap-2">
+          <PrimaryButton label="Registrar" />
+        </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center mt-6 space-y-6">
+
+        <div className="w-1/4">
+          <InputLabel htmlFor="clientId" value="Cliente" />
+
+          <Dropdown
+            id="clientId"
+            className="mt-1 w-full"
+            options={clients}
+            required
+            value={data.clientId}
+            onChange={(e) => setData('clientId', e.value)}
+          />
+
+          <InputError message={errors.clientId} className="mt-2" />
+        </div>
+
         <div>
           <p className="mt-1 text-sm text-gray-600">
             Dar click al link para descargar la plantilla:
@@ -69,9 +89,9 @@ const CreateMultipleForm = ({ className, onErrors }: Props) => {
           <InputError message={errors.fileProcesos} className="mt-2" />
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <PrimaryButton icon="fas fa-save fa-lg" label="Guardar" />
-        </div>
+        </div> */}
       </form>
     </section>
   )

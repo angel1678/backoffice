@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
-import { Dialog, DialogProps } from 'primereact/dialog';
+import { DialogProps } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 
 import InputError from '@/Components/InputError';
@@ -58,7 +58,7 @@ export default function Create({ model, onHide, ...props }: Props) {
           value={data.nickname}
           onChange={e => setData('nickname', e.target.value)}
         />
-        <InputError message={errors.name} />
+        <InputError message={errors.nickname} />
       </div>
       <div>
         <InputLabel htmlFor="email" value="Correo electronico:" />
@@ -69,7 +69,7 @@ export default function Create({ model, onHide, ...props }: Props) {
           value={data.email}
           onChange={e => setData('email', e.target.value)}
         />
-        <InputError message={errors.name} />
+        <InputError message={errors.email} />
       </div>
     </FormDialog>
   )

@@ -13,7 +13,7 @@ export default function NotificationLink({ routeName, title, type, value }: Prop
   return (
     <Link
       href={route(routeName)}
-      method="post"
+      method="get"
       as="button"
       data={{ notification: type }}
       className={classNames('text-lg w-64', { 'font-bold': type == value })}

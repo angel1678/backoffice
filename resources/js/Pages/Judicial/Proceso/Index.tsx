@@ -1,23 +1,24 @@
-import React, { ChangeEvent, useState } from 'react';
-import axios from 'axios';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
+
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 
 import DataTable from '@/Components/DataTable';
+import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
-// import DialogMovimiento from '@/Components/DialogMovimiento';
-// import DataTableProceso from '@/Components/DataTableProceso';
+import DialogMovimiento from '@/Components/DialogMovimiento';
 // import DialogLastUpdate from '@/Components/DialogLastUpdate';
+import useAuth from '@/Hook/useAuth';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import { InputText } from 'primereact/inputtext';
-import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
-import PrimaryButton from '@/Components/PrimaryButton';
 
 type Props = PageProps & {
   procesos: any;
+  isLastUpdates: boolean;
 };
 
 const optionsStatus = [
@@ -25,11 +26,13 @@ const optionsStatus = [
   { label: 'Inactivo', value: '0' },
 ];
 
-export default function Proceso({ app, auth, errors, procesos, search, status }: Props) {
-  const breadCrumb = [
-    { label: 'Judicial', icon: 'judicial' },
-    { label: 'Todos los procesos' }
-  ];
+const breadCrumb = [
+  { label: 'Judicial', icon: 'judicial' },
+  { label: 'Todos los procesos' }
+];
+
+export default function Proceso({ app, auth, errors, procesos, search, status, isLastUpdates }: Props) {
+  const { isAdmin } = useAuth();
 
   const [hasFilter, setHasFilter] = useState(false);
   const [filters, setFilters] = useState({ statu: '', search: '' });
@@ -41,8 +44,8 @@ export default function Proceso({ app, auth, errors, procesos, search, status }:
   const [procesoId, setProcesoId] = useState([]);
   const [movimiento, setMovimiento] = useState([]);
 
-  const [dialogLastUpdate, setDialogLastUpdate] = useState(false);
-  const [lastDetalle, setLastDetalle] = useState([]);
+  // const [dialogLastUpdate, setDialogLastUpdate] = useState(false);
+  // const [lastDetalle, setLastDetalle] = useState([]);
 
   // const handleLastUpdates = async () => {
   //   const { data } = await axios.get(route('proceso-last-update.index'));
@@ -50,17 +53,10 @@ export default function Proceso({ app, auth, errors, procesos, search, status }:
   //   setDialogLastUpdate(true);
   // };
 
-  // const handleShowMovimientos = async (id) => {
-  //   const { data } = await axios.get(route('proceso.movimiento', id));
-  //   setProcesoId(id);
-  //   setMovimiento(data);
-  //   setDialog(true);
-  // };
-
   const handlePage = (page: number, filters?: any) => {
     const data: any = Object.fromEntries(Object.entries({ page, ...filters })
       .filter(([_, v]) => (v != null && v != '')));
-    router.get(route('proceso.index'), data, { preserveState: true });
+    router.get(route('judicial.process.index'), data, { preserveState: true });
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement> | DropdownChangeEvent) => {
@@ -70,76 +66,72 @@ export default function Proceso({ app, auth, errors, procesos, search, status }:
 
   const handleRefresh = () => router.reload();
   const handleCreateClient = () => router.visit(route('judicial.client.create'));
-  const handleCreateProcess = () => router.visit(route('judicial.proceso.create'));
+  const handleCreateProcess = () => router.visit(route('judicial.process.create'));
   const handleEdit = (id: string) => router.visit(route('proceso.edit', id));
   const handleUpdate = (id: string) => router.put(route('proceso.update', id));
 
   const handleLastUpdates = async () => {
-    const { data } = await axios.get(route('proceso-last-update.index'));
-    setLastDetalle(data);
-    setDialogLastUpdate(true);
+    // const { data } = await axios.get(route('proceso-last-update.index'));
+    // setLastDetalle(data);
+    // setDialogLastUpdate(true);
   };
 
   const handleShowMovimientos = async (id: string) => {
-    const { data } = await axios.get(route('proceso.movimiento', id));
-    // setProcesoId(id);
-    setMovimiento(data);
-    setDialog(true);
+    router.get(route('judicial.movimient.index', id), {}, {
+      preserveState: true,
+      onSuccess: ({ props }) => {
+        const { movimients } = props as any;
+        console.log(movimients);
+        setMovimiento(movimients);
+        setDialog(true);
+      },
+    });
   };
 
   const actionsBodyTemplate = (data: any) => (
     <div className="flex gap-1 justify-center m-1">
       <SecondaryButton icon="fas fa-folder fa-lg" severe="info" onClick={() => handleShowMovimientos(data.id)} />
-      {
-        (auth.isAdmin) &&
+      {isAdmin() && (
         <SecondaryButton
           icon="fas fa-pencil fa-lg"
           onClick={() => handleEdit(data.id)}
           tooltip="editar"
           tooltipOptions={{ position: 'bottom' }}
         />
-      }
-      {
-        (!auth.isAdmin && auth.user.id == data.user_id) &&
+      )}
+      {(!isAdmin() && auth.user.id == data.user_id) && (
         <Button
           icon={classNames('fas fa-lg', !data.activo ? 'fa-check' : 'fa-times')}
           onClick={() => handleUpdate(data.id)}
           tooltip={!data.activo ? 'Activar' : 'Inactivar'}
           tooltipOptions={{ position: 'bottom' }}
         />
-      }
+      )}
     </div>
   );
 
+  useEffect(() => {
+    if (hasFilter) handlePage(1, filters);
+  }, [hasFilter, filters]);
+
   return (
     <AuthenticatedLayout app={app} auth={auth} title="Procesos Judiciales" breadCrumb={breadCrumb} errors={errors}>
-      {/* <DialogMovimiento proceso={procesoId} model={movimiento} visible={dialog} onHide={() => setDialog(false)} />
-      <DialogLastUpdate isAdmin={auth.isAdmin} model={lastDetalle} visible={dialogLastUpdate} onHide={() => setDialogLastUpdate(false)} /> */}
+      <DialogMovimiento
+        proceso={procesoId}
+        model={movimiento}
+        visible={dialog}
+        onHide={() => setDialog(false)}
+      />
 
-      {/* <DataTableProceso
-        auth={auth}
-        value={procesos.data}
-        isCrud
-        isLastUpdates
-        onLastUpdates={handleLastUpdates}
-        onMovimiento={handleShowMovimientos}
-        urlDownload={route('proceso.export')}
-
-        filters={{ search, statu }}
-        rows={100}
-        first={procesos.from}
-        totalRecords={procesos.total}
-        onPage={handlePage}
-      /> */}
+      {/* <DialogLastUpdate isAdmin={auth.isAdmin} model={lastDetalle} visible={dialogLastUpdate} onHide={() => setDialogLastUpdate(false)} /> */}
 
       <div className="flex justify-between mb-2">
         <div className="flex gap-2">
-          {
-            // isLastUpdates &&
+          {isLastUpdates &&
             <SecondaryButton
               icon="fas fa-newspaper"
               label="Ultimas Actualizaciones"
-            // onClick={handleLastUpdates}
+              onClick={handleLastUpdates}
             />
           }
           <div>
@@ -168,7 +160,7 @@ export default function Proceso({ app, auth, errors, procesos, search, status }:
           <PrimaryButton icon="fas fa-plus" label="Agregar nuevo cliente" onClick={handleCreateClient} />
           <PrimaryButton icon="fas fa-plus" label="Agregar proceso" onClick={handleCreateProcess} />
           {
-            auth.isAdmin &&
+            isAdmin() &&
             <form action={route('proceso.export')} method="get">
               {
                 Object.keys(filters).map(key => (
@@ -196,13 +188,13 @@ export default function Proceso({ app, auth, errors, procesos, search, status }:
         onPage={e => handlePage((e.page || 0) + 1)}
       >
         <Column field="process" header="Numero del Proceso" headerClassName={classNames(classHeader, 'w-72')} bodyClassName={classBody} />
-        <Column field="client" header="Cliente" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
-        <Column field="actor" header="Actor" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
-        <Column field="defendant" header="Demandado" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
+        <Column field="client.name" header="Cliente" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
+        <Column field="actors" header="Actor" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
+        <Column field="defendants" header="Demandado" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
         <Column field="typeProcedure" header="Tipo de Procedimiento" headerClassName={classNames(classHeader, 'w-72')} bodyClassName={classBody} />
         <Column field="proceduralStage" header="Etapa procesal" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
         {
-          auth.isAdmin &&
+          isAdmin() &&
           <Column field="userName" header="Usuario" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
         }
         <Column field="status" header="Estatus" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />

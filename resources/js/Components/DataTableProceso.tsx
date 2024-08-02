@@ -44,6 +44,7 @@ export default function DataTableProceso({
     search: filtersProp.search
   });
 
+  // @ts-ignore
   const handleChange = (e) => {
     setHasFilter(true);
     setFilters(prevState => ({ ...prevState, [e.target.name]: e.target.value }));

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Judicial;
 
-use App\Models\User;
 use Inertia\Response;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\JudicialClient;
 use App\Data\JudicialClientData;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class ClientController extends Controller
@@ -16,6 +17,7 @@ class ClientController extends Controller
      */
     public function index(): Response
     {
+        session()->reflash();
         $models = JudicialClient::paginate(10);
 
         return inertia('Judicial/Client/Index', [
@@ -28,13 +30,13 @@ class ClientController extends Controller
      */
     public function create(): Response
     {
-        $users = User::get()->map(fn ($user) => [
+        $companies = Company::get()->map(fn ($user) => [
             'label' => $user->name,
             'value' => $user->id
         ]);
 
         return inertia('Judicial/Client/Create', [
-            'users' => $users,
+            'companies' => $companies,
         ]);
     }
 
@@ -43,9 +45,17 @@ class ClientController extends Controller
      */
     public function store(JudicialClientData $data)
     {
-        JudicialClient::create($data->toArray());
+        DB::beginTransaction();
+        try {
+            $client = JudicialClient::create($data->toArray());
+            DB::commit();
 
-        return back();
+            session()->flash('clientSelected', $client->id);
+            return $this->redirectWithMessage('judicial.process.create', 'El cliente fue creado exitosamente.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->backWarning('Ocurrio un error al momento de crear el cliente.');
+        }
     }
 
     /**

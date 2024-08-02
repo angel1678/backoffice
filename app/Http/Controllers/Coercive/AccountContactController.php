@@ -25,10 +25,7 @@ class AccountContactController extends Controller
      */
     public function create()
     {
-        $types = Type::where('group', 'CONTACT')
-            ->select('id as value', 'name as label')
-            ->get();
-
+        $types = Type::group('CONTACT')->get();
         $locations = GeographicalDistribution::whereNotIn('type_id', [GeographicalDistributionType::COUNTRY])
             ->select('id as value', 'name as label', 'parent_id')
             ->get();

@@ -1,6 +1,7 @@
 import React from 'react';
 import ImageButton from '@/Components/ImageButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import useAuth from '@/Hook/useAuth';
 import { PageProps } from '@/types';
 
 const breadCrumb = [
@@ -12,6 +13,9 @@ type Props = PageProps & {
 }
 
 export default function Index({ app, auth, clients, errors }: Props) {
+  const { hasRol } = useAuth();
+  const isAdmin = hasRol('admin');
+
   return (
     <AuthenticatedLayout app={app} auth={auth} title="Coactiva" breadCrumb={breadCrumb} errors={errors}>
       <div className="bg-white overflow-hidden shadow-lg rounded-lg m-4 p-6 w-auto" style={{ height: 'calc(100vh - 10rem)' }}>
@@ -30,7 +34,7 @@ export default function Index({ app, auth, clients, errors }: Props) {
               />
             ))
           }
-          {auth.isAdmin &&
+          {isAdmin &&
             <ImageButton
               className="!bg-[#DBECFE]"
               image="/img/circle-add.svg"

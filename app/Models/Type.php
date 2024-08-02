@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\DropdownTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Type extends Model
 {
-    use HasFactory;
+    use HasFactory, DropdownTrait;
 
     protected $table = 'types';
 
@@ -31,5 +32,12 @@ class Type extends Model
         static::addGlobalScope('isVisible', function (Builder $builder) {
             $builder->where('is_visible', true);
         });
+    }
+
+    protected function scopeGroup(Builder $builder, string $group)
+    {
+        $builder->where('group', $group)
+            ->where('is_active', true)
+            ->dropdown();
     }
 }

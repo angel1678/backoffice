@@ -34,9 +34,13 @@ class HandleInertiaRequests extends Middleware
         $notifications = $request->user()?->unreadNotifications
             ->where('type', 'App\Notifications\CommentNotification');
 
+        /** @var User */
+        $user = $request->user();
+
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'roles' => $user?->getRoles(),
                 'isAdmin' => $request->user()?->isAn('admin'),
                 'notifications' => $notifications?->map(fn ($item) => [
                     ...$item->data,
@@ -52,7 +56,8 @@ class HandleInertiaRequests extends Middleware
             'urlPrev' => function () {
                 $urlPrev = url()->previous();
                 return ($urlPrev !== route('login') && $urlPrev !== '' && $urlPrev !== url()->current()) ? $urlPrev : null;
-            }
+            },
+            'message' => session('message', null),
         ]);
     }
 }

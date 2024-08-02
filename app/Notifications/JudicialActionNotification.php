@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Models\Proceso;
 use Carbon\Carbon;
+use App\Models\Proceso;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use App\Models\ProcesoDetalle;
@@ -70,9 +70,10 @@ class JudicialActionNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         $fecha = Carbon::now()->format('d/m/Y H:i:s');
-
         return [
             'id' => $this->procesoDetalle->id,
+            // 'movimientoId' => $this->procesoDetalle->movimiento_id,
+            // 'procesoId' => $this->procesoDetalle->movimiento->proceso_id,
             'proceso' => $this->codigo,
             'fecha' => $fecha,
             'titulo' => $this->procesoDetalle->titulo,

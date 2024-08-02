@@ -18,17 +18,25 @@ use App\Http\Controllers\Proceso\MovimientoDetalleController;
 use App\Http\Controllers\Configuration\RoleConfigurationController;
 use App\Http\Controllers\Configuration\UserConfigurationController;
 use App\Http\Controllers\Configuration\IndexConfigurationController;
+use App\Http\Controllers\Configuration\CompanyConfigurationContoller;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
 use App\Http\Controllers\Configuration\UserRegisterConfigurationController;
 use App\Http\Controllers\Coercive\ClientController as CoerciveClientController;
 use App\Http\Controllers\Judicial\ClientController as JudicialClientController;
-use App\Http\Controllers\Judicial\ProcesoController as JudicialProcesoController;
+use App\Http\Controllers\Judicial\ProcessController as JudicialProcessController;
+use App\Http\Controllers\Judicial\InvolvedController as JudicialInvolvedController;
 use App\Http\Controllers\Judicial\DashboardController as JudicialDashboardController;
-use App\Http\Controllers\Judicial\NotificationController as JudicialNotificationController;
 use App\Http\Controllers\Coercive\ClientAccountController as CoerciveClientAccountController;
 use App\Http\Controllers\Proceso\AccountExportController as JudiciaryAccountExportController;
 use App\Http\Controllers\Coercive\AccountContactController as CoerciveAccountContactController;
+use App\Http\Controllers\Judicial\StoreUploadFileController as JudicialStoreUploadFileController;
+use App\Http\Controllers\Judicial\ShowNotificationController as JudicialShowNotificationController;
+use App\Http\Controllers\Judicial\IndexNotificationController as JudicialIndexNotificationController;
 use App\Http\Controllers\Coercive\ClientAccountExportController as CoerciveClientAccountExportController;
+use App\Http\Controllers\Judicial\IndexDetailDocumentController as JudicialIndexDetailDocumentController;
+use App\Http\Controllers\Judicial\ShowProcessMovimientController as JudicialShowProcessMovimientController;
+use App\Http\Controllers\Judicial\IndexProcessMovimientController as JudicialIndexProcessMovimientController;
+use App\Http\Controllers\Judicial\ShowDocumentController as JudicialShowDocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,32 +71,59 @@ Route::middleware('auth')
         Route::get('dashboard', JudicialDashboardController::class)
             ->name('judicial.dashboard');
 
-        Route::post('notification', JudicialNotificationController::class)
-            ->name('judicial.notification');
+        Route::get('notification', JudicialIndexNotificationController::class)
+            ->name('judicial.notification.index');
 
-        Route::resource('proceso', JudicialProcesoController::class)
-            ->names('judicial.proceso')
+        Route::get('notification/{notification}', JudicialShowNotificationController::class)
+            ->name('judicial.notification.show');
+
+        Route::get('process/{process}/movimient', JudicialIndexProcessMovimientController::class)
+            ->name('judicial.movimient.index');
+
+        Route::get('process/{process}/movimient/{movimient}', JudicialShowProcessMovimientController::class)
+            ->name('judicial.movimient.show');
+
+        Route::post('detail/{judicialDetail}/upload', JudicialStoreUploadFileController::class)
+            ->name('judicial.detail.upload');
+
+        Route::get('detail/{judicialDetail}/document', JudicialIndexDetailDocumentController::class)
+            ->name('judicial.detail.document');
+
+        Route::get('document/{document}', JudicialShowDocumentController::class)
+            ->name('judicial.document.show');
+
+        Route::resource('process', JudicialProcessController::class)
+            ->names('judicial.process')
             ->except('show');
 
         Route::resource('client', JudicialClientController::class)
             ->names('judicial.client')
             ->except('show');
+
+        Route::resource('involved', JudicialInvolvedController::class)
+            ->names('judicial.involved')
+            ->except('show');
     });
 
-Route::middleware('auth')->prefix('configuration')->group(function () {
-    Route::get('/user/{user}/register', UserRegisterConfigurationController::class)
-        ->name('configuration.user.register');
+Route::middleware('auth')
+    ->prefix('configuration')
+    ->group(function () {
+        Route::get('/user/{user}/register', UserRegisterConfigurationController::class)
+            ->name('configuration.user.register');
 
-    Route::resource('user', UserConfigurationController::class)
-        ->names('configuration.user');
+        Route::resource('user', UserConfigurationController::class)
+            ->names('configuration.user');
 
-    Route::resource('role', RoleConfigurationController::class)
-        ->names('configuration.role')
-        ->parameters(['role' => 'user']);
+        Route::resource('role', RoleConfigurationController::class)
+            ->names('configuration.role')
+            ->parameters(['role' => 'user']);
 
-    Route::get('/', IndexConfigurationController::class)
-        ->name('configuration.index');
-});
+        Route::resource('company', CompanyConfigurationContoller::class)
+            ->names('configuration.company');
+
+        Route::get('/', IndexConfigurationController::class)
+            ->name('configuration.index');
+    });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

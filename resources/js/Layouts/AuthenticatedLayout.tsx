@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 
@@ -6,6 +6,7 @@ import { Menubar } from 'primereact/menubar';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import { MenuItem } from 'primereact/menuitem';
+import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
 
 import ApplicationLogo from '@/Components/ApplicationLogo';
@@ -13,6 +14,7 @@ import BackButton from '@/Components/BackButton';
 import BreadCrumb from '@/Components/BreadCrumb';
 import Dropdown from '@/Components/Dropdown';
 import Icon from '@/Components/Icon';
+import useAuth from '@/Hook/useAuth';
 import useNotification from '@/Hook/useNotification';
 import { PageProps } from '@/types';
 
@@ -26,9 +28,13 @@ type Props = PageProps & PropsWithChildren & {
 };
 
 export default function Authenticated({ auth, title, errors, children, breadCrumb = [], showBack, titleBack, subMenu }: Props) {
-  const { props: { urlPrev } } = usePage<PageProps>();
+  const { props: { urlPrev, message } } = usePage<PageProps>();
+  const toast = useRef<Toast | null>(null);
   const setCommentId = useNotification(state => state.setCommentId);
   const [notifications, setNotifications] = useState<any>(auth.notifications);
+
+  const { hasRol } = useAuth();
+  const isAdmin = hasRol('admin');
 
   const command = (data: any) => router.visit(route(data.item.route));
 
@@ -65,9 +71,17 @@ export default function Authenticated({ auth, title, errors, children, breadCrum
       .error((status: any) => console.log("AuthenticatedLayout", status));
   }, []);
 
+  useEffect(() => {
+    if (message) {
+      toast.current?.show({ severity: message.type, detail: message.detail });
+    }
+  }, [message]);
+
   return (
     <>
       <ConfirmDialog />
+      <Toast ref={toast} />
+
       <div className="min-h-screen bg-fondo">
         <Head title={title} />
 
@@ -132,7 +146,7 @@ export default function Authenticated({ auth, title, errors, children, breadCrum
 
                   <Dropdown.Content>
                     <Dropdown.Link href={route('profile.edit')} className="!text-base">Mi Información</Dropdown.Link>
-                    {auth.isAdmin &&
+                    {isAdmin &&
                       <Dropdown.Link href={route('setting.edit')} className="!text-base">Configuración</Dropdown.Link>
                     }
                     <Dropdown.Link href={route('logout')} className="!text-base" method="post" as="button">

@@ -21,11 +21,11 @@ const DialogMovimiento = ({ proceso, model = [], visible, onHide }: Props) => {
   const [dialog, setDialog] = useState(false);
   const [detalle, setDetalle] = useState([]);
 
-  const classHeader = 'text-center';
+  const classHeader = '!text-center text-lg';
   const classBody = '!text-center';
 
-  const handleDetalle = async (movimiento: any) => {
-    router.visit(route('proceso.movimiento.show', movimiento));
+  const handleDetalle = async (data: any) => {
+    router.visit(route('judicial.movimient.show', [data.proceso_id, data.id]));
   };
 
   const bodyDemandadoProcesado = (data: any) => (
@@ -39,7 +39,7 @@ const DialogMovimiento = ({ proceso, model = [], visible, onHide }: Props) => {
       <SecondaryButton
         severe="info"
         icon="fas fa-folder fa-lg"
-        onClick={() => handleDetalle(data.id)}
+        onClick={() => handleDetalle(data)}
       />
     </div>
   );
@@ -48,15 +48,15 @@ const DialogMovimiento = ({ proceso, model = [], visible, onHide }: Props) => {
     <>
       <DialogMovimientoDetalle model={detalle} visible={dialog} onHide={() => setDialog(false)} />
 
-      <Dialog header="Procesos Judiciales \ Movimientos" visible={visible} className="w-[80rem]" onHide={onHide}>
+      <Dialog header="Procesos Judiciales \ Movimientos" visible={visible} className="w-[80%]" onHide={onHide}>
         <DataTable value={model} size="small">
-          <Column field="fecha" header="Fecha" headerClassName={classHeader} bodyClassName={classBody} />
-          <Column field="numero_ingreso" header="Numero Ingreso" headerClassName={classNames(classHeader, 'w-14')} bodyClassName={classBody} />
-          <Column field="dependencia_jurisdiccional" header="Dependencia jurisdiccional" headerClassName={classNames(classHeader, 'w-64')} bodyClassName={classBody} />
-          <Column field="actor_ofendido" header="Actor / Ofendido" headerClassName={classNames(classHeader, 'w-32')} bodyClassName={classBody} />
-          <Column field="accion_infraccion" header="Accion / Infraccion" headerClassName={classNames(classHeader, 'w-40')} bodyClassName={classBody} />
-          <Column field="demandado_procesado" body={bodyDemandadoProcesado} header="Demandado / Procesado" headerClassName={classHeader} bodyClassName={classBody} />
-          <Column body={bodyAcciones} header="Acciones" headerClassName={classNames(classHeader, 'w-22')} />
+          <Column field="fecha" header="Fecha" headerClassName={classNames(classHeader, 'w-[11%]')} />
+          <Column field="numero_ingreso" header="Numero Ingreso" headerClassName={classNames(classHeader, 'w-[9%]')} bodyClassName={classBody} />
+          <Column field="dependencia_jurisdiccional" header="Dependencia jurisdiccional" headerClassName={classNames(classHeader, 'w-[26%]')} bodyClassName={classBody} />
+          <Column field="actor_ofendido" header="Actor / Ofendido" headerClassName={classNames(classHeader, 'w-[10%]')} bodyClassName={classBody} />
+          <Column field="accion_infraccion" header="Accion / Infraccion" headerClassName={classNames(classHeader, 'w-[12%]')} bodyClassName={classBody} />
+          <Column field="demandado_procesado" body={bodyDemandadoProcesado} header="Demandado / Procesado" headerClassName={classNames(classHeader, 'w-[26%]')} bodyClassName={classBody} />
+          <Column body={bodyAcciones} header="Acciones" headerClassName={classNames(classHeader, 'w-[3rem]')} />
         </DataTable>
       </Dialog>
     </>

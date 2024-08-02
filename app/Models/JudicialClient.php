@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\DropdownTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class JudicialClient extends Model
 {
-    use HasFactory;
+    use HasFactory, DropdownTrait;
 
     protected $table = "judicial_clients";
 
@@ -16,4 +18,9 @@ class JudicialClient extends Model
         'ruc',
         'billed_by',
     ];
+
+    public function judicials(): HasMany
+    {
+        return $this->hasMany(Proceso::class);
+    }
 }
