@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Errors } from '@inertiajs/core';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { PageProps } from '@/types';
+import { DropdownType, PageProps } from '@/types';
 
 import CreateSingleForm from './Partials/CreateSingleForm';
 
 type Props = PageProps & {
-  users: any[];
+  companies: DropdownType[];
 };
 
-export default function Create({ app, auth, users }: Props) {
+export default function Create({ app, auth, companies }: Props) {
   const [errors, setErrors] = useState<Errors>();
 
   return (
@@ -28,7 +28,7 @@ export default function Create({ app, auth, users }: Props) {
           }
 
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <CreateSingleForm users={users} onErrors={setErrors} />
+            <CreateSingleForm companies={companies} onErrors={setErrors} />
           </div>
         </div>
       </div>

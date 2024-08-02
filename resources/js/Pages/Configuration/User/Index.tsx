@@ -17,6 +17,7 @@ type Props = PageProps & {
 
 export default function Index({ app, auth, errors, models }: Props) {
   const { visible, handleShow, handleHide } = useDialog();
+  const classHeader = '!text-center text-lg';
 
   const handleSendRegister = (data: any) => {
     confirmDialog({
@@ -32,17 +33,7 @@ export default function Index({ app, auth, errors, models }: Props) {
     })
   };
 
-  const buttonsTemplate = (data: any) => {
-    return (
-      <>
-        <Button icon="pi pi-envelope" severity="info" onClick={() => handleSendRegister(data)} />
-      </>
-    )
-  };
-
-  const handleAdd = () => {
-    handleShow();
-  };
+  const handleAdd = () => handleShow();
 
   const handleDelete = (data: any) => {
     confirmDialog({
@@ -57,6 +48,12 @@ export default function Index({ app, auth, errors, models }: Props) {
       },
     });
   };
+
+  const buttonsTemplate = (data: any) => (
+    <>
+      <Button icon="pi pi-envelope" severity="info" onClick={() => handleSendRegister(data)} />
+    </>
+  );
 
   return (
     <>
@@ -75,10 +72,10 @@ export default function Index({ app, auth, errors, models }: Props) {
           onAdd={handleAdd}
           onDelete={handleDelete}
         >
-          <Column field="name" header="Nombre y Apellido" style={{ width: '25%' }} />
-          <Column field="nickname" header="Username" style={{ width: '20%' }} />
-          <Column field="email" header="Correo" style={{ width: '40%' }} />
-          <Column field="email_verified_at" header="Fecha de verificación" style={{ width: '15%' }} />
+          <Column field="name" header="Nombre y Apellido" headerClassName={classHeader} style={{ width: '25%' }} />
+          <Column field="nickname" header="Username" headerClassName={classHeader} style={{ width: '20%' }} />
+          <Column field="email" header="Correo" headerClassName={classHeader} style={{ width: '37%' }} />
+          <Column field="email_verified_at" headerClassName={classHeader} header="Fecha de verificación" style={{ width: '18%' }} />
         </DataTable>
       </Authenticated>
     </>

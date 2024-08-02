@@ -23,7 +23,7 @@ export default function Dashboard({ app, auth, movimientos = [], errors }: Props
         <div className={classNames(className)} onClick={handleVisit('judicial.dashboard')}>
           <span>JUDICIAL</span>
         </div>
-        <div className={classNames(className)}>
+        <div className={classNames(className)} onClick={handleVisit('coercive.clients.index')}>
           <span>COACTIVA</span>
         </div>
         <div className={classNames(className)}>

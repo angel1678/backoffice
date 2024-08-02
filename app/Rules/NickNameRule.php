@@ -18,7 +18,7 @@ class NickNameRule implements ValidationRule
     {
         collect($value)->each(function ($nickName) use ($fail) {
             if (!User::where('nickname', Str::replace('@', '', $nickName))->exists()) {
-                $fail("El existe usuario con alias {$nickName}.");
+                $fail("El usuario existe con alias {$nickName}.");
             }
         });
     }

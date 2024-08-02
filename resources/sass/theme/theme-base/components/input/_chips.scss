@@ -10,6 +10,10 @@
 
         &:not(.p-disabled).p-focus {
             @include focused-input();
+
+            input {
+                box-shadow: none;
+            }
         }
 
         .p-chips-token {
@@ -26,7 +30,7 @@
 
         .p-chips-input-token {
             padding: math.div(nth($inputPadding, 1), 2) 0;
-                
+
             input {
                 font-family: $fontFamily;
                 font-size: $fontSize;

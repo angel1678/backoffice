@@ -1,16 +1,16 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import { Link, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
+import { DataTable, DataTableSelectEvent } from 'primereact/datatable';
+import { MenuItem } from 'primereact/menuitem';
 
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import dateFormatLong from '@/Helper/dateFormatLong';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import { MenuItem } from 'primereact/menuitem';
-import { classNames } from 'primereact/utils';
+
 import NotificationLink from './Partials/NotificationLink';
 
 const breadCrumb = [
@@ -25,39 +25,43 @@ type Props = PageProps & {
 
 const subMenu: MenuItem[] = [
   { label: 'Inicio', url: 'judicial.dashboard' },
-  { label: 'Lista de procesos', url: 'judicial.proceso.index' },
+  { label: 'Lista de procesos', url: 'judicial.process.index' },
   { label: 'Reporteria' },
   { label: 'Gestión de plantillas' },
 ];
 
-export default function Index({ app, auth, movimientos = [], judicialNotification, typeNotification, errors }: Props) {
+export default function Index({ app, auth, judicialNotification, typeNotification, errors }: Props) {
   const dateNow = dayjs();
 
   const handleCreateClient = () => router.visit(route('judicial.client.create'));
-  const handleCreateProcess = () => router.visit(route('judicial.proceso.create'));
+  const handleCreateProcess = () => router.visit(route('judicial.process.create'));
 
-  const handleDetalle = async (movimiento: any) => {
-    router.visit(route('proceso.movimiento.show', movimiento));
+  const handleDetalle = async (id: string) => {
+    router.visit(route('judicial.notification.show', id));
   };
 
-  const handleJudiciaryActive = () => router.visit(route('proceso.index'));
+  const handleRowSelect = ({ data }: DataTableSelectEvent) => {
+    handleDetalle(data.id);
+  };
 
-  const bodyTituloAccionInfraccion = (data: any) => (
-    <div>
-      <div>{data.titulo}</div>
-      <div>{data.accion_infraccion}</div>
-    </div>
-  );
+  // const handleJudiciaryActive = () => router.visit(route('proceso.index'));
 
-  const bodyAcciones = (data: any) => (
-    <div className="flex gap-1 justify-center m-1">
-      <SecondaryButton
-        severe="info"
-        icon="fas fa-folder fa-lg"
-        onClick={() => handleDetalle(data.movimiento_id)}
-      />
-    </div>
-  );
+  // const bodyTituloAccionInfraccion = (data: any) => (
+  //   <div>
+  //     <div>{data.titulo}</div>
+  //     <div>{data.accion_infraccion}</div>
+  //   </div>
+  // );
+
+  // const bodyAcciones = (data: any) => (
+  //   <div className="flex gap-1 justify-center m-1">
+  //     <SecondaryButton
+  //       severe="info"
+  //       icon="fas fa-folder fa-lg"
+  //       onClick={() => handleDetalle(data.movimiento_id)}
+  //     />
+  //   </div>
+  // );
 
   return (
     <AuthenticatedLayout app={app} auth={auth} subMenu={subMenu} title="Dashboard" breadCrumb={breadCrumb} errors={errors}>
@@ -73,13 +77,13 @@ export default function Index({ app, auth, movimientos = [], judicialNotificatio
         <div className="flex w-full" style={{ height: 'calc(100vh - 24rem)' }}>
           <div className="flex flex-col gap-4 items-center pt-12 w-1/4 bg-[#dbecfe] rounded-l-xl">
             <NotificationLink
-              routeName="judicial.notification"
+              routeName="judicial.notification.index"
               title="Notificaciones nuevas"
               type="unread"
               value={typeNotification}
             />
             <NotificationLink
-              routeName="judicial.notification"
+              routeName="judicial.notification.index"
               title="Notificaciones leidas"
               type="read"
               value={typeNotification}
@@ -89,7 +93,7 @@ export default function Index({ app, auth, movimientos = [], judicialNotificatio
             <DataTable
               value={judicialNotification}
               selectionMode="single"
-              onSelect={e => console.log(e)}
+              onRowSelect={handleRowSelect}
               rowClassName={() => "text-sm"}
             >
               <Column header="Usuario" style={{ width: '25%' }} />

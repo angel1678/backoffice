@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Judicial;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class NotificationController extends Controller
+class IndexNotificationController extends Controller
 {
     /**
      * Handle the incoming request.

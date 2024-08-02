@@ -40,18 +40,18 @@ class ClientAccountController extends Controller
         $query = $client->accounts();
         $query->when($user->isNotAn('admin'), function ($query) use ($user) {
             $query->where('executive_id', $user->id);
-        })->when(!empty($stage), function ($query) use($stage) {
+        })->when(!empty($stage), function ($query) use ($stage) {
             $query->where('stage_id', $stage);
-        })->when(!empty($search), function ($query) use($search) {
-            $query->where(function ($query) use($search) {
+        })->when(!empty($search), function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
                 $query->where('process', 'like', "%{$search}%")
                     ->orWhere('identification', 'like', "{$search}%")
                     ->orWhere('name', 'like', "%{$search}%");
             });
         })->where('client_id', $client->id)
-        ->withCasts([
-            'principal_amount' => CurrencyFormat::class
-        ]);
+            ->withCasts([
+                'principal_amount' => CurrencyFormat::class
+            ]);
 
         $accounts = $query->paginate(100);
 
@@ -138,7 +138,7 @@ class ClientAccountController extends Controller
             ->get();
 
         return Inertia::render('Coercive/Account/Edit', [
-            'client'=> $client,
+            'client' => $client,
             'account' => $account,
             'contacts' => $contacts,
             'options' => $options,

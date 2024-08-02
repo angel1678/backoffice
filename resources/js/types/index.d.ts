@@ -16,8 +16,21 @@ export interface App {
     notifications: any;
   }
 
+  export interface Message {
+    detail: string;
+    type: "success" | "info" | "warn" | "error" | undefined;
+  }
+
+  export type InvolvedType = 'actor'|'defendant';
+
+  export interface DropdownType {
+    value: any;
+    label: string;
+  }
+
   export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     app: App,
     auth: Auth,
     urlPrev?: string;
+    message?: Message;
   };

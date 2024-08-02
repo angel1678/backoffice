@@ -3,17 +3,17 @@ import { Errors } from '@inertiajs/core';
 import { useForm } from '@inertiajs/react';
 
 import { Dropdown } from 'primereact/dropdown';
-import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
 
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
+import { DropdownType } from '@/types';
 
 type Props = {
   className?: string;
-  users?: any[];
+  companies?: DropdownType[];
   onErrors: (errors: Errors) => void;
 };
 
@@ -23,8 +23,10 @@ type State = {
   billedBy: number;
 };
 
-export default function CreateSingleForm({ className, users, onErrors }: Props) {
-  const { data, errors, post, processing, setData, reset } = useForm<State>();
+export default function CreateSingleForm({ className, companies, onErrors }: Props) {
+  const { data, errors, post, processing, setData, reset } = useForm<State>({
+    clientName: '', identification: '', billedBy: 0
+  });
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +34,8 @@ export default function CreateSingleForm({ className, users, onErrors }: Props) 
     post(route('judicial.client.store'), {
       preserveScroll: true,
       preserveState: true,
-      onError: (errors) => onErrors && onErrors(errors)
+      onSuccess: () => reset(),
+      onError: (errors) => onErrors && onErrors(errors),
     });
   };
 
@@ -72,7 +75,7 @@ export default function CreateSingleForm({ className, users, onErrors }: Props) 
 
           <Dropdown
             id="billedBy"
-            options={users}
+            options={companies}
             className="mt-1 w-full"
             value={data.billedBy}
             onChange={e => setData('billedBy', e.target.value)}
