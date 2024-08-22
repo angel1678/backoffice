@@ -8,10 +8,11 @@ use Inertia\Response;
 use App\Models\Proceso;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Models\JudicialFile;
+use App\Enums\ProcessStatus;
 use Illuminate\Http\Request;
 use App\Models\JudicialClient;
 use App\Models\JudicialInvolved;
+use BenSampo\Enum\Rules\EnumKey;
 use App\Data\JudicialProcessData;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -37,7 +38,7 @@ class ProcessController extends Controller
                     ->orWhereRelation('associates', 'user_id', $user->id);
             });
         })->when($status != null, function ($query) use ($status) {
-            $query->where('activo', $status);
+            $query->where('status', $status);
         })->when(!empty($search), function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
                 $query->whereRaw("CONCAT(judicatura_id, '-', anio_id, '-', numero_id) like '{$search}%'")
@@ -52,11 +53,15 @@ class ProcessController extends Controller
 
         $movimients = session('movimients');
 
+        $statusType = Type::group('JUDICIAL_STATE')
+            ->get();
+
         return inertia('Judicial/Proceso/Index', [
             'procesos' => $procesos,
             'movimients' => $movimients,
             'search' => $search,
             'status' => $status,
+            'statusType' => $statusType,
         ]);
     }
 
@@ -72,6 +77,8 @@ class ProcessController extends Controller
 
         $personWhoPays = Type::group('PERSON_WHO_PAYS')->get();
         $relevantInformation = Type::group('RELEVANT_INFORMATION')->get();
+        $proceduresType = Type::group('PROCEDURE_TYPE')->get();
+        $proceduralStage = session('proceduralStage');
 
         $defendantsType = session('defendantsType');
         $clientSelected = session('clientSelected');
@@ -84,6 +91,8 @@ class ProcessController extends Controller
             'defendants' => $defendants,
             'defendantsType' => $defendantsType,
             'personWhoPays' => $personWhoPays,
+            'proceduresType' => $proceduresType,
+            'proceduralStage' => $proceduralStage,
             'relevantInformation' => $relevantInformation,
             'users' => $users,
         ]);
@@ -100,8 +109,9 @@ class ProcessController extends Controller
         try {
             $judicialProcess = Proceso::create($data->toArray());
             $judicialProcess->associates()->attach($data->responsible);
-            $judicialProcess->actors()->sync($data->actors);
-            $judicialProcess->defendants()->sync($data->defendants);
+            $judicialProcess->involved()->sync(
+                collect($data->actors)->concat($data->defendants)
+            );
 
             collect($request->file('files'))
                 ->each(function ($file) use ($judicialProcess, $data) {
@@ -141,9 +151,31 @@ class ProcessController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Proceso $proceso)
+    public function update(Request $request, Proceso $process)
     {
-        //
+        $message = '';
+
+        $data = (object) $request->validate([
+            'status' => ['nullable', new EnumKey(ProcessStatus::class)]
+        ]);
+
+        DB::beginTransaction();
+        try {
+            if ($data->status) {
+                $process->status = ProcessStatus::fromKey($data->status);
+                $message = "El estado cambio a {$request->status}";
+            }
+
+            if ($process->isDirty()) {
+                $process->save();
+            }
+
+            DB::commit();
+            return $this->backSuccess($message);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
     /**

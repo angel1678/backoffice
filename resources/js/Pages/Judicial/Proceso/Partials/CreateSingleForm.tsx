@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Errors } from '@inertiajs/core';
 import { router, useForm } from '@inertiajs/react';
 
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputMask } from 'primereact/inputmask';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
@@ -26,6 +26,7 @@ type Props = {
   defaultUserId: number;
   defendants?: DropdownType[];
   personWhoPays?: DropdownType[];
+  proceduresType?: DropdownType[];
   relevantInformation?: DropdownType[];
   users: DropdownType[];
   onErrors: (errors: Errors) => void;
@@ -47,18 +48,30 @@ type State = {
   files?: File[];
 }
 
-const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultUserId, defendants, personWhoPays, relevantInformation, users, onErrors }: Props) => {
+const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultUserId, defendants, personWhoPays, proceduresType, relevantInformation, users, onErrors }: Props) => {
   const { visible: visibleUpload, handleHide: handleHideUpload, handleShow: handleShowUpload } = useDialog();
   const { visible: visibleActor, handleHide: handleHideActor, handleShow: handleShowActor } = useDialog();
   const [clientDisabled, setClientDisabled] = useState<boolean>(false);
-  const { data, setData, errors, post, reset, processing, transform } = useForm<State>({
-    process: '', responsible: defaultUserId, clientId: clientSelected
+  const { data, setData, errors, post, reset, processing } = useForm<State>({
+    process: '', responsible: defaultUserId, clientId: clientSelected, identification: '', numberOperation: ''
   });
-
-  transform(data => ({ ...data, typeProcedure: 1, proceduralStage: 1 }));
 
   const [involvedType, setInvolvedType] = useState<InvolvedType>();
   const [defendantsType, setDefendantsType] = useState<any[]>();
+  const [proceduralStage, setProceduralStage] = useState<DropdownType[]>();
+
+  const handleTypeOfProcedure = (e: DropdownChangeEvent) => {
+    router.get(route('type.index', { group: 'PROCEDURAL_STAGE', parentId: e.value }), {}, {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: ({ props }) => {
+        const { proceduralStage } = props as any;
+        setProceduralStage(proceduralStage);
+        setData(state => ({ ...state, typeProcedure: e.value, proceduralStage: undefined }));
+      },
+      onError: console.log,
+    });
+  };
 
   const handleSubmit = () => {
     post(route('judicial.process.store'), {
@@ -246,8 +259,12 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
                 inputClassName="w-full"
                 id="amount"
                 value={data.amount}
-                onChange={e => setData('amount', e.value)}
+                onChange={(e: any) => {
+                  console.log(e);
+                  setData('amount', e.value)
+                }}
                 required
+                max={9999999999}
                 mode="decimal"
                 prefix="$ "
                 locale="de-DE"
@@ -278,6 +295,10 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
               <Dropdown
                 className="mt-1 w-full"
                 id="typeOfProcedure"
+                options={proceduresType}
+                value={data.typeProcedure}
+                onChange={handleTypeOfProcedure}
+                required
               />
 
               <InputError message={errors.typeProcedure} className="mt-2" />
@@ -288,6 +309,10 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
               <Dropdown
                 className="mt-1 w-full"
                 id="proceduralStage"
+                options={proceduralStage}
+                value={data.proceduralStage}
+                onChange={e => setData('proceduralStage', e.value)}
+                required
               />
 
               <InputError message={errors.proceduralStage} className="mt-2" />

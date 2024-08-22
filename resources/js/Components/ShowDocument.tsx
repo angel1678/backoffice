@@ -14,10 +14,9 @@ export default function ShowDocument({ documents, onHide, ...props }: Props) {
   const handleShowDocument = (item: any) => {
     router.get(route('judicial.document.show', item.id), {}, {
       preserveState: true,
-      onSuccess: ({ props }) => {
+      onSuccess: async ({ props }) => {
         const { documentSelected } = props as any;
         setDocument(documentSelected);
-        console.log(documentSelected)
       },
     })
   };
@@ -41,7 +40,7 @@ export default function ShowDocument({ documents, onHide, ...props }: Props) {
         </div>
         <div className="w-2/3 border-l-2 ml-4">
           {document
-            ? (<object data={document} type="application/pdf" className="w-full h-full" />)
+            ? (<object data={document} type="text/html" className="w-full h-full" />)
             : (
               <div className="flex w-full h-full justify-center items-center">
                 <span>Debe seleccionar un archivo para visualizarlo.</span>

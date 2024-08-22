@@ -1,32 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
 
 import { Button } from 'primereact/button';
-import { ScrollPanel } from 'primereact/scrollpanel';
-
+import IconButton from '@/Components/IconButton';
+import PrimaryButton from '@/Components/PrimaryButton';
+import ShowDocument from '@/Components/ShowDocument';
+import UploadDocument from '@/Components/UploadDocument';
+import useDialog from '@/Hook/useDialog';
 import useNotification from '@/Hook/useNotification';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import PrimaryButton from '@/Components/PrimaryButton';
-import IconButton from '@/Components/IconButton';
-import useDialog from '@/Hook/useDialog';
-import UploadDocument from '@/Components/UploadDocument';
-import { router } from '@inertiajs/react';
-import ShowDocument from '@/Components/ShowDocument';
+
+import AddUser from './Partial/AddUser';
+import Comments from './Partial/Comments';
+import GeneralComments from './Partial/GeneralComments';
 
 type Props = PageProps & {
-  movimiento: any;
-  detalle: any[];
-  users: any[];
   associates: any[];
+  client: any;
+  detalle: any[];
+  movimiento: any;
+  process: any;
   ownerId: any;
+  users: any[];
+  comments: any[];
 };
 
-export default function Show({ movimiento, users, associates, app, auth, ownerId, errors, ...props }: Props) {
+export default function Show({ client, comments, movimiento, process, users, associates, app, auth, ownerId, errors, ...props }: Props) {
   const commentId = useNotification(state => state.commentId);
-  const { visible: visibleUploadFile, handleShow: handleShowUploadFile, handleHide: handleHideUploadFile } = useDialog();
-  const { visible: visibleFile, handleShow: handleShowFile, handleHide: handleHideFile } = useDialog();
+  const uploadFile = useDialog();
+  const showFile = useDialog();
+  const addUser = useDialog();
+  const generalComments = useDialog();
 
-  const [visible, setVisible] = useState(false);
   const [detalle, setDetalle] = useState(props.detalle);
   const [detailSelected, setDetailSelected] = useState<any>();
   const [files, setFiles] = useState([]);
@@ -35,14 +41,14 @@ export default function Show({ movimiento, users, associates, app, auth, ownerId
     router.post(route('judicial.detail.upload', detailSelected.id), { files }, {
       preserveState: true,
       onSuccess: () => {
-        handleHideUploadFile();
+        uploadFile.handleHide();
       },
     });
   };
 
   const handleAddFile = (item: any) =>
     () => {
-      handleShowUploadFile();
+      uploadFile.handleShow();
       setDetailSelected(item);
     };
 
@@ -53,77 +59,179 @@ export default function Show({ movimiento, users, associates, app, auth, ownerId
         onSuccess: ({ props }) => {
           const { documents } = props as any;
           setFiles(documents);
-          handleShowFile();
+          showFile.handleShow();
         },
       });
     };
+
+  const handleProceduralStage = (status: string) =>
+    () => {
+      console.log(route('judicial.process.update', process.id));
+      router.put(route('judicial.process.update', process.id), { status }, {
+        preserveState: true,
+        preserveScroll: true,
+        onError: console.log,
+      })
+    };
+
+  const handleShowGeneralComments = () => {
+    router.get(route('judicial.comment.index', process.id), {}, {
+      preserveState: true,
+      onSuccess: () => {
+        generalComments.handleShow();
+      },
+    });
+  };
+
+  const headerTemplate = (
+    <div className="flex w-full items-center justify-end">
+      <div className="font-bold text-lg">
+        Numero de proceso: {process.process}
+      </div>
+    </div>
+  );
+
+  useEffect(() => {
+    window.Echo.private(`movimiento_${movimiento.id}`)
+      .listen('ProcesoDetalleComentarioEvent', (e: any) => {
+        setDetalle(state => state.map(item => {
+          if (item.id === e.detalle_id) {
+            return { ...item, comments: [...item.comments, e.comentario] }
+          }
+          return item;
+        }));
+      })
+      .error((status: any) => console.log("ProcesoMovimientoDetalle", status));
+  }, []);
+
+  useEffect(() => {
+    setDetalle(props.detalle);
+  }, [props.detalle]);
+
+  useLayoutEffect(() => {
+    const commentDiv = document.querySelector(`#comment_${commentId}`);
+    if (commentDiv) {
+      commentDiv.scrollIntoView({ behavior: 'smooth' });
+      commentDiv.classList.add('bg-orange-200');
+      setInterval(() => {
+        commentDiv.classList.remove('bg-orange-200');
+      }, 1000);
+    }
+  }, [commentId]);
 
   return (
     <>
       <UploadDocument
         header="Subir documentos"
-        visible={visibleUploadFile}
+        visible={uploadFile.visible}
         onAccept={handleUploadFile}
-        onHide={handleHideUploadFile}
+        onHide={uploadFile.handleHide}
       />
 
       <ShowDocument
         documents={files}
         header="Mostrar documentos"
-        visible={visibleFile}
-        onHide={handleHideFile}
+        visible={showFile.visible}
+        onHide={showFile.handleHide}
       />
 
-      <AuthenticatedLayout app={app} auth={auth} errors={errors} title="Procesos Judiciales" urlBack={route('judicial.process.index')}>
-        {/* <DialogAddUser
+      <AddUser
         ownerId={ownerId}
         procesoId={movimiento.proceso_id}
         users={users}
         associates={associates}
-        visible={visible}
-        onHide={() => setVisible(false)}
-      /> */}
+        visible={addUser.visible}
+        onHide={addUser.handleHide}
+      />
 
+      <GeneralComments
+        header="Observaciones Generales"
+        judicialId={process.id}
+        models={comments}
+        visible={generalComments.visible}
+        onHide={generalComments.handleHide}
+      />
+
+      <AuthenticatedLayout
+        app={app}
+        auth={auth}
+        errors={errors} title="Procesos Judiciales"
+        showBack
+        header={headerTemplate}
+      >
         <div className="flex gap-4">
-          <div className="bg-white rounded-lg shadow-lg w-[30%] px-4 py-2">
-            <div className="font-bold text-lg border-b-2 px-3 py-2">
-              Información
-            </div>
-            <div className="grid p-3">
-              <div className="flex flex-col mb-2">
-                <div className="font-semibold text-sm">Fecha</div>
-                <div>{movimiento.fecha}</div>
+          <div className='flex flex-col gap-2 w-[30%] overflow-auto pr-1' style={{ height: 'calc(100vh - 10rem)' }}>
+            <div className="bg-white rounded-lg shadow-lg px-4 py-2">
+              <div className="font-bold text-lg border-b-2 px-3 py-2">
+                Información
               </div>
-              <div className="flex flex-col mb-2">
-                <div className="font-semibold text-sm">Numero Ingreso</div>
-                <div>{movimiento.numero_ingreso}</div>
-              </div>
-              <div className="flex flex-col mb-2">
-                <div className="font-semibold text-sm">Dependencia / Jurisdiccional</div>
-                <div>{movimiento.dependencia_jurisdiccional}</div>
-              </div>
-              <div className="flex flex-col mb-2">
-                <div className="font-semibold text-sm">Actor / Ofendido</div>
-                <div>{movimiento.actor_ofendido}</div>
-              </div>
-              <div className="flex flex-col mb-2">
-                <div className="font-semibold text-sm">Accion / Infraccion</div>
-                <div>{movimiento.accion_infraccion}</div>
-              </div>
-              <div className="flex flex-col mb-2">
-                <div className="font-semibold text-sm">Demandado / Procesado</div>
-                <div>{movimiento.demandado_procesado}</div>
-              </div>
-              <div className="flex flex-col mb-2">
-                <div className="flex justify-between items-center">
-                  <div className="font-semibold text-sm">Usuarios involucrados</div>
-                  {
-                    ownerId == auth.user.id &&
-                    <Button icon="pi pi-plus" text rounded className="!h-10" onClick={() => setVisible(true)} />
-                  }
+              <div className="grid p-3">
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Fecha</div>
+                  <div>{movimiento.fecha}</div>
                 </div>
-                <div>
-                  {associates.map(i => i.name).join(', ')}
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Numero Ingreso</div>
+                  <div>{movimiento.numero_ingreso}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Dependencia / Jurisdiccional</div>
+                  <div>{movimiento.dependencia_jurisdiccional}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Actor / Ofendido</div>
+                  <div>{movimiento.actor_ofendido}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Accion / Infraccion</div>
+                  <div>{movimiento.accion_infraccion}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Demandado / Procesado</div>
+                  <div>{movimiento.demandado_procesado}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="flex justify-between items-center">
+                    <div className="font-bold text-sm">Usuarios involucrados</div>
+                    {
+                      ownerId == auth.user.id &&
+                      <Button icon="pi pi-plus" text rounded className="!h-10" onClick={addUser.handleShow} />
+                    }
+                  </div>
+                  <div>
+                    {associates.map(i => i.name).join(', ')}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-lg shadow-lg px-4 py-2">
+              <div className="font-bold text-lg border-b-2 px-3 py-2">
+                Información del Proceso
+              </div>
+              <div className="grid p-3">
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Cliente</div>
+                  <div>{client.name}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Cuantía</div>
+                  <div>{process.amount}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Procedimiento</div>
+                  <div>{process.procedural_stage}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Usuarios involucrados</div>
+                  <div>{process.actor_names}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Operación</div>
+                  <div>{process.number_operation}</div>
+                </div>
+                <div className="flex flex-col mb-2">
+                  <div className="font-bold text-sm">Demandado</div>
+                  <div>{process.defendant_names}</div>
                 </div>
               </div>
             </div>
@@ -135,7 +243,7 @@ export default function Show({ movimiento, users, associates, app, auth, ownerId
                 Detalle
               </div>
               <div>
-                <div className="w-full overflow-scroll pr-1" style={{ height: 'calc(100vh - 15rem)' }} >
+                <div className="w-full overflow-scroll pr-1" style={{ height: 'calc(100vh - 17.5rem)' }} >
                   <div className="flex flex-col gap-4">
                     {
                       detalle.map((item, index) => (
@@ -152,7 +260,11 @@ export default function Show({ movimiento, users, associates, app, auth, ownerId
                               <IconButton icon="pi pi-search" onClick={handleSearchFile(item)} />
                             </div>
                           </div>
-                          {/* <Comments procesoId={movimiento.proceso_id} detalleId={item.id} comentarios={item.comentarios} /> */}
+                          <Comments
+                            procesoId={movimiento.proceso_id}
+                            detalleId={item.id}
+                            comentarios={item.comments}
+                          />
                         </div>
                       ))
                     }
@@ -162,10 +274,10 @@ export default function Show({ movimiento, users, associates, app, auth, ownerId
             </div>
 
             <div className="flex justify-between">
-              <PrimaryButton label="Observaciones generales" />
+              <PrimaryButton label="Observaciones generales" onClick={handleShowGeneralComments} />
               <PrimaryButton label="Elaborar escrito" />
-              <PrimaryButton label="Enviar a pasivo" />
-              <PrimaryButton label="Restablecer a activo" />
+              <PrimaryButton label="Enviar a pasivo" onClick={handleProceduralStage('pasivo')} disabled={process.status == 71} />
+              <PrimaryButton label="Restablecer a activo" onClick={handleProceduralStage('activo')} disabled={process.status == 70} />
             </div>
           </div>
         </div>

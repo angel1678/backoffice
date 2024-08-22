@@ -11,6 +11,28 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+    <link href="https://fonts.googleapis.com/css?family=Ariel" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Sofia" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" />
+    <style>
+        .ql-font-ariel {
+            font-family: 'Ariel', sans-serif;
+        }
+
+        .ql-font-roboto {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .ql-font-sofia {
+            font-family: 'Sofia', sans-serif;
+        }
+
+        .ql-font-ubuntu {
+            font-family: 'Ubuntu', sans-serif;
+        }
+    </style>
+
     <!-- Scripts -->
     @routes
     @viteReactRefresh

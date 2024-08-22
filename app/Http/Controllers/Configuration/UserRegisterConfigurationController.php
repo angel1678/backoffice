@@ -23,7 +23,8 @@ class UserRegisterConfigurationController extends Controller
             $user->password = Hash::make(Str::random(24));
             $user->save();
 
-            Mail::to($user->email)
+            $email = env('APP_DEBUG') ? env('EMAIL_DEBUG') : $user->email;
+            Mail::to($email)
                 ->send(new UserRegisterMail($user));
 
             DB::commit();

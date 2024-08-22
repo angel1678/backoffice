@@ -2,12 +2,16 @@
 
 namespace App\Data;
 
-use App\Models\Proceso;
-use Spatie\LaravelData\Attributes\MapInputName;
+use App\Enums\ProcessStatus;
 use Spatie\LaravelData\Resource;
+use Spatie\LaravelData\Attributes\Computed;
+use Spatie\LaravelData\Attributes\MapInputName;
 
 class JudicialProcessResource extends Resource
 {
+    #[Computed]
+    public string $statusName;
+
     public function __construct(
         public string $id,
         public string $process,
@@ -21,8 +25,9 @@ class JudicialProcessResource extends Resource
         public string $defendants,
         public ?string $typeProcedure,
         public ?string $proceduralStage,
-        // public string $status,
+        public int $status,
         public string $userName,
     ) {
+        $this->statusName = ProcessStatus::fromValue($status)->key;
     }
 }

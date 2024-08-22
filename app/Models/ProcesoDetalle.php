@@ -22,6 +22,11 @@ class ProcesoDetalle extends Model
         return $this->hasMany(ProcesoComentario::class, 'detalle_id', 'id');
     }
 
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(ProcesoComentario::class, 'judicial');
+    }
+
     public function movimiento(): BelongsTo
     {
         return $this->belongsTo(ProcesoMovimiento::class, 'movimiento_id');

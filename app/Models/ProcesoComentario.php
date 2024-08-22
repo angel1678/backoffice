@@ -39,7 +39,7 @@ class ProcesoComentario extends Model
 
     public function getDateAttribute()
     {
-        return $this->created_at->format('d/M/Y H:i');
+        return $this->created_at->format('d/m/Y H:i');
     }
 
     public function user()

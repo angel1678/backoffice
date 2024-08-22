@@ -27,7 +27,7 @@ const subMenu: MenuItem[] = [
   { label: 'Inicio', url: 'judicial.dashboard' },
   { label: 'Lista de procesos', url: 'judicial.process.index' },
   { label: 'Reporteria' },
-  { label: 'Gestión de plantillas' },
+  { label: 'Gestión de plantillas', url: 'management.index' },
 ];
 
 export default function Index({ app, auth, judicialNotification, typeNotification, errors }: Props) {

@@ -14,28 +14,24 @@ import DialogMovimiento from '@/Components/DialogMovimiento';
 // import DialogLastUpdate from '@/Components/DialogLastUpdate';
 import useAuth from '@/Hook/useAuth';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { PageProps } from '@/types';
+import { DropdownType, PageProps } from '@/types';
 
 type Props = PageProps & {
   procesos: any;
   isLastUpdates: boolean;
+  statusType: DropdownType[];
 };
-
-const optionsStatus = [
-  { label: 'Activo', value: '1' },
-  { label: 'Inactivo', value: '0' },
-];
 
 const breadCrumb = [
   { label: 'Judicial', icon: 'judicial' },
   { label: 'Todos los procesos' }
 ];
 
-export default function Proceso({ app, auth, errors, procesos, search, status, isLastUpdates }: Props) {
+export default function Proceso({ app, auth, errors, procesos, search, status, statusType, isLastUpdates }: Props) {
   const { isAdmin } = useAuth();
 
   const [hasFilter, setHasFilter] = useState(false);
-  const [filters, setFilters] = useState({ statu: '', search: '' });
+  const [filters, setFilters] = useState({ status: '', search: '' });
 
   const classHeader = '!text-center text-lg';
   const classBody = '!text-center';
@@ -147,11 +143,11 @@ export default function Proceso({ app, auth, errors, procesos, search, status, i
             </span>
           </div>
           <Dropdown
-            name="statu"
+            name="status"
             placeholder="Selecione un estado"
-            options={optionsStatus}
+            options={statusType}
             showClear
-            value={filters.statu}
+            value={filters.status}
             onChange={handleChange}
           />
         </div>
@@ -197,7 +193,7 @@ export default function Proceso({ app, auth, errors, procesos, search, status, i
           isAdmin() &&
           <Column field="userName" header="Usuario" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
         }
-        <Column field="status" header="Estatus" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
+        <Column field="statusName" header="Estatus" headerClassName={classNames(classHeader, 'w-48')} bodyClassName={classBody} />
         <Column body={actionsBodyTemplate} header="Acciones" headerClassName={classNames(classHeader, 'w-36')} bodyClassName={classBody} />
       </DataTable>
     </AuthenticatedLayout>

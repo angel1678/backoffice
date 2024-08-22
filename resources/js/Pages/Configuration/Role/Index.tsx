@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { router } from '@inertiajs/react';
 import { Column, ColumnBodyOptions } from 'primereact/column';
 import { confirmDialog } from 'primereact/confirmdialog';
 import DataTable from '@/Components/DataTable';
+import PrimaryButton from '@/Components/PrimaryButton';
 import useDialog from '@/Hook/useDialog';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
 
 import Form from './Partials/Form';
-import { router } from '@inertiajs/react';
 
 type Props = PageProps & {
   models: any[];
@@ -15,6 +16,8 @@ type Props = PageProps & {
 };
 
 export default function Index({ app, auth, errors, models }: Props) {
+  const classHeader = 'text-lg';
+
   const { visible, handleShow, handleHide } = useDialog();
   const [edit, setEdit] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>();
@@ -60,8 +63,28 @@ export default function Index({ app, auth, errors, models }: Props) {
     });
   };
 
+  const handleSendRegister = (data: any) => {
+    confirmDialog({
+      header: 'Notificar registro',
+      message: 'Esta seguro de realizar la notificación, esto reseteara la contraseña del usuario y el email verificado.',
+      acceptLabel: 'Aceptar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        router.get(route('configuration.user.register', data?.id), {}, {
+          preserveState: true,
+        });
+      }
+    })
+  };
+
   const rolesTemplate = (data: any, options: ColumnBodyOptions) => (
     <span>{data[options.field].map((e: any) => e.title).join(', ')}</span>
+  );
+
+  const buttonsTemplate = (data: any) => (
+    <>
+      <PrimaryButton icon="pi pi-envelope" severity="info" onClick={() => handleSendRegister(data)} />
+    </>
   );
 
   return (
@@ -76,6 +99,7 @@ export default function Index({ app, auth, errors, models }: Props) {
       />
       <Authenticated app={app} auth={auth} errors={errors} title="Roles">
         <DataTable
+          buttons={buttonsTemplate}
           value={models}
           scrollHeight="calc(100vh - 13rem)"
           title="Roles del sistema"
@@ -84,9 +108,11 @@ export default function Index({ app, auth, errors, models }: Props) {
           onEdit={handleEdit}
           onDelete={handleDelete}
         >
-          <Column field="name" header="Nombre" style={{ width: '30%' }} />
-          <Column field="email" header="Correo" style={{ width: '40%' }} />
-          <Column field="roles" header="Roles" body={rolesTemplate} style={{ width: '30%' }} />
+          <Column field="name" header="Nombre" headerClassName={classHeader} style={{ width: '15%' }} />
+          <Column field="nickname" header="Username" headerClassName={classHeader} style={{ width: '15%' }} />
+          <Column field="email" header="Correo" headerClassName={classHeader} style={{ width: '25%' }} />
+          <Column field="email_verified_at" headerClassName={classHeader} header="Fecha de verificación" style={{ width: '15%' }} />
+          <Column field="roles" header="Roles" headerClassName={classHeader} body={rolesTemplate} style={{ width: '30%' }} />
         </DataTable>
       </Authenticated>
     </>

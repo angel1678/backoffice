@@ -15,15 +15,15 @@ type Props = DataTableProps<any> & {
   onDelete?: (data: any) => void;
 }
 
-export default function DataTable({ children, hiddenButtons, hiddenHeader, scrollHeight, title, onAdd, onEdit, onDelete, ...props }: Props) {
+export default function DataTable({ buttons, children, hiddenButtons, hiddenHeader, scrollHeight, title, onAdd, onEdit, onDelete, ...props }: Props) {
 
   const handleAdd = () => onAdd && onAdd();
   const handleEdit = (data: any) => onEdit && onEdit(data);
   const handleDelete = (data: any) => onDelete && onDelete(data);
 
-  const buttons = (data: any) => (
+  const buttonsTemplate = (data: any) => (
     <div className="flex gap-1">
-      {props?.buttons && props?.buttons(data)}
+      {buttons && buttons(data)}
       <Button icon="pi pi-pencil" severity="success" onClick={() => handleEdit(data)} />
       <Button icon="pi pi-trash" severity="secondary" onClick={() => handleDelete(data)} />
     </div>
@@ -50,7 +50,7 @@ export default function DataTable({ children, hiddenButtons, hiddenHeader, scrol
         >
           {children}
           {!hiddenButtons &&
-            <Column body={buttons} style={{ width: '6rem' }} />
+            <Column body={buttonsTemplate} style={{ width: '6rem' }} />
           }
         </Component>
       </div>

@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import { DialogProps } from 'primereact/dialog';
 import { InputSwitch } from 'primereact/inputswitch';
+import { InputText } from 'primereact/inputtext';
 
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import FormDialog from '@/Components/FormDialog';
-import { Dropdown } from 'primereact/dropdown';
 
 type Props = DialogProps & {
   edit?: boolean;
@@ -15,13 +15,15 @@ type Props = DialogProps & {
 }
 
 type Status = {
-  userId?: number;
+  name?: string;
+  nickname?: string;
+  email?: string;
   roles: any;
 }
 
 export default function Form({ edit, formOptions, model, onHide, ...props }: Props) {
   const { data, errors, post, put, reset, setData } = useForm<Status>({
-    roles: {}
+    roles: {}, name: '', nickname: '', email: ''
   });
 
   const handleReject = () => {
@@ -41,9 +43,10 @@ export default function Form({ edit, formOptions, model, onHide, ...props }: Pro
   };
 
   useEffect(() => {
-    console.log(formOptions);
-    setData('roles', formOptions?.roles || {});
-  }, [formOptions]);
+    if (edit) {
+      setData({ roles: formOptions?.roles || {}, name: model?.name, email: model?.email, nickname: model?.nickname });
+    }
+  }, [formOptions, model]);
 
   return (
     <FormDialog
@@ -53,19 +56,40 @@ export default function Form({ edit, formOptions, model, onHide, ...props }: Pro
       onHide={handleReject}
       onReject={handleReject}
     >
-      {!edit && (
-        <div>
-          <InputLabel htmlFor="userId" value="Usuario:" />
-          <Dropdown
-            className="w-full"
-            name="userId"
-            options={formOptions?.users}
-            value={data.userId}
-            onChange={e => setData('userId', e.value)}
-          />
-          <InputError message={errors.userId} />
-        </div>
-      )}
+      <div>
+        <InputLabel htmlFor="name" value="Nombre:" />
+        <InputText
+          className="w-full"
+          name="name"
+          disabled={edit}
+          value={data.name}
+          onChange={e => setData('name', e.target.value)}
+        />
+        <InputError message={errors.name} />
+      </div>
+      <div>
+        <InputLabel htmlFor="nickname" value="Username:" />
+        <InputText
+          className="w-full"
+          name="nickname"
+          disabled={edit}
+          value={data.nickname}
+          onChange={e => setData('nickname', e.target.value)}
+        />
+        <InputError message={errors.nickname} />
+      </div>
+      <div>
+        <InputLabel htmlFor="email" value="Correo electronico:" />
+        <InputText
+          className="w-full"
+          name="email"
+          disabled={edit}
+          type="email"
+          value={data.email}
+          onChange={e => setData('email', e.target.value)}
+        />
+        <InputError message={errors.email} />
+      </div>
       <div>
         <InputLabel htmlFor="roles" value="Roles:" />
         <div>

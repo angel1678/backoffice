@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DialogProps } from 'primereact/dialog';
 
 import FormDialog from './FormDialog';
 import TextInput from './TextInput';
+import PrimaryButton from './PrimaryButton';
 
 type Props = DialogProps & {
   onAccept?: (file: File[]) => void;
 }
 
 export default function UploadDocument({ onAccept, onHide, ...props }: Props) {
+  const inputFile = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<File[]>([]);
 
   const handleReject = () => {
@@ -38,17 +40,26 @@ export default function UploadDocument({ onAccept, onHide, ...props }: Props) {
       onHide={handleReject}
       onReject={handleReject}
     >
-      <TextInput
-        id="fileProcesos"
-        className="mt-1 block w-full"
-        type="file"
-        onChange={(e) => {
-          if (e.target.files) {
-            const [file] = e.target.files;
-            setFiles(state => [...state, file]);
-          }
-        }}
-      />
+      <div>
+        <TextInput
+          id="fileProcesos"
+          ref={inputFile}
+          style={{ 'display': 'none' }}
+          accept=".docx, .pdf"
+          type="file"
+          onChange={(e) => {
+            if (e.target.files) {
+              const [file] = e.target.files;
+              setFiles(state => [...state, file]);
+            }
+          }}
+        />
+        <PrimaryButton
+          className="w-full"
+          label="Cargar documento"
+          onClick={() => inputFile.current?.click()}
+        />
+      </div>
       <div className="flex flex-col gap-4 mt-4">
         {
           files.map(file => (
