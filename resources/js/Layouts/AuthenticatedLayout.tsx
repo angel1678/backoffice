@@ -25,9 +25,10 @@ type Props = PageProps & PropsWithChildren & {
   showBack?: boolean;
   titleBack?: string;
   subMenu?: MenuItem[];
+  header?: React.ReactNode;
 };
 
-export default function Authenticated({ auth, title, errors, children, breadCrumb = [], showBack, titleBack, subMenu }: Props) {
+export default function Authenticated({ auth, title, errors, children, breadCrumb = [], showBack, titleBack, subMenu, header }: Props) {
   const { props: { urlPrev, message } } = usePage<PageProps>();
   const toast = useRef<Toast | null>(null);
   const setCommentId = useNotification(state => state.setCommentId);
@@ -42,7 +43,7 @@ export default function Authenticated({ auth, title, errors, children, breadCrum
     { label: 'Inicio', className: 'font-semibold', icon: (<Icon name="home" className="h-6 mr-2" />), route: 'dashboard', command },
     { label: 'Judicial', className: 'font-semibold', icon: (<Icon name="judicial" className="h-6 mr-2" />), route: 'judicial.dashboard', command },
     { label: 'Coactiva', className: 'font-semibold', icon: (<Icon name="coactiva" className="h-6 mr-2" />), route: 'coercive.clients.index', command },
-    { label: 'Configuración', className: 'font-semibold', route: 'configuration.index', command },
+    { label: 'Configuración', className: 'font-semibold', icon: (<Icon name="configuracion" className="h-6 mr-2" />), route: 'configuration.index', command },
   ];
 
   const handleNoification = (notification: any) =>
@@ -174,7 +175,7 @@ export default function Authenticated({ auth, title, errors, children, breadCrum
         )}
         <div style={{ overflow: "scroll", height: heightBySubMenu() }}>
           <main className="mt-[1.75rem] px-[2.75rem]">
-            <div className="mb-6">
+            <div className="mb-6 flex">
               {breadCrumb && <BreadCrumb items={breadCrumb} />}
 
               {showBack && (
@@ -183,6 +184,7 @@ export default function Authenticated({ auth, title, errors, children, breadCrum
                   <label className="text-2xl font-extrabold">{titleBack}</label>
                 </div>
               )}
+              {header && header}
             </div>
 
             {children}

@@ -173,7 +173,7 @@ class ProcesoController extends Controller
             foreach ($movimientos as $movimiento) {
                 $detalles = $movimiento->detalle();
                 foreach ($detalles as $detalle) {
-                    $detalle->comentarios()->delete();
+                    $detalle->comments()->delete();
                     $detalle->delete();
                 }
                 $movimiento->delete();

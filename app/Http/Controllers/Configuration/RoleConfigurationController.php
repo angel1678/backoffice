@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Configuration;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Mail\UserRegisterMail;
 use Silber\Bouncer\Database\Role;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class RoleConfigurationController extends Controller
 {
@@ -58,7 +62,9 @@ class RoleConfigurationController extends Controller
     public function store(Request $request)
     {
         $data = (object) $request->validate([
-            'userId' => ['required', 'exists:users,id'],
+            'name' => ['required', 'string'],
+            'nickname' => ['required', 'string'],
+            'email' => ['required', 'email'],
             'roles' => ['required', 'array'],
             'roles.admin' => ['boolean'],
             'roles.accountant' => ['boolean'],
@@ -68,13 +74,24 @@ class RoleConfigurationController extends Controller
 
         DB::beginTransaction();
         try {
-            $user = User::find($data->userId);
+            $user = User::create([
+                'name' => $data->name,
+                'nickname' => $data->nickname,
+                'email' => $data->email,
+                'password' => Hash::make(Str::random(24)),
+            ]);
+
             $roles = collect($data->roles)
                 ->filter(fn ($value) => $value)
                 ->keys()
                 ->toArray();
 
             $user->assign($roles);
+
+            $email = env('APP_DEBUG') ? env('EMAIL_DEBUG') : $user->email;
+            Mail::to($email)
+                ->send(new UserRegisterMail($user));
+
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -98,10 +115,10 @@ class RoleConfigurationController extends Controller
     public function edit(User $user)
     {
         $roles = Role::leftJoin('assigned_roles', function ($query) use ($user) {
-                $query->on('assigned_roles.role_id', '=', 'roles.id')
-                    ->where('assigned_roles.entity_type', 'App\Models\User')
-                    ->where('assigned_roles.entity_id', '=', $user->id);
-            })
+            $query->on('assigned_roles.role_id', '=', 'roles.id')
+                ->where('assigned_roles.entity_type', 'App\Models\User')
+                ->where('assigned_roles.entity_id', '=', $user->id);
+        })
             ->select(
                 'roles.name',
                 DB::raw('case when assigned_roles.entity_id is null then false else true end as value')
@@ -153,6 +170,7 @@ class RoleConfigurationController extends Controller
     public function destroy(User $user)
     {
         $user->roles()->detach();
+        $user->delete();
         back();
     }
 }

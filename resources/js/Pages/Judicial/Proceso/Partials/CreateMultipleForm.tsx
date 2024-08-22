@@ -12,23 +12,24 @@ import { DropdownType } from '@/types';
 type Props = {
   className?: string;
   clients?: DropdownType[];
+  defaultUserId?: number;
+  users?: DropdownType[];
   onErrors: (errors: Errors) => void;
 }
 
 type State = {
   fileProcesos: File | null;
   clientId?: number;
+  userId?: number;
 }
 
-const CreateMultipleForm = ({ className, clients, onErrors }: Props) => {
-  const { data, setData, errors, post, progress } = useForm<State>({
-    fileProcesos: null,
+const CreateMultipleForm = ({ className, clients, defaultUserId, users, onErrors }: Props) => {
+  const { data, setData, errors, post, progress, processing } = useForm<State>({
+    fileProcesos: null, userId: defaultUserId
   });
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    post(route('proceso.batchStore'), {
+  const handleSubmit = () => {
+    post(route('judicial.process.batchStore'), {
       preserveState: true,
       onError: (errors) => onErrors && onErrors(errors)
     })
@@ -39,11 +40,11 @@ const CreateMultipleForm = ({ className, clients, onErrors }: Props) => {
       <header className="flex justify-between">
         <h2 className="text-lg font-medium text-gray-900">Registro de carga masiva</h2>
         <div className="flex gap-2">
-          <PrimaryButton label="Registrar" />
+          <PrimaryButton label="Registrar" onClick={handleSubmit} disabled={processing} />
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="flex flex-col items-center mt-6 space-y-6">
+      <form className="flex flex-col items-center mt-6 space-y-6">
 
         <div className="w-1/4">
           <InputLabel htmlFor="clientId" value="Cliente" />
@@ -58,6 +59,21 @@ const CreateMultipleForm = ({ className, clients, onErrors }: Props) => {
           />
 
           <InputError message={errors.clientId} className="mt-2" />
+        </div>
+
+        <div className="w-1/4">
+          <InputLabel htmlFor="userId" value="Ejecutivo" />
+
+          <Dropdown
+            id="userId"
+            className="mt-1 w-full"
+            options={users}
+            required
+            value={data.userId}
+            onChange={(e) => setData('userId', e.value)}
+          />
+
+          <InputError message={errors.userId} className="mt-2" />
         </div>
 
         <div>

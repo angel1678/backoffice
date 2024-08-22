@@ -13,11 +13,12 @@ type Props = PageProps & {
   defaultUserId: number;
   defendants: DropdownType[];
   personWhoPays: DropdownType[];
+  proceduresType: DropdownType[];
   relevantInformation: DropdownType[];
   users: DropdownType[];
 };
 
-export default function Create({ actors, app, auth, clients, clientSelected, defaultUserId, defendants, personWhoPays, relevantInformation, users }: Props) {
+export default function Create({ actors, app, auth, clients, clientSelected, defaultUserId, defendants, personWhoPays, proceduresType, relevantInformation, users }: Props) {
   const [errors, setErrors] = useState<Errors>();
 
   return (
@@ -43,6 +44,7 @@ export default function Create({ actors, app, auth, clients, clientSelected, def
               defaultUserId={defaultUserId}
               defendants={defendants}
               personWhoPays={personWhoPays}
+              proceduresType={proceduresType}
               relevantInformation={relevantInformation}
               users={users}
               onErrors={setErrors}
@@ -52,6 +54,8 @@ export default function Create({ actors, app, auth, clients, clientSelected, def
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
             <CreateMultipleForm
               clients={clients}
+              defaultUserId={defaultUserId}
+              users={users}
               onErrors={setErrors}
             />
           </div>

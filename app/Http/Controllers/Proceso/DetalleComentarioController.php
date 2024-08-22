@@ -39,7 +39,7 @@ class DetalleComentarioController extends Controller
 
         DB::beginTransaction();
         try {
-            $comment = $detalle->comentarios()->create([
+            $comment = $detalle->comments()->create([
                 'description' => $data->comment,
                 'user_id' => Auth::id(),
             ]);

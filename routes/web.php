@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TypeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProcesoController;
 use App\Http\Controllers\ProfileController;
@@ -16,7 +17,6 @@ use App\Http\Controllers\ProcesoMovimientoDetalleController;
 use App\Http\Controllers\Proceso\DetalleComentarioController;
 use App\Http\Controllers\Proceso\MovimientoDetalleController;
 use App\Http\Controllers\Configuration\RoleConfigurationController;
-use App\Http\Controllers\Configuration\UserConfigurationController;
 use App\Http\Controllers\Configuration\IndexConfigurationController;
 use App\Http\Controllers\Configuration\CompanyConfigurationContoller;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
@@ -26,6 +26,9 @@ use App\Http\Controllers\Judicial\ClientController as JudicialClientController;
 use App\Http\Controllers\Judicial\ProcessController as JudicialProcessController;
 use App\Http\Controllers\Judicial\InvolvedController as JudicialInvolvedController;
 use App\Http\Controllers\Judicial\DashboardController as JudicialDashboardController;
+use App\Http\Controllers\Judicial\IndexCommentController as JudicialIndexCommentController;
+use App\Http\Controllers\Judicial\ShowDocumentController as JudicialShowDocumentController;
+use App\Http\Controllers\Judicial\StoreCommentController as JudicialStoreCommentController;
 use App\Http\Controllers\Coercive\ClientAccountController as CoerciveClientAccountController;
 use App\Http\Controllers\Proceso\AccountExportController as JudiciaryAccountExportController;
 use App\Http\Controllers\Coercive\AccountContactController as CoerciveAccountContactController;
@@ -33,10 +36,10 @@ use App\Http\Controllers\Judicial\StoreUploadFileController as JudicialStoreUplo
 use App\Http\Controllers\Judicial\ShowNotificationController as JudicialShowNotificationController;
 use App\Http\Controllers\Judicial\IndexNotificationController as JudicialIndexNotificationController;
 use App\Http\Controllers\Coercive\ClientAccountExportController as CoerciveClientAccountExportController;
+use App\Http\Controllers\Judicial\BatchStoreProcessController;
 use App\Http\Controllers\Judicial\IndexDetailDocumentController as JudicialIndexDetailDocumentController;
 use App\Http\Controllers\Judicial\ShowProcessMovimientController as JudicialShowProcessMovimientController;
 use App\Http\Controllers\Judicial\IndexProcessMovimientController as JudicialIndexProcessMovimientController;
-use App\Http\Controllers\Judicial\ShowDocumentController as JudicialShowDocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +68,8 @@ Route::prefix('register')
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware('auth')->get('/type', TypeController::class)->name('type.index');
+
 Route::middleware('auth')
     ->prefix('judicial')
     ->group(function () {
@@ -92,6 +97,15 @@ Route::middleware('auth')
         Route::get('document/{document}', JudicialShowDocumentController::class)
             ->name('judicial.document.show');
 
+        Route::get('{judicial}/comment', JudicialIndexCommentController::class)
+            ->name('judicial.comment.index');
+
+        Route::post('{judicial}/comment', JudicialStoreCommentController::class)
+            ->name('judicial.comment.store');
+
+        Route::post('process/batch', BatchStoreProcessController::class)
+            ->name('judicial.process.batchStore');
+
         Route::resource('process', JudicialProcessController::class)
             ->names('judicial.process')
             ->except('show');
@@ -110,9 +124,6 @@ Route::middleware('auth')
     ->group(function () {
         Route::get('/user/{user}/register', UserRegisterConfigurationController::class)
             ->name('configuration.user.register');
-
-        Route::resource('user', UserConfigurationController::class)
-            ->names('configuration.user');
 
         Route::resource('role', RoleConfigurationController::class)
             ->names('configuration.role')
