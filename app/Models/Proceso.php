@@ -83,6 +83,11 @@ class Proceso extends Model
         return $this->defendants->implode('name', ', ');
     }
 
+    protected function getTypeProcedureAttribute(): string
+    {
+        return Type::find($this->type_of_procedure_id)?->name;
+    }
+
     protected function getProceduralStageAttribute(): string
     {
         return Type::find($this->procedural_stage_id)?->name;

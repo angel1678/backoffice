@@ -83,6 +83,10 @@ export default function Show({ client, comments, movimiento, process, users, ass
     });
   };
 
+  const handleCreateTemplate = () => {
+    router.visit(route('judicial.movimient.template', movimiento.id));
+  };
+
   const headerTemplate = (
     <div className="flex w-full items-center justify-end">
       <div className="font-bold text-lg">
@@ -275,7 +279,7 @@ export default function Show({ client, comments, movimiento, process, users, ass
 
             <div className="flex justify-between">
               <PrimaryButton label="Observaciones generales" onClick={handleShowGeneralComments} />
-              <PrimaryButton label="Elaborar escrito" />
+              <PrimaryButton label="Elaborar escrito" onClick={handleCreateTemplate} />
               <PrimaryButton label="Enviar a pasivo" onClick={handleProceduralStage('pasivo')} disabled={process.status == 71} />
               <PrimaryButton label="Restablecer a activo" onClick={handleProceduralStage('activo')} disabled={process.status == 70} />
             </div>

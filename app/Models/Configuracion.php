@@ -31,4 +31,9 @@ class Configuracion extends Model
         $query->where('grupo', '=', $grupo)
             ->where('parametro', '=', $parametro);
     }
+
+    public function scopeGetGroup(Builder $query, $grupo)
+    {
+        $query->where('grupo', '=', $grupo);
+    }
 }

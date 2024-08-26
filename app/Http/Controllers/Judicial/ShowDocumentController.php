@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Judicial;
 
 use App\Models\JudicialFile;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Yaza\LaravelGoogleDriveStorage\Gdrive;
 
 class ShowDocumentController extends Controller
@@ -25,14 +23,7 @@ class ShowDocumentController extends Controller
         $file = $document->file;
 
         if ($document->ext === 'doc' || $document->ext === 'docx') {
-            $path = public_path('storage');
-            Storage::disk('public')->put($document->filename, $document->file);
-            $word = \PhpOffice\PhpWord\IOFactory::load("{$path}\\{$document->filename}");
-
-            $rtf = new \PhpOffice\PhpWord\Writer\HTML($word);
-            $rtf->save("{$path}\\{$document->filename}.html");
-
-            $file = File::get("{$path}\\{$document->filename}.html");
+            //TODO: Agregar la api para convertir word en html (Garofalo)
         }
 
         return back()->with('documentSelected', $this->extension[$document->ext] . ';base64,' . base64_encode($file));

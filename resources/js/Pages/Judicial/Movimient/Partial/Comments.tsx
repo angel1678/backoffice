@@ -83,7 +83,7 @@ export default function Comments({ procesoId, detalleId, comentarios = [] }: Pro
           <InputError message={errors.comment} />
           <InputError message={errors.nicksName} />
         </div>
-        <PrimaryButton icon="pi pi-send" disabled={processing} onClick={handleClick} />
+        <PrimaryButton icon={<Icon name="enviar" className="h-6" />} disabled={processing} onClick={handleClick} />
       </div>
     </div>
   );

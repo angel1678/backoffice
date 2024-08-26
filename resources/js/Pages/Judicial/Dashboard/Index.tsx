@@ -27,7 +27,7 @@ const subMenu: MenuItem[] = [
   { label: 'Inicio', url: 'judicial.dashboard' },
   { label: 'Lista de procesos', url: 'judicial.process.index' },
   { label: 'Reporteria' },
-  { label: 'Gestión de plantillas', url: 'management.index' },
+  { label: 'Gestión de plantillas', url: 'judicial.template.index' },
 ];
 
 export default function Index({ app, auth, judicialNotification, typeNotification, errors }: Props) {
@@ -77,12 +77,15 @@ export default function Index({ app, auth, judicialNotification, typeNotificatio
         <div className="flex w-full" style={{ height: 'calc(100vh - 24rem)' }}>
           <div className="flex flex-col gap-4 items-center pt-12 w-1/4 bg-[#dbecfe] rounded-l-xl">
             <NotificationLink
+              icon="notificaciones-nuevas"
+              classNameIcon="h-7"
               routeName="judicial.notification.index"
               title="Notificaciones nuevas"
               type="unread"
               value={typeNotification}
             />
             <NotificationLink
+              icon="notificaciones-leidsa"
               routeName="judicial.notification.index"
               title="Notificaciones leidas"
               type="read"

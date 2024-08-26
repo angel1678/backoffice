@@ -48,6 +48,8 @@ export default function Index({ app, auth, errors, models }: Props) {
           scrollHeight="calc(100vh - 13rem)"
           title="Empresas que facturan"
 
+          hiddenEdit
+
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}

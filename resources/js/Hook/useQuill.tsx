@@ -18,11 +18,14 @@ export default function useQuill(refEditor: MutableRefObject<Editor | null>) {
     backspaceParams: {
       key: 'Backspace',
       handler: (range: any, context: any) => {
-        const _quill = refEditor.current?.getQuill();
-        if (context.prefix.charAt(context.offset - 1) === '}') {
-          const _start = context.prefix.lastIndexOf('{');
-          if (RegExp(/{{\w+}}/).test(context.prefix.substring(_start - 1, context.offset))) {
-            _quill.deleteText(_start, context.offset - _start);
+        const _quill: Quill = refEditor.current?.getQuill();
+        const { prefix } = context;
+
+        if (prefix.charAt(prefix.length - 1) === '}') {
+          const _start = prefix.lastIndexOf('{');
+          if (RegExp(/{{\w+}}/).test(prefix.substring(_start - 1, prefix.length))) {
+            const _index = _quill.getText().indexOf(prefix);
+            _quill.deleteText(_index + _start, prefix.length - _start);
           }
         }
         return true;
@@ -38,10 +41,10 @@ export default function useQuill(refEditor: MutableRefObject<Editor | null>) {
     <>
       <span className="ql-formats">
         <select className="ql-font" aria-label="Font">
-          {Fonts.map(item => (<option value={item}>{item}</option>))}
+          {Fonts.map(item => (<option key={item} value={item}>{item}</option>))}
         </select>
         <select className="ql-size" aria-label="Size">
-          {Sizes.map(item => (<option value={item}>{item.replace('px', '')}</option>))}
+          {Sizes.map(item => (<option key={item} value={item}>{item.replace('px', '')}</option>))}
         </select>
       </span>
       <span className="ql-formats">

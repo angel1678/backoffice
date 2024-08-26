@@ -8,6 +8,7 @@ import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { DropdownType } from '@/types';
+import Icon from '@/Components/Icon';
 
 type Props = {
   className?: string;
@@ -40,7 +41,7 @@ const CreateMultipleForm = ({ className, clients, defaultUserId, users, onErrors
       <header className="flex justify-between">
         <h2 className="text-lg font-medium text-gray-900">Registro de carga masiva</h2>
         <div className="flex gap-2">
-          <PrimaryButton label="Registrar" onClick={handleSubmit} disabled={processing} />
+          <PrimaryButton label="Registrar" icon={<Icon name="registrar" className="h-6 mr-1" />} onClick={handleSubmit} disabled={processing} />
         </div>
       </header>
 
@@ -104,10 +105,6 @@ const CreateMultipleForm = ({ className, clients, defaultUserId, users, onErrors
 
           <InputError message={errors.fileProcesos} className="mt-2" />
         </div>
-
-        {/* <div className="flex items-center gap-4">
-          <PrimaryButton icon="fas fa-save fa-lg" label="Guardar" />
-        </div> */}
       </form>
     </section>
   )

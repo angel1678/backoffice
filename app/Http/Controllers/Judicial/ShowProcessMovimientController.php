@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Judicial;
 
-use App\Enums\ProcessStatus;
 use App\Models\User;
 use App\Models\Proceso;
 use App\Models\ProcesoMovimiento;

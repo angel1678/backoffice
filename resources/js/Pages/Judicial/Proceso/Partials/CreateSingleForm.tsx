@@ -17,6 +17,7 @@ import useDialog from '@/Hook/useDialog';
 import { DropdownType, InvolvedType } from '@/types';
 
 import CreateInvolvedForm from './CreateInvolvedForm';
+import Icon from '@/Components/Icon';
 
 type Props = {
   actors?: DropdownType[];
@@ -134,8 +135,8 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
         <header className="flex justify-between">
           <h2 className="text-2xl font-extrabold text-gray-900">Registro de proceso simple</h2>
           <div className="flex gap-2">
-            <PrimaryButton label="Cargar documentos" onClick={handleShowUpload} />
-            <PrimaryButton label="Registrar" onClick={handleSubmit} disabled={processing} />
+            <PrimaryButton label="Cargar documentos" icon={<Icon name="cargar-documentos" className="h-6 mr-1" />} onClick={handleShowUpload} />
+            <PrimaryButton label="Registrar" icon={<Icon name="registrar" className="h-6 mr-1" />} onClick={handleSubmit} disabled={processing} />
           </div>
         </header>
 

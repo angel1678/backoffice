@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
                 'roles' => $user?->getRoles(),
                 'isAdmin' => $request->user()?->isAn('admin'),
-                'notifications' => $notifications?->map(fn ($item) => [
+                'notifications' => $notifications?->map(fn($item) => [
                     ...$item->data,
                     'type' => $item->type,
                     'id' => $item->id
@@ -54,7 +54,7 @@ class HandleInertiaRequests extends Middleware
                 ]);
             },
             'urlPrev' => function () {
-                $urlPrev = url()->previous();
+                $urlPrev = session('urlPrev', url()->previous());
                 return ($urlPrev !== route('login') && $urlPrev !== '' && $urlPrev !== url()->current()) ? $urlPrev : null;
             },
             'message' => session('message', null),
