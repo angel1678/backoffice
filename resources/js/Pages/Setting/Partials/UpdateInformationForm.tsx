@@ -6,6 +6,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
+import { InputText } from 'primereact/inputtext';
 
 type Props = {
   className?: string;
@@ -40,14 +41,25 @@ export default function UpdateInformationForm({ model = [], className }: Props) 
 
               <span className="text-xs text-slate-700">{value?.descripcion}</span>
 
-              <InputNumber
-                id={key}
-                className="mt-2 block"
-                inputClassName="w-full rounded-md border-slate-300"
-                value={data[key]}
-                onChange={(e) => setData(key, e.value)}
-                required
-              />
+              {value?.tipo == 'number' && (
+                <InputNumber
+                  id={key}
+                  className="mt-2 block"
+                  inputClassName="w-full rounded-md border-slate-300"
+                  value={data[key]}
+                  onChange={(e) => setData(key, e.value)}
+                  required
+                />
+              )}
+              {value?.tipo == 'text' && (
+                <InputText
+                  id={key}
+                  className="mt-2 block w-full"
+                  value={data[key]}
+                  onChange={(e) => setData(key, e.value)}
+                  required
+                />
+              )}
 
               <InputError className="mt-2" message={errors[key]} />
             </div>

@@ -9,13 +9,15 @@ type Props = DataTableProps<any> & {
 
   hiddenButtons?: boolean;
   hiddenHeader?: boolean;
+  hiddenEdit?: boolean;
+  hiddenDelete?: boolean;
 
   onAdd?: () => void;
   onEdit?: (data: any) => void;
   onDelete?: (data: any) => void;
 }
 
-export default function DataTable({ buttons, children, hiddenButtons, hiddenHeader, scrollHeight, title, onAdd, onEdit, onDelete, ...props }: Props) {
+export default function DataTable({ buttons, children, hiddenButtons, hiddenHeader, hiddenEdit, hiddenDelete, scrollHeight, title, onAdd, onEdit, onDelete, ...props }: Props) {
 
   const handleAdd = () => onAdd && onAdd();
   const handleEdit = (data: any) => onEdit && onEdit(data);
@@ -24,8 +26,12 @@ export default function DataTable({ buttons, children, hiddenButtons, hiddenHead
   const buttonsTemplate = (data: any) => (
     <div className="flex gap-1">
       {buttons && buttons(data)}
-      <Button icon="pi pi-pencil" severity="success" onClick={() => handleEdit(data)} />
-      <Button icon="pi pi-trash" severity="secondary" onClick={() => handleDelete(data)} />
+      {!hiddenEdit &&
+        <Button icon="pi pi-pencil" severity="success" onClick={() => handleEdit(data)} />
+      }
+      {!hiddenDelete &&
+        <Button icon="pi pi-trash" severity="secondary" onClick={() => handleDelete(data)} />
+      }
     </div>
   );
 

@@ -15,6 +15,7 @@ import DialogMovimiento from '@/Components/DialogMovimiento';
 import useAuth from '@/Hook/useAuth';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { DropdownType, PageProps } from '@/types';
+import Icon from '@/Components/Icon';
 
 type Props = PageProps & {
   procesos: any;
@@ -152,7 +153,7 @@ export default function Proceso({ app, auth, errors, procesos, search, status, s
           />
         </div>
         <div className="flex gap-2">
-          <SecondaryButton icon="fas fa-refresh" onClick={handleRefresh} />
+          <SecondaryButton icon={<Icon name="refrescar" className="h-7" />} onClick={handleRefresh} />
           <PrimaryButton icon="fas fa-plus" label="Agregar nuevo cliente" onClick={handleCreateClient} />
           <PrimaryButton icon="fas fa-plus" label="Agregar proceso" onClick={handleCreateProcess} />
           {

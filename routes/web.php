@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Judicial\CreateBatchTemplateController as JudicialCreateBatchTemplateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\ReportController;
@@ -16,15 +17,18 @@ use App\Http\Controllers\ProcesoDetalleLastUpdateController;
 use App\Http\Controllers\ProcesoMovimientoDetalleController;
 use App\Http\Controllers\Proceso\DetalleComentarioController;
 use App\Http\Controllers\Proceso\MovimientoDetalleController;
+use App\Http\Controllers\Judicial\BatchStoreProcessController;
 use App\Http\Controllers\Configuration\RoleConfigurationController;
 use App\Http\Controllers\Configuration\IndexConfigurationController;
 use App\Http\Controllers\Configuration\CompanyConfigurationContoller;
+use App\Http\Controllers\Configuration\TemplateConfigurationController;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
 use App\Http\Controllers\Configuration\UserRegisterConfigurationController;
 use App\Http\Controllers\Coercive\ClientController as CoerciveClientController;
 use App\Http\Controllers\Judicial\ClientController as JudicialClientController;
 use App\Http\Controllers\Judicial\ProcessController as JudicialProcessController;
 use App\Http\Controllers\Judicial\InvolvedController as JudicialInvolvedController;
+use App\Http\Controllers\Judicial\TemplateController as JudicialTemplateController;
 use App\Http\Controllers\Judicial\DashboardController as JudicialDashboardController;
 use App\Http\Controllers\Judicial\IndexCommentController as JudicialIndexCommentController;
 use App\Http\Controllers\Judicial\ShowDocumentController as JudicialShowDocumentController;
@@ -32,14 +36,15 @@ use App\Http\Controllers\Judicial\StoreCommentController as JudicialStoreComment
 use App\Http\Controllers\Coercive\ClientAccountController as CoerciveClientAccountController;
 use App\Http\Controllers\Proceso\AccountExportController as JudiciaryAccountExportController;
 use App\Http\Controllers\Coercive\AccountContactController as CoerciveAccountContactController;
+use App\Http\Controllers\Judicial\ExportTemplateController as JudicialExportTemplateController;
 use App\Http\Controllers\Judicial\StoreUploadFileController as JudicialStoreUploadFileController;
 use App\Http\Controllers\Judicial\ShowNotificationController as JudicialShowNotificationController;
 use App\Http\Controllers\Judicial\IndexNotificationController as JudicialIndexNotificationController;
 use App\Http\Controllers\Coercive\ClientAccountExportController as CoerciveClientAccountExportController;
-use App\Http\Controllers\Judicial\BatchStoreProcessController;
 use App\Http\Controllers\Judicial\IndexDetailDocumentController as JudicialIndexDetailDocumentController;
 use App\Http\Controllers\Judicial\ShowProcessMovimientController as JudicialShowProcessMovimientController;
 use App\Http\Controllers\Judicial\IndexProcessMovimientController as JudicialIndexProcessMovimientController;
+use App\Http\Controllers\Judicial\CreateTemplateProcessMovimientController as JudicialCreateTemplateProcessMovimientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +93,9 @@ Route::middleware('auth')
         Route::get('process/{process}/movimient/{movimient}', JudicialShowProcessMovimientController::class)
             ->name('judicial.movimient.show');
 
+        Route::get('movimient/{movimient}/template', JudicialCreateTemplateProcessMovimientController::class)
+            ->name('judicial.movimient.template');
+
         Route::post('detail/{judicialDetail}/upload', JudicialStoreUploadFileController::class)
             ->name('judicial.detail.upload');
 
@@ -117,6 +125,16 @@ Route::middleware('auth')
         Route::resource('involved', JudicialInvolvedController::class)
             ->names('judicial.involved')
             ->except('show');
+
+        Route::post('template/{template}/export', JudicialExportTemplateController::class)
+            ->name('judicial.template.export');
+
+        Route::get('template/create/batch', JudicialCreateBatchTemplateController::class)
+            ->name('judicial.template.createBatch');
+
+        Route::resource('template', JudicialTemplateController::class)
+            ->names('judicial.template')
+            ->except('edit', 'update', 'destroy');
     });
 
 Route::middleware('auth')
@@ -131,6 +149,9 @@ Route::middleware('auth')
 
         Route::resource('company', CompanyConfigurationContoller::class)
             ->names('configuration.company');
+
+        Route::resource('template', TemplateConfigurationController::class)
+            ->names('configuration.template');
 
         Route::get('/', IndexConfigurationController::class)
             ->name('configuration.index');
