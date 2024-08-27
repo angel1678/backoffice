@@ -59,7 +59,6 @@ class TemplateConfigurationController extends Controller
             return $this->backSuccess('La plantilla fue creada exitosamente.');
         } catch (\Throwable $th) {
             DB::rollBack();
-            dump($th);
             return $this->backWarning('Hubo un error al momento de crear la plantilla.');
         }
     }
@@ -104,7 +103,6 @@ class TemplateConfigurationController extends Controller
             return $this->backSuccess('La plantilla fue editada exitosamente.');
         } catch (\Throwable $th) {
             DB::rollBack();
-            dump($th);
             return $this->backWarning('Hubo un error al momento de editar la plantilla.');
         }
     }

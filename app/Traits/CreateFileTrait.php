@@ -32,7 +32,6 @@ trait CreateFileTrait
             $pdf->setPaper('A4', 'portrait');
             $pdf->save("{$path}/{$fileName}.pdf", $disk);
         } else if ($judicialMovimientIds->count() > 1) {
-            dump('si pasa');
             $pages = [];
             $judicialMovimientIds->each(function ($movimient) use ($template, $configurations, &$pages) {
                 $movimient = ProcesoMovimiento::find($movimient);
