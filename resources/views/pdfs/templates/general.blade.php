@@ -77,7 +77,7 @@
     <div class="page">
         <div id="header">
             <div class="header">
-                <img src="D:/workspace/loyalis/backoffice/public/img/logo-black.png" class="logo" />
+                <img src="{{$logo}}" class="logo" />
             </div>
         </div>
         <div id="body" class="body">
