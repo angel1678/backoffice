@@ -7,6 +7,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
 
+use function Amp\ByteStream\split;
+
 class SettingController extends Controller
 {
     /**
@@ -26,16 +28,21 @@ class SettingController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'proceso:ultimas_actualizaciones' => 'required|min:1',
-            'proceso:casos_detenidos' => 'required|min:1',
-        ]);
+        $validation = ['number' => 'required|min:1', 'text' => 'required|string'];
 
-        Configuracion::getParam('proceso', 'ultimas_actualizaciones')
-            ->update(['valor' => $data['proceso:ultimas_actualizaciones']]);
+        $configurations = Configuracion::get()
+            ->map(fn($item) => ["{$item->grupo}:{$item->parametro}" => $validation[$item->tipo]])
+            ->flatMap(fn($item) => $item)
+            ->toArray();
 
-        Configuracion::getParam('proceso', 'casos_detenidos')
-            ->update(['valor' => $data['proceso:casos_detenidos']]);
+        $data = $request->validate($configurations);
+
+        collect($data)->each(function ($item, $key) {
+            [$grupo, $proceso] = explode(':', $key);
+
+            Configuracion::getParam($grupo, $proceso)
+                ->update(['valor' => $item]);
+        });
 
         return redirect()->route('setting.edit');
     }
