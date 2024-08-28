@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Judicial\CreateBatchTemplateController as JudicialCreateBatchTemplateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\ReportController;
@@ -41,6 +40,7 @@ use App\Http\Controllers\Judicial\StoreUploadFileController as JudicialStoreUplo
 use App\Http\Controllers\Judicial\ShowNotificationController as JudicialShowNotificationController;
 use App\Http\Controllers\Judicial\IndexNotificationController as JudicialIndexNotificationController;
 use App\Http\Controllers\Coercive\ClientAccountExportController as CoerciveClientAccountExportController;
+use App\Http\Controllers\Judicial\CreateBatchTemplateController as JudicialCreateBatchTemplateController;
 use App\Http\Controllers\Judicial\IndexDetailDocumentController as JudicialIndexDetailDocumentController;
 use App\Http\Controllers\Judicial\ShowProcessMovimientController as JudicialShowProcessMovimientController;
 use App\Http\Controllers\Judicial\IndexProcessMovimientController as JudicialIndexProcessMovimientController;
@@ -187,6 +187,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->prefix('process')->group(function () {
     Route::get('/report', [ReportController::class, 'index'])->name('process.report.index');
+    Route::post('/report', [ReportController::class, 'export'])->name('process.report.export');
 });
 
 Route::middleware('auth')->prefix('coercive')->group(function () {

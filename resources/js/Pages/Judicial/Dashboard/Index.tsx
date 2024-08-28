@@ -26,7 +26,7 @@ type Props = PageProps & {
 const subMenu: MenuItem[] = [
   { label: 'Inicio', url: 'judicial.dashboard' },
   { label: 'Lista de procesos', url: 'judicial.process.index' },
-  { label: 'Reporteria' },
+  { label: 'Reporteria', url: 'process.report.index' },
   { label: 'Gestión de plantillas', url: 'judicial.template.index' },
 ];
 

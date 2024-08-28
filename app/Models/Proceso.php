@@ -93,6 +93,11 @@ class Proceso extends Model
         return Type::find($this->procedural_stage_id)?->name;
     }
 
+    protected function getStatusNameAttribute(): string
+    {
+        return Type::find($this->status)?->name;
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(JudicialClient::class);

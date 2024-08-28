@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 import { InputNumber } from 'primereact/inputnumber';
@@ -44,6 +44,7 @@ export default function UpdateInformationForm({ model = [], className }: Props) 
               {value?.tipo == 'number' && (
                 <InputNumber
                   id={key}
+                  inputId={key}
                   className="mt-2 block"
                   inputClassName="w-full rounded-md border-slate-300"
                   value={data[key]}
@@ -56,7 +57,7 @@ export default function UpdateInformationForm({ model = [], className }: Props) 
                   id={key}
                   className="mt-2 block w-full"
                   value={data[key]}
-                  onChange={(e) => setData(key, e.value)}
+                  onChange={(e) => setData(key, e.target.value)}
                   required
                 />
               )}

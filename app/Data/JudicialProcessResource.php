@@ -9,9 +9,6 @@ use Spatie\LaravelData\Attributes\MapInputName;
 
 class JudicialProcessResource extends Resource
 {
-    #[Computed]
-    public string $statusName;
-
     public function __construct(
         public string $id,
         public string $process,
@@ -27,7 +24,6 @@ class JudicialProcessResource extends Resource
         public ?string $proceduralStage,
         public int $status,
         public string $userName,
-    ) {
-        $this->statusName = ProcessStatus::fromValue($status)->key;
-    }
+        public ?string $statusName,
+    ) {}
 }
