@@ -88,14 +88,14 @@ export default function Proceso({ app, auth, errors, procesos, search, status, s
   const actionsBodyTemplate = (data: any) => (
     <div className="flex gap-1 justify-center m-1">
       <SecondaryButton icon="fas fa-folder fa-lg" severe="info" onClick={() => handleShowMovimientos(data.id)} />
-      {isAdmin() && (
+      {/* {isAdmin() && (
         <SecondaryButton
           icon="fas fa-pencil fa-lg"
           onClick={() => handleEdit(data.id)}
           tooltip="editar"
           tooltipOptions={{ position: 'bottom' }}
         />
-      )}
+      )} */}
       {(!isAdmin() && auth.user.id == data.user_id) && (
         <Button
           icon={classNames('fas fa-lg', !data.activo ? 'fa-check' : 'fa-times')}
