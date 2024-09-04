@@ -23,6 +23,7 @@ use App\Http\Controllers\Configuration\CompanyConfigurationContoller;
 use App\Http\Controllers\Configuration\TemplateConfigurationController;
 use App\Http\Controllers\Proceso\UserController as ProcesoUserController;
 use App\Http\Controllers\Configuration\UserRegisterConfigurationController;
+use App\Http\Controllers\Configuration\ProceduralStageConfigurationController;
 use App\Http\Controllers\Coercive\ClientController as CoerciveClientController;
 use App\Http\Controllers\Judicial\ClientController as JudicialClientController;
 use App\Http\Controllers\Judicial\ProcessController as JudicialProcessController;
@@ -152,6 +153,14 @@ Route::middleware('auth')
 
         Route::resource('template', TemplateConfigurationController::class)
             ->names('configuration.template');
+
+        Route::post('procedural-stage/{procedureType?}', [ProceduralStageConfigurationController::class, 'store'])
+            ->name('configuration.proceduralStage.store');
+
+        Route::resource('procedural-stage', ProceduralStageConfigurationController::class)
+            ->names('configuration.proceduralStage')
+            ->parameters(['procedural-stage' => 'procedureType'])
+            ->except('store');
 
         Route::get('/', IndexConfigurationController::class)
             ->name('configuration.index');

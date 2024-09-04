@@ -40,14 +40,14 @@ class RoleConfigurationController extends Controller
         $users = User::with('roles')
             ->has('roles', '=', 0)
             ->get()
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'value' => $item->id,
                 'label' => $item->name
             ]);
 
         $roles = Role::get()
-            ->map(fn ($item) =>  ["{$item->name}" => false])
-            ->flatMap(fn ($item) => $item);
+            ->map(fn($item) =>  ["{$item->name}" => false])
+            ->flatMap(fn($item) => $item);
 
         return back()
             ->with('formOptions', [
@@ -63,8 +63,8 @@ class RoleConfigurationController extends Controller
     {
         $data = (object) $request->validate([
             'name' => ['required', 'string'],
-            'nickname' => ['required', 'string'],
-            'email' => ['required', 'email'],
+            'nickname' => ['required', 'string', 'unique:users,nickname'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'roles' => ['required', 'array'],
             'roles.admin' => ['boolean'],
             'roles.accountant' => ['boolean'],
@@ -82,7 +82,7 @@ class RoleConfigurationController extends Controller
             ]);
 
             $roles = collect($data->roles)
-                ->filter(fn ($value) => $value)
+                ->filter(fn($value) => $value)
                 ->keys()
                 ->toArray();
 
@@ -124,8 +124,8 @@ class RoleConfigurationController extends Controller
                 DB::raw('case when assigned_roles.entity_id is null then false else true end as value')
             )
             ->get()
-            ->map(fn ($item) =>  ["{$item->name}" => (bool) $item->value])
-            ->flatMap(fn ($item) => $item);
+            ->map(fn($item) =>  ["{$item->name}" => (bool) $item->value])
+            ->flatMap(fn($item) => $item);
 
         return back()
             ->with('formOptions', [
@@ -149,7 +149,7 @@ class RoleConfigurationController extends Controller
         DB::beginTransaction();
         try {
             $roles = collect($data->roles)
-                ->filter(fn ($value) => $value)
+                ->filter(fn($value) => $value)
                 ->keys()
                 ->toArray();
 

@@ -2,10 +2,10 @@
 
 namespace App\Imports;
 
-use App\Models\Type;
 use App\Models\Proceso;
 use Maatwebsite\Excel\Row;
 use Illuminate\Support\Str;
+use App\Models\ProcedureType;
 use App\Models\JudicialClient;
 use App\Models\JudicialInvolved;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +55,7 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
             return null;
         }
 
-        $procedimiento = Type::where('group', 'PROCEDURE_TYPE')
+        $procedimiento = ProcedureType::whereNull('parent_id')
             ->where(DB::raw('upper(name)'), Str::upper($row['procedimiento']));
         if (!$procedimiento->exists()) {
             $this->errors["{$rowIndex}-procedure"] = "En la fila {$rowIndex}, el procedimiento {$row['procedimiento']} no existe";
@@ -63,9 +63,8 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
         }
         $procedimiento = $procedimiento->first();
 
-        $etapaProcesal = Type::where('group', 'PROCEDURAL_STAGE')
+        $etapaProcesal = ProcedureType::whereNotNull('parent_id')
             ->where(DB::raw('upper(name)'), Str::upper($row['etapa_procesal']));
-
         if (!$etapaProcesal->exists()) {
             $this->errors["{$rowIndex}-status"] = "En la fila {$rowIndex}, la etapa procesal {$row['etapa_procesal']} no existe";
             return null;

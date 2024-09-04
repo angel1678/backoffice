@@ -26,9 +26,10 @@ type Props = PageProps & PropsWithChildren & {
   titleBack?: string;
   subMenu?: MenuItem[];
   header?: React.ReactNode;
+  classNameBack?: string;
 };
 
-export default function Authenticated({ auth, title, errors, children, breadCrumb = [], showBack, titleBack, subMenu, header }: Props) {
+export default function Authenticated({ auth, title, errors, children, breadCrumb = [], showBack, classNameBack, titleBack, subMenu, header }: Props) {
   const { props: { urlPrev, message } } = usePage<PageProps>();
   const toast = useRef<Toast | null>(null);
   const setCommentId = useNotification(state => state.setCommentId);
@@ -179,7 +180,7 @@ export default function Authenticated({ auth, title, errors, children, breadCrum
               {breadCrumb && <BreadCrumb items={breadCrumb} />}
 
               {showBack && (
-                <div className="flex gap-4 items-center">
+                <div className={classNames("flex gap-4 items-center", classNameBack)}>
                   <BackButton disabled={!urlPrev} onClick={() => urlPrev && router.visit(urlPrev)} />
                   <label className="text-2xl font-extrabold">{titleBack}</label>
                 </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Judicial;
 
 use App\Models\User;
 use App\Models\Proceso;
+use App\Models\ProcedureType;
 use App\Models\ProcesoMovimiento;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ class ShowProcessMovimientController extends Controller
     {
         $associates = $movimient->proceso->associates()->select('id', 'name')->get();
         $detalle = $movimient->detalle()->with('comments')->orderBy('fecha', 'desc')->get();
+        $proceduresType = ProcedureType::whereNull('parent_id')->dropdown()->get();
         $ownerId = $movimient->proceso->user_id;
         $users = User::where('id', '<>', Auth::id())->dropdown()->get();
         $client = $process->client;
@@ -38,6 +40,7 @@ class ShowProcessMovimientController extends Controller
             'client' => $client,
             'process' => $process,
             'comments' => $comments,
+            'proceduresType' => $proceduresType,
         ]);
     }
 }
