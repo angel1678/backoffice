@@ -23,7 +23,7 @@ class JudicialProcessResource extends Resource
         public ?string $typeProcedure,
         public ?string $proceduralStage,
         public int $status,
-        public string $userName,
+        public ?string $userName,
         public ?string $statusName,
     ) {}
 }
