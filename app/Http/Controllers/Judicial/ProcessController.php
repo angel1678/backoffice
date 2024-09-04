@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Enums\ProcessStatus;
 use Illuminate\Http\Request;
+use App\Models\ProcedureType;
 use App\Models\JudicialClient;
 use App\Models\JudicialInvolved;
 use BenSampo\Enum\Rules\EnumKey;
@@ -77,7 +78,9 @@ class ProcessController extends Controller
 
         $personWhoPays = Type::group('PERSON_WHO_PAYS')->get();
         $relevantInformation = Type::group('RELEVANT_INFORMATION')->get();
-        $proceduresType = Type::group('PROCEDURE_TYPE')->get();
+        $proceduresType = ProcedureType::whereNull('parent_id')
+            ->dropdown()
+            ->get();
         $proceduralStage = session('proceduralStage');
 
         $defendantsType = session('defendantsType');

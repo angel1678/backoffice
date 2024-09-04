@@ -62,7 +62,7 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
   const [proceduralStage, setProceduralStage] = useState<DropdownType[]>();
 
   const handleTypeOfProcedure = (e: DropdownChangeEvent) => {
-    router.get(route('type.index', { group: 'PROCEDURAL_STAGE', parentId: e.value }), {}, {
+    router.get(route('configuration.proceduralStage.show', { procedureType: e.value }), {}, {
       preserveState: true,
       preserveScroll: true,
       onSuccess: ({ props }) => {

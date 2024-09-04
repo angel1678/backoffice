@@ -12,6 +12,7 @@ use App\Enums\ProcessStatus;
 use Illuminate\Http\Request;
 use App\Models\JudicialClient;
 use App\Exports\ReportAccountExport;
+use App\Models\ProcedureType;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\RedirectResponse;
 
@@ -20,7 +21,10 @@ class ReportController extends Controller
     public function index(Request $request): Response
     {
         $clients = JudicialClient::dropdown()->get();
-        $proceduresType = Type::group('PROCEDURE_TYPE')->dropdown()->get();
+        $proceduresType = ProcedureType::whereNull('parent_id')
+            ->dropdown()
+            ->get();
+
         $status = Type::group('JUDICIAL_STATE')->dropdown()->get();
         $users = User::dropdown()->get();
 

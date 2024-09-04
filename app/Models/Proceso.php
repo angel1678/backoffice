@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\ProcessStatus;
 use App\Casts\CurrencyFormat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Proceso extends Model
 {
@@ -83,14 +83,14 @@ class Proceso extends Model
         return $this->defendants->implode('name', ', ');
     }
 
-    protected function getTypeProcedureAttribute(): string
+    protected function getTypeProcedureAttribute(): string|null
     {
-        return Type::find($this->type_of_procedure_id)?->name;
+        return $this->procedureType?->name;
     }
 
-    protected function getProceduralStageAttribute(): string
+    protected function getProceduralStageAttribute(): string|null
     {
-        return Type::find($this->procedural_stage_id)?->name;
+        return $this->procedureStage?->name;
     }
 
     protected function getStatusNameAttribute(): string
@@ -141,6 +141,16 @@ class Proceso extends Model
     public function comments(): MorphMany
     {
         return $this->morphMany(ProcesoComentario::class, 'judicial');
+    }
+
+    public function procedureType(): HasOne
+    {
+        return $this->hasOne(ProcedureType::class, 'id', 'type_of_procedure_id');
+    }
+
+    public function procedureStage(): HasOne
+    {
+        return $this->hasOne(ProcedureType::class, 'id', 'procedural_stage_id');
     }
 
     public function scopeUltimaFechaDetalle(Builder $query, $fecha)

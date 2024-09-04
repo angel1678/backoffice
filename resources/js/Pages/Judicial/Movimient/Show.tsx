@@ -2,7 +2,9 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
 
 import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
 import IconButton from '@/Components/IconButton';
+import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import ShowDocument from '@/Components/ShowDocument';
 import UploadDocument from '@/Components/UploadDocument';
@@ -24,9 +26,10 @@ type Props = PageProps & {
   ownerId: any;
   users: any[];
   comments: any[];
+  proceduresType: any[];
 };
 
-export default function Show({ client, comments, movimiento, process, users, associates, app, auth, ownerId, errors, ...props }: Props) {
+export default function Show({ client, comments, movimiento, proceduresType, process, users, associates, app, auth, ownerId, errors, ...props }: Props) {
   const commentId = useNotification(state => state.commentId);
   const uploadFile = useDialog();
   const showFile = useDialog();
@@ -36,6 +39,8 @@ export default function Show({ client, comments, movimiento, process, users, ass
   const [detalle, setDetalle] = useState(props.detalle);
   const [detailSelected, setDetailSelected] = useState<any>();
   const [files, setFiles] = useState([]);
+
+  const [procedureType, setProcedureType] = useState<any>();
 
   const handleUploadFile = (files: any) => {
     router.post(route('judicial.detail.upload', detailSelected.id), { files }, {
@@ -88,7 +93,16 @@ export default function Show({ client, comments, movimiento, process, users, ass
   };
 
   const headerTemplate = (
-    <div className="flex w-full items-center justify-end">
+    <div className="flex justify-between w-full">
+      <div>
+        <InputLabel value="Etapa Procesal" />
+        <Dropdown
+          options={proceduresType}
+          className="w-52"
+          value={procedureType}
+          onChange={e => setProcedureType(e.value)}
+        />
+      </div>
       <div className="font-bold text-lg">
         Numero de proceso: {process.process}
       </div>
@@ -161,10 +175,11 @@ export default function Show({ client, comments, movimiento, process, users, ass
         auth={auth}
         errors={errors} title="Procesos Judiciales"
         showBack
+        classNameBack="w-[31%]"
         header={headerTemplate}
       >
         <div className="flex gap-4">
-          <div className='flex flex-col gap-2 w-[30%] overflow-auto pr-1' style={{ height: 'calc(100vh - 10rem)' }}>
+          <div className='flex flex-col gap-2 w-[30%] overflow-auto pr-1' style={{ height: 'calc(100vh - 11.5rem)' }}>
             <div className="bg-white rounded-lg shadow-lg px-4 py-2">
               <div className="font-bold text-lg border-b-2 px-3 py-2">
                 Información
@@ -247,7 +262,7 @@ export default function Show({ client, comments, movimiento, process, users, ass
                 Detalle
               </div>
               <div>
-                <div className="w-full overflow-scroll pr-1" style={{ height: 'calc(100vh - 17.5rem)' }} >
+                <div className="w-full overflow-scroll pr-1" style={{ height: 'calc(100vh - 19rem)' }} >
                   <div className="flex flex-col gap-4">
                     {
                       detalle.map((item, index) => (
