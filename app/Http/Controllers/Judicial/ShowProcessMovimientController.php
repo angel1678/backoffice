@@ -41,6 +41,7 @@ class ShowProcessMovimientController extends Controller
             'process' => $process,
             'comments' => $comments,
             'proceduresType' => $proceduresType,
+            'urlPrev' => route('judicial.process.index'),
         ]);
     }
 }
