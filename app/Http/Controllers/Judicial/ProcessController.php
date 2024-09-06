@@ -86,6 +86,9 @@ class ProcessController extends Controller
         $defendantsType = session('defendantsType');
         $clientSelected = session('clientSelected');
 
+        $backRoute = url()->previous() === url()->current() ? session('backRoute') : url()->previous();
+        session()->put('backRoute', $backRoute);
+
         return inertia('Judicial/Proceso/Create', [
             'actors' => $actors,
             'clients' => $clients,
@@ -98,6 +101,7 @@ class ProcessController extends Controller
             'proceduralStage' => $proceduralStage,
             'relevantInformation' => $relevantInformation,
             'users' => $users,
+            'urlPrev' => $backRoute,
         ]);
     }
 
@@ -159,14 +163,20 @@ class ProcessController extends Controller
         $message = '';
 
         $data = (object) $request->validate([
-            'status' => ['nullable', new EnumKey(ProcessStatus::class)]
+            'status' => ['nullable', new EnumKey(ProcessStatus::class)],
+            'procedureType' => ['nullable', 'numeric'],
         ]);
 
         DB::beginTransaction();
         try {
-            if ($data->status) {
+            if (!empty($data->status)) {
                 $process->status = ProcessStatus::fromKey($data->status);
-                $message = "El estado cambio a {$request->status}";
+                $message = "El estado cambio a {$request->status}.";
+            }
+
+            if (!empty($data->procedureType)) {
+                $process->type_of_procedure_id = $data->procedureType;
+                $message = "La etapa procesal fue actualizada.";
             }
 
             if ($process->isDirty()) {

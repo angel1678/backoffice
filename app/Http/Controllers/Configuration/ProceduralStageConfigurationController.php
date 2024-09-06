@@ -27,6 +27,7 @@ class ProceduralStageConfigurationController extends Controller
         return inertia('Configuration/ProceduralStage/Index', [
             'typeProcedures' => $typeProcedures,
             'proceduralStage' => $proceduralStage,
+            'urlPrev' => route('configuration.index')
         ]);
     }
 

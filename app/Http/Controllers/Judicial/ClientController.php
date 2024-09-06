@@ -30,13 +30,17 @@ class ClientController extends Controller
      */
     public function create(): Response
     {
-        $companies = Company::get()->map(fn ($user) => [
+        $companies = Company::get()->map(fn($user) => [
             'label' => $user->name,
             'value' => $user->id
         ]);
 
+        $backRoute = url()->previous() == url()->current() ? session('backRoute') : url()->previous();
+        session()->put('backRoute', $backRoute);
+
         return inertia('Judicial/Client/Create', [
             'companies' => $companies,
+            'urlPrev' => $backRoute,
         ]);
     }
 

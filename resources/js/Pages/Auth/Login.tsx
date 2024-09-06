@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { FormEvent, useEffect } from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import Checkbox from '@/Components/Checkbox';
-import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import GuestLayout from '@/Layouts/GuestLayout';
 import { PageProps } from '@/types';
 
 export default function Login({ status, canResetPassword }: PageProps<{ status: any, canResetPassword: any }>) {
@@ -25,9 +25,8 @@ export default function Login({ status, canResetPassword }: PageProps<{ status: 
     setData(event.target.name, event.target.type === 'checkbox' ? event.target.checked : event.target.value);
   };
 
-  const submit = (e) => {
+  const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     post(route('login'));
   };
 
@@ -78,13 +77,7 @@ export default function Login({ status, canResetPassword }: PageProps<{ status: 
           </label>
         </div>
 
-        <div className="flex items-center justify-between mt-4">
-          <Link
-            href={route('register')}
-            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Register
-          </Link>
+        <div className="flex items-center justify-end mt-4">
           <div className="flex items-center">
             {canResetPassword && (
               <Link

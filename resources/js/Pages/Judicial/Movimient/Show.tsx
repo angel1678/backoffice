@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
 
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import IconButton from '@/Components/IconButton';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -16,6 +16,7 @@ import { PageProps } from '@/types';
 import AddUser from './Partial/AddUser';
 import Comments from './Partial/Comments';
 import GeneralComments from './Partial/GeneralComments';
+import Icon from '@/Components/Icon';
 
 type Props = PageProps & {
   associates: any[];
@@ -40,7 +41,7 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
   const [detailSelected, setDetailSelected] = useState<any>();
   const [files, setFiles] = useState([]);
 
-  const [procedureType, setProcedureType] = useState<any>();
+  const [procedureType, setProcedureType] = useState<any>(process.type_of_procedure_id);
 
   const handleUploadFile = (files: any) => {
     router.post(route('judicial.detail.upload', detailSelected.id), { files }, {
@@ -71,7 +72,6 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
 
   const handleProceduralStage = (status: string) =>
     () => {
-      console.log(route('judicial.process.update', process.id));
       router.put(route('judicial.process.update', process.id), { status }, {
         preserveState: true,
         preserveScroll: true,
@@ -92,19 +92,34 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
     router.visit(route('judicial.movimient.template', movimiento.id));
   };
 
+  const handleProcedureType = (e: DropdownChangeEvent) => {
+    router.put(route('judicial.process.update', process.id), { procedureType: e.value }, {
+      preserveState: true,
+      onSuccess: ({ props }) => {
+        const { process } = props as any;
+        setProcedureType(process.type_of_procedure_id);
+      }
+    });
+  };
+
   const headerTemplate = (
-    <div className="flex justify-between w-full">
+    <div className="flex justify-between items-end w-full">
       <div>
         <InputLabel value="Etapa Procesal" />
         <Dropdown
           options={proceduresType}
           className="w-52"
           value={procedureType}
-          onChange={e => setProcedureType(e.value)}
+          onChange={handleProcedureType}
         />
       </div>
-      <div className="font-bold text-lg">
-        Numero de proceso: {process.process}
+      <div className="flex flex-col font-bold text-lg gap-1">
+        <span className="self-end">Numero de proceso: {process.process}</span>
+
+        <div className="flex gap-2">
+          <PrimaryButton label="Registar gasto" icon={<Icon name="facturacion" className="w-7 h-7 mr-1" />} className="!text-base" />
+          <PrimaryButton label="Descargar reporte de la facturacion de gastos" icon={<Icon name="descarga-reporte" className="w-7 h-7 mr-1" />} className="w-60 !text-sm" />
+        </div>
       </div>
     </div>
   );
@@ -173,13 +188,14 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
       <AuthenticatedLayout
         app={app}
         auth={auth}
-        errors={errors} title="Procesos Judiciales"
+        errors={errors}
+        title="Procesos Judiciales"
         showBack
         classNameBack="w-[31%]"
         header={headerTemplate}
       >
         <div className="flex gap-4">
-          <div className='flex flex-col gap-2 w-[30%] overflow-auto pr-1' style={{ height: 'calc(100vh - 11.5rem)' }}>
+          <div className='flex flex-col gap-2 w-[30%] overflow-auto pr-1' style={{ height: 'calc(100vh - 13rem)' }}>
             <div className="bg-white rounded-lg shadow-lg px-4 py-2">
               <div className="font-bold text-lg border-b-2 px-3 py-2">
                 Información
@@ -262,7 +278,7 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
                 Detalle
               </div>
               <div>
-                <div className="w-full overflow-scroll pr-1" style={{ height: 'calc(100vh - 19rem)' }} >
+                <div className="w-full overflow-scroll pr-1" style={{ height: 'calc(100vh - 20.5rem)' }} >
                   <div className="flex flex-col gap-4">
                     {
                       detalle.map((item, index) => (

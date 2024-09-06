@@ -45,6 +45,7 @@ export default function Authenticated({ auth, title, errors, children, breadCrum
     { label: 'Judicial', className: 'font-semibold', icon: (<Icon name="judicial" className="h-6 mr-2" />), route: 'judicial.dashboard', command },
     { label: 'Coactiva', className: 'font-semibold', icon: (<Icon name="coactiva" className="h-6 mr-2" />), route: 'coercive.clients.index', command },
     { label: 'Configuración', className: 'font-semibold', icon: (<Icon name="configuracion" className="h-6 mr-2" />), route: 'configuration.index', command },
+    { label: 'Gestión', className: 'font-semibold', route: 'configuration.template.index', command },
   ];
 
   const handleNoification = (notification: any) =>
