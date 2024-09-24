@@ -49,7 +49,7 @@ type State = {
   files?: File[];
 }
 
-const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultUserId, defendants, personWhoPays, proceduresType, relevantInformation, users, onErrors }: Props) => {
+const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, personWhoPays, proceduresType, relevantInformation, users, onErrors }: Props) => {
   const { visible: visibleUpload, handleHide: handleHideUpload, handleShow: handleShowUpload } = useDialog();
   const { visible: visibleActor, handleHide: handleHideActor, handleShow: handleShowActor } = useDialog();
   const [clientDisabled, setClientDisabled] = useState<boolean>(false);
@@ -60,6 +60,8 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
   const [involvedType, setInvolvedType] = useState<InvolvedType>();
   const [defendantsType, setDefendantsType] = useState<any[]>();
   const [proceduralStage, setProceduralStage] = useState<DropdownType[]>();
+  const [actors, setActors] = useState<any[]>([]);
+  const [defendants, setDefendants] = useState<any[]>([]);
 
   const handleTypeOfProcedure = (e: DropdownChangeEvent) => {
     router.get(route('configuration.proceduralStage.show', { procedureType: e.value }), {}, {
@@ -125,10 +127,18 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
 
       <CreateInvolvedForm
         defendantsType={defendantsType}
-        header="Agregar Actor"
+        header={involvedType == 'actor' ? "Agregar Actor" : "Agregar demandado"}
         type={involvedType}
         visible={visibleActor}
         onHide={handleHideActor}
+        onSave={(data) => {
+          if (involvedType == 'actor') {
+            setActors(state => ([...state, data]))
+          } else if (involvedType == 'defendant') {
+            setDefendants(state => ([...state, data]))
+          }
+          handleHideActor()
+        }}
       />
 
       <section className={className}>
@@ -181,6 +191,7 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
                 id="actors"
                 className="mt-1 w-full"
                 options={actors}
+                optionLabel="name"
                 required
                 value={data.actors}
                 onChange={(e) => setData('actors', e.value)}
@@ -197,6 +208,7 @@ const CreateSingleForm = ({ actors, className, clients, clientSelected, defaultU
                 id="defendants"
                 className="mt-1 w-full"
                 options={defendants}
+                optionLabel="name"
                 required
                 value={data.defendants}
                 onChange={(e) => setData('defendants', e.value)}

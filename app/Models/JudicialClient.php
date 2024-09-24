@@ -21,6 +21,6 @@ class JudicialClient extends Model
 
     public function judicials(): HasMany
     {
-        return $this->hasMany(Proceso::class);
+        return $this->hasMany(Proceso::class, 'client_id');
     }
 }

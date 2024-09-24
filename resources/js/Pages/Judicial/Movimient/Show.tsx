@@ -41,7 +41,9 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
   const [detailSelected, setDetailSelected] = useState<any>();
   const [files, setFiles] = useState([]);
 
-  const [procedureType, setProcedureType] = useState<any>(process.type_of_procedure_id);
+  console.log({ proceduresType, process });
+
+  const [procedureType, setProcedureType] = useState<any>(process.procedural_stage_id);
 
   const handleUploadFile = (files: any) => {
     router.post(route('judicial.detail.upload', detailSelected.id), { files }, {
@@ -92,12 +94,12 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
     router.visit(route('judicial.movimient.template', movimiento.id));
   };
 
-  const handleProcedureType = (e: DropdownChangeEvent) => {
-    router.put(route('judicial.process.update', process.id), { procedureType: e.value }, {
+  const handleProcedureStage = (e: DropdownChangeEvent) => {
+    router.put(route('judicial.process.update', process.id), { proceduralStage: e.value }, {
       preserveState: true,
       onSuccess: ({ props }) => {
         const { process } = props as any;
-        setProcedureType(process.type_of_procedure_id);
+        setProcedureType(process.procedural_stage_id);
       }
     });
   };
@@ -110,7 +112,7 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
           options={proceduresType}
           className="w-52"
           value={procedureType}
-          onChange={handleProcedureType}
+          onChange={handleProcedureStage}
         />
       </div>
       <div className="flex flex-col font-bold text-lg gap-1">
@@ -254,7 +256,7 @@ export default function Show({ client, comments, movimiento, proceduresType, pro
                 </div>
                 <div className="flex flex-col mb-2">
                   <div className="font-bold text-sm">Procedimiento</div>
-                  <div>{process.procedural_stage}</div>
+                  <div>{process.type_procedure}</div>
                 </div>
                 <div className="flex flex-col mb-2">
                   <div className="font-bold text-sm">Usuarios involucrados</div>

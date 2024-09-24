@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -56,5 +57,10 @@ class User extends Authenticatable
         $id = str_pad($count + 1, 2, '0', STR_PAD_LEFT);
 
         return "{$nickname}{$id}";
+    }
+
+    public function judicials(): HasMany
+    {
+        return $this->hasMany(Proceso::class, 'user_id');
     }
 }

@@ -55,6 +55,7 @@ class Proceso extends Model
         'process',
         'actor_names',
         'defendant_names',
+        'type_procedure',
         'procedural_stage',
     ];
 
@@ -75,12 +76,12 @@ class Proceso extends Model
 
     protected function getActorNamesAttribute(): string
     {
-        return $this->actors->implode('name', ', ');
+        return ''; //$this->actors->implode('name', ', ');
     }
 
     protected function getDefendantNamesAttribute(): string
     {
-        return $this->defendants->implode('name', ', ');
+        return ''; //$this->defendants->implode('name', ', ');
     }
 
     protected function getTypeProcedureAttribute(): string|null
@@ -118,17 +119,17 @@ class Proceso extends Model
         return $this->belongsToMany(User::class, 'procesos_user');
     }
 
-    public function involved(): BelongsToMany
+    public function involved(): HasMany
     {
-        return $this->belongsToMany(JudicialInvolved::class, 'judicial_process_involved', 'judicial_id', 'involved_id');
+        return $this->hasMany(JudicialInvolved::class, 'judicial_id');
     }
 
-    public function actors(): BelongsToMany
+    public function actors(): HasMany
     {
         return $this->involved()->where('judicial_involved.type', 50);
     }
 
-    public function defendants(): BelongsToMany
+    public function defendants(): HasMany
     {
         return $this->involved()->where('judicial_involved.type', 51);
     }

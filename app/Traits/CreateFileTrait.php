@@ -15,14 +15,14 @@ trait CreateFileTrait
 {
     protected function generateTemplatePDF(object $data, Template $template, string $fileName, string $path, string $disk = 'public')
     {
-        $judicialMovimientIds = collect($data->judicialMovimientIds);
+        $judicialMovimientIds = collect($data->judicialMovimientIds ?? []);
         $references = Configuracion::getGroup('template')->get();
         $configurations = (object) $references
             ->map(fn($item) => [$item->parametro => $item->valor])
             ->flatMap(fn($values) => $values)
             ->toArray();
 
-        if ($data->text && $judicialMovimientIds->count() == 1) {
+        if ($data->text && ($judicialMovimientIds->count() == 1 || !empty($data->judicialMovimientId))) {
             $pdf = Pdf::loadView('pdfs.templates.general', [
                 'logo' => public_path() . '/img/logo-black.png',
                 'text' => $data->text,
