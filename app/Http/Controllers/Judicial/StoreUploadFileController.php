@@ -28,6 +28,7 @@ class StoreUploadFileController extends Controller
                     $judicialDetail->files()->create([
                         'location' => $judicial->process,
                         'name' => $fileName,
+                        'origin_name' => $file->getClientOriginalName(),
                     ]);
                 });
             DB::commit();

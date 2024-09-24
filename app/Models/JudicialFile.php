@@ -17,5 +17,6 @@ class JudicialFile extends Model
         'judicial_type',
         'location',
         'name',
+        'origin_name',
     ];
 }

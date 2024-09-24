@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { router, useForm } from '@inertiajs/react';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import InputLabel from '@/Components/InputLabel';
 import { DropdownType } from '@/types';
 
@@ -18,12 +18,14 @@ type Props = {
 type Status = {
   clientId?: number;
   procedureTypeId?: number;
+  proceduralStageId?: number;
   statusId?: number;
   userId?: number;
   workTeamId?: number;
 }
 
 export default function Filters({ className, clients, proceduresType, status, users, onChange, onSearch }: Props) {
+  const [proceduralStatus, setProceduralStatus] = useState<any[]>();
   const { data, setData, post } = useForm<Status>({
     clientId: undefined, procedureTypeId: undefined, statusId: undefined, userId: undefined, workTeamId: undefined
   });
@@ -34,6 +36,21 @@ export default function Filters({ className, clients, proceduresType, status, us
       data: JSON.parse(JSON.stringify(data)),
       preserveState: true
     });
+  };
+
+  const handleProcedureType = (e: DropdownChangeEvent) => {
+    if (!!e.value) {
+      router.get(route('configuration.proceduralStage.show', { procedureType: e.value }), {}, {
+        preserveState: true,
+        onSuccess: ({ props }) => {
+          const { proceduralStatus } = props as any;
+          setProceduralStatus(proceduralStatus);
+        }
+      })
+    } else {
+      setProceduralStatus([]);
+    }
+    setData('procedureTypeId', e.value);
   };
 
   useEffect(() => {
@@ -63,11 +80,26 @@ export default function Filters({ className, clients, proceduresType, status, us
           className="mt-1 w-full dropdown"
           options={proceduresType}
           value={data.procedureTypeId}
-          onChange={e => setData('procedureTypeId', e.value)}
+          onChange={handleProcedureType}
           required
           showClear
         />
       </div>
+
+      <div className="w-full">
+        <InputLabel htmlFor="proceduralStageId" value="Estado del procedimiento" />
+
+        <Dropdown
+          id="proceduralStageId"
+          className="mt-1 w-full dropdown"
+          options={proceduralStatus}
+          value={data.proceduralStageId}
+          onChange={e => setData('proceduralStageId', e.value)}
+          required
+          showClear
+        />
+      </div>
+
       <div className="w-full">
         <InputLabel htmlFor="statusId" value="Estatus" />
 

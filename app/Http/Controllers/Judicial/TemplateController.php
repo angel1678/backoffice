@@ -75,7 +75,7 @@ class TemplateController extends Controller
         $template = Template::find($data->templateId);
 
         $fileName = Str::replace(' ', '_', $template->name) . '_' . Carbon::now()->format('Ymdhis');
-        $this->generateTemplatePDF($request, $template, $fileName, "/{$procesoMovimiento->proceso->process}", 'google');
+        $this->generateTemplatePDF($data, $template, $fileName, "/{$procesoMovimiento->proceso->process}", 'google');
         return $this->backSuccess('El documento se genero y guardo exitosamente');
     }
 

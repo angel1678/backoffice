@@ -116,9 +116,9 @@ class ProcessController extends Controller
         try {
             $judicialProcess = Proceso::create($data->toArray());
             $judicialProcess->associates()->attach($data->responsible);
-            $judicialProcess->involved()->sync(
-                collect($data->actors)->concat($data->defendants)
-            );
+            // $judicialProcess->involved()->sync(
+            //     collect($data->actors)->concat($data->defendants)
+            // );
 
             collect($request->file('files'))
                 ->each(function ($file) use ($judicialProcess, $data) {
@@ -128,6 +128,7 @@ class ProcessController extends Controller
                     $judicialProcess->files()->create([
                         'location' => $judicialProcess->process,
                         'name' => $fileName,
+                        'origin_name' => $file->getClientOriginalName(),
                     ]);
                 });
 
@@ -165,6 +166,7 @@ class ProcessController extends Controller
         $data = (object) $request->validate([
             'status' => ['nullable', new EnumKey(ProcessStatus::class)],
             'procedureType' => ['nullable', 'numeric'],
+            'proceduralStage' => ['nullable', 'numeric'],
         ]);
 
         DB::beginTransaction();
@@ -176,6 +178,11 @@ class ProcessController extends Controller
 
             if (!empty($data->procedureType)) {
                 $process->type_of_procedure_id = $data->procedureType;
+                $message = "El tipo de procedimiento fue actualizada.";
+            }
+
+            if (!empty($data->proceduralStage)) {
+                $process->procedural_stage_id = $data->proceduralStage;
                 $message = "La etapa procesal fue actualizada.";
             }
 

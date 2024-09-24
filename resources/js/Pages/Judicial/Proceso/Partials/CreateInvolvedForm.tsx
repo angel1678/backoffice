@@ -11,6 +11,7 @@ import { InvolvedType } from '@/types';
 type Props = DialogProps & {
   defendantsType?: any[];
   type?: InvolvedType;
+  onSave?: (involved: any) => void;
 }
 
 type Status = {
@@ -18,7 +19,7 @@ type Status = {
   defendantType?: number;
 }
 
-export default function CreateInvolvedForm({ defendantsType, type, onHide, ...props }: Props) {
+export default function CreateInvolvedForm({ defendantsType, type, onSave, onHide, ...props }: Props) {
   const { data, errors, post, reset, setData, transform } = useForm<Status>({
     name: '', defendantType: undefined
   });
@@ -31,11 +32,12 @@ export default function CreateInvolvedForm({ defendantsType, type, onHide, ...pr
   };
 
   const handleAccept = () => {
-    post(route('judicial.involved.store'), {
-      preserveState: true,
-      onSuccess: () => handleReject(),
-      onError: console.log,
-    })
+    onSave && onSave(data);
+    // post(route('judicial.involved.store'), {
+    //   preserveState: true,
+    //   onSuccess: () => handleReject(),
+    //   onError: console.log,
+    // })
   };
 
   return (

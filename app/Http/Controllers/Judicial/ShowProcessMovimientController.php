@@ -18,7 +18,7 @@ class ShowProcessMovimientController extends Controller
     {
         $associates = $movimient->proceso->associates()->select('id', 'name')->get();
         $detalle = $movimient->detalle()->with('comments')->orderBy('fecha', 'desc')->get();
-        $proceduresType = ProcedureType::whereNull('parent_id')->dropdown()->get();
+        $proceduresType = ProcedureType::where('parent_id', $process->type_of_procedure_id)->dropdown()->get();
         $ownerId = $movimient->proceso->user_id;
         $users = User::where('id', '<>', Auth::id())->dropdown()->get();
         $client = $process->client;

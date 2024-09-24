@@ -40,7 +40,7 @@ export default function GeneralComments({ judicialId, models = [], ...props }: P
       {...props}
       style={{ width: '35vw', height: 'calc(100vh - 10rem)' }}
     >
-      <div className="scroll-auto" style={{ height: 'calc(100vh - 25rem)' }}>
+      <div style={{ height: 'calc(100vh - 25rem)', overflowY: 'auto' }}>
         {
           comments?.map(item => (<Comment {...item} className="border-2 rounded-md mb-2 shadow-md" />))
         }
