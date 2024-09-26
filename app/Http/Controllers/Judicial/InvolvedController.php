@@ -24,11 +24,11 @@ class InvolvedController extends Controller
      */
     public function create(Request $request)
     {
-        // if ($request->type == 'defendant') {
-        //     $defendantsType = Type::group('DEFENDANT_TYPE')->get();
-        //     return back()->with('defendantsType', $defendantsType);
-        // }
-        return back();
+        $defendantsType = $request->type == 'defendant'
+            ? Type::group('DEFENDANT_TYPE')->get()
+            : [];
+
+        return back()->with('defendantsType', $defendantsType);
     }
 
     /**

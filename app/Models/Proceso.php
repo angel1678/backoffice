@@ -76,12 +76,12 @@ class Proceso extends Model
 
     protected function getActorNamesAttribute(): string
     {
-        return ''; //$this->actors->implode('name', ', ');
+        return $this->actors->implode('name', ', ');
     }
 
     protected function getDefendantNamesAttribute(): string
     {
-        return ''; //$this->defendants->implode('name', ', ');
+        return $this->defendants->implode('name', ', ');
     }
 
     protected function getTypeProcedureAttribute(): string|null

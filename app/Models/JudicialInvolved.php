@@ -16,7 +16,7 @@ class JudicialInvolved extends Model
     protected $fillable = [
         'type',
         'name',
-        // 'defendant_type',
+        'defendant_type',
     ];
 
     protected function scopeType(Builder $builder, int $type)

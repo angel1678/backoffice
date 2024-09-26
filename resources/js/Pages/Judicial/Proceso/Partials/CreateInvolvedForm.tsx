@@ -7,6 +7,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import FormDialog from '@/Components/FormDialog';
 import { InvolvedType } from '@/types';
+import { Dropdown } from 'primereact/dropdown';
 
 type Props = DialogProps & {
   defendantsType?: any[];
@@ -33,11 +34,7 @@ export default function CreateInvolvedForm({ defendantsType, type, onSave, onHid
 
   const handleAccept = () => {
     onSave && onSave(data);
-    // post(route('judicial.involved.store'), {
-    //   preserveState: true,
-    //   onSuccess: () => handleReject(),
-    //   onError: console.log,
-    // })
+    reset();
   };
 
   return (
@@ -62,7 +59,7 @@ export default function CreateInvolvedForm({ defendantsType, type, onSave, onHid
         <InputError message={errors.name} className="mt-2" />
       </div>
 
-      {/* {type === 'defendant' && (
+      {type === 'defendant' && (
         <div>
           <InputLabel htmlFor="defendantType" value="Tipo" />
 
@@ -77,7 +74,7 @@ export default function CreateInvolvedForm({ defendantsType, type, onSave, onHid
 
           <InputError message={errors.defendantType} className="mt-2" />
         </div>
-      )} */}
+      )}
     </FormDialog>
   )
 }

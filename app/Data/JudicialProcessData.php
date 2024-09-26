@@ -32,11 +32,11 @@ class JudicialProcessData extends Data
         public int $clientId,
 
         #[Required]
-        /** @var int[] */
+        /** @var object[] */
         public array $actors,
 
         #[Required]
-        /** @var int[] */
+        /** @var object[] */
         public array $defendants,
 
         #[Required]

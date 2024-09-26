@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('judicial_id');
             $table->integer('type');
+            $table->integer('defendant_type')->nullable();
             $table->string('name');
             $table->timestamps();
         });

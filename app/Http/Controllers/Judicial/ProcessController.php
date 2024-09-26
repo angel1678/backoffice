@@ -116,9 +116,21 @@ class ProcessController extends Controller
         try {
             $judicialProcess = Proceso::create($data->toArray());
             $judicialProcess->associates()->attach($data->responsible);
-            // $judicialProcess->involved()->sync(
-            //     collect($data->actors)->concat($data->defendants)
-            // );
+
+            collect($data->actors)->each(function ($item) use ($judicialProcess) {
+                $judicialProcess->involved()->create([
+                    'type' => 50,
+                    'name' => $item['name'],
+                ]);
+            });
+
+            collect($data->defendants)->each(function ($item) use ($judicialProcess) {
+                $judicialProcess->involved()->create([
+                    'type' => 51,
+                    'defendant_type' => $item['defendantType'],
+                    'name' => $item['name'],
+                ]);
+            });
 
             collect($request->file('files'))
                 ->each(function ($file) use ($judicialProcess, $data) {

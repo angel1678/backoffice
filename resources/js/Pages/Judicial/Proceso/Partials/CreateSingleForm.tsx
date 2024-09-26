@@ -133,9 +133,13 @@ const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, p
         onHide={handleHideActor}
         onSave={(data) => {
           if (involvedType == 'actor') {
-            setActors(state => ([...state, data]))
+            const _actors = [...actors, data];
+            setActors(_actors);
+            setData('actors', _actors);
           } else if (involvedType == 'defendant') {
-            setDefendants(state => ([...state, data]))
+            const _defendants = [...defendants, data];
+            setDefendants(_defendants);
+            setData('defendants', _defendants);
           }
           handleHideActor()
         }}
