@@ -32,6 +32,7 @@ class JudicialNotificationJob implements ShouldQueue
     {
         ProcesoDetalle::where('send_notification', true)
             ->whereNull('sended_at')
+            ->get()
             ->each(function ($procesoDetalle) {
                 /** @var User */
                 $user = $procesoDetalle
