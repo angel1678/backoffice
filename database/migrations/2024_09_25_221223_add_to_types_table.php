@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::table('types')->find(62)->delete();
+        DB::table('types')->where('id', 62)->delete();
     }
 };
