@@ -2,6 +2,10 @@
 
 namespace App\Imports;
 
+use App\Enums\DefendantType;
+use App\Enums\PersonInvolved;
+use App\Enums\PersonWhoPays;
+use App\Enums\RelevantInformation;
 use App\Models\Proceso;
 use Maatwebsite\Excel\Row;
 use Illuminate\Support\Str;
@@ -37,7 +41,7 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
         $rowIndex = $row->getIndex();
         $row      = $row->toArray();
 
-        [$judicatura, $anio, $numero] = explode('-', $row['proceso']);
+        [$judicatura, $anio, $numero] = explode('-', $row['numero_de_proceso']);
         if (
             Proceso::where([
                 ['judicatura_id', $judicatura],
@@ -56,7 +60,7 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
         }
 
         $procedimiento = ProcedureType::whereNull('parent_id')
-            ->where(DB::raw('upper(name)'), Str::upper($row['procedimiento']));
+            ->where(DB::raw('upper(name)'), Str::upper($row['tipo_de_procedimiento']));
         if (!$procedimiento->exists()) {
             $this->errors["{$rowIndex}-procedure"] = "En la fila {$rowIndex}, el procedimiento {$row['procedimiento']} no existe";
             return null;
@@ -71,33 +75,32 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
         }
         $etapaProcesal = $etapaProcesal->first();
 
+        $personWhoPays = PersonWhoPays::fromKey(Str::upper($row['persona_que_factura']));
+
         $proceso = Proceso::create([
             'judicatura_id'         => $judicatura,
             'anio_id'               => $anio,
             'numero_id'             => $numero,
             'client_id'             => $client->id,
+            'person_who_pays'       => $personWhoPays->value,
             'number_operation'      => $row['operacion'],
             'amount'                => $row['cuantia'],
-            'identification'        => $row['identificacion_demandado'],
+            'identification'        => $row['cedula_del_demandado'],
             'type_of_procedure_id'  => $procedimiento->id,
             'procedural_stage_id'   => $etapaProcesal->id,
             'user_id'               => $this->userId,
+            'relevant_information'  => RelevantInformation::NA,
         ]);
 
-        $proceso->associates()->attach($this->userId);
+        $proceso->involved()->create([
+            'type' => PersonInvolved::ACTOR,
+            'name' => $row['clienteactor'],
+        ]);
 
-        if (!empty($row['demandado'])) {
-            $demandado = JudicialInvolved::where('name', $row['demandado'])
-                ->where('type', 51);
-            if (!$demandado->exists()) {
-                $demandado = JudicialInvolved::create([
-                    'type' => 51,
-                    'name' => $row['demandado'],
-                ]);
-            } else {
-                $demandado = $demandado->first();
-            }
-            $proceso->involved()->sync([$demandado->id]);
-        }
+        $proceso->involved()->create([
+            'type' => PersonInvolved::DEMANDADO,
+            'defendant_type' => DefendantType::DEUDOR_PRINCIPAL,
+            'name' => $row['demandado'],
+        ]);
     }
 }

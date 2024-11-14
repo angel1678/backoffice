@@ -35,7 +35,7 @@ export default function ShowDocument({ documents, onHide, ...props }: Props) {
       <div className="flex flex-row h-full">
         <div className="w-1/3 flex flex-col gap-3">
           {documents?.map(item => (
-            <SecondaryButton key={item.id} label={item.origin_name} onClick={() => handleShowDocument(item)} />
+            <SecondaryButton key={item.id} label={item.name} onClick={() => handleShowDocument(item)} />
           ))}
         </div>
         <div className="w-2/3 border-l-2 ml-4">
