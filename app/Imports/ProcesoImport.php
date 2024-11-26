@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use App\Models\ProcedureType;
 use App\Models\JudicialClient;
 use App\Models\JudicialInvolved;
+use App\Models\PersonWhoBilled;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -75,14 +76,18 @@ class ProcesoImport implements OnEachRow, WithHeadingRow, SkipsOnError
         }
         $etapaProcesal = $etapaProcesal->first();
 
-        $personWhoPays = PersonWhoPays::fromKey(Str::upper($row['persona_que_factura']));
+        $personWhoPays = PersonWhoBilled::where(DB::raw('upper(name)'), Str::upper($row['persona_que_factura']))
+            ->first();
+        if (empty($personWhoPays)) {
+            $personWhoPays = PersonWhoBilled::create(['name' => Str::upper($row['persona_que_factura']), 'is_visible' => false]);
+        }
 
         $proceso = Proceso::create([
             'judicatura_id'         => $judicatura,
             'anio_id'               => $anio,
             'numero_id'             => $numero,
             'client_id'             => $client->id,
-            'person_who_pays'       => $personWhoPays->value,
+            'person_who_pays'       => $personWhoPays->id,
             'number_operation'      => $row['operacion'],
             'amount'                => $row['cuantia'],
             'identification'        => $row['cedula_del_demandado'],
