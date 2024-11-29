@@ -40,7 +40,7 @@ class JudicialProcessData extends Data
         public array $defendants,
 
         #[Required]
-        public int $personWhoPays,
+        public mixed $personWhoPays,
 
         #[Rule([new Required, new IdentificationRule('dni')])]
         public string $identification,
@@ -51,7 +51,7 @@ class JudicialProcessData extends Data
         #[Required]
         public float $amount,
 
-        public int $relevantInformation,
+        public mixed $relevantInformation,
 
         #[MapOutputName('type_of_procedure_id')]
         public int $typeProcedure,

@@ -8,6 +8,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
 import { MultiSelect } from 'primereact/multiselect';
 
+import Icon from '@/Components/Icon';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -17,7 +18,7 @@ import useDialog from '@/Hook/useDialog';
 import { DropdownType, InvolvedType } from '@/types';
 
 import CreateInvolvedForm from './CreateInvolvedForm';
-import Icon from '@/Components/Icon';
+import CreateForm from './CreateForm';
 
 type Props = {
   actors?: DropdownType[];
@@ -38,21 +39,25 @@ type State = {
   clientId?: number;
   actors?: string[];
   defendants?: string[];
-  personWhoPays?: number;
+  personWhoPays?: any;
   identification?: string;
   numberOperation?: string;
   amount?: number | null;
-  relevantInformation?: number;
+  relevantInformation?: any;
   typeProcedure?: number;
   proceduralStage?: number;
   responsible?: number;
   files?: File[];
 }
 
-const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, personWhoPays, proceduresType, relevantInformation, users, onErrors }: Props) => {
+const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, proceduresType, users, onErrors, ...props }: Props) => {
   const { visible: visibleUpload, handleHide: handleHideUpload, handleShow: handleShowUpload } = useDialog();
   const { visible: visibleActor, handleHide: handleHideActor, handleShow: handleShowActor } = useDialog();
+  const { visible: visiblePersonWhoBillid, handleHide: handleHidePersonWhoBillid, handleShow: handleShowPersonWhoBillid } = useDialog();
+  const { visible: visibleRelevantInformation, handleHide: handleHideRelevantInformation, handleShow: handleShowRelevantInformation } = useDialog();
   const [clientDisabled, setClientDisabled] = useState<boolean>(false);
+  const [personWhoPays, setPersonWhoPays] = useState<DropdownType[]>([]);
+  const [relevantInformation, setRelevantInformation] = useState<DropdownType[]>([]);
   const { data, setData, errors, post, reset, processing } = useForm<State>({
     process: '', responsible: defaultUserId, clientId: clientSelected, identification: '', numberOperation: ''
   });
@@ -116,6 +121,11 @@ const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, p
     }
   }, [clientSelected]);
 
+  useEffect(() => {
+    setPersonWhoPays(props.personWhoPays || []);
+    setRelevantInformation(props.relevantInformation || []);
+  }, []);
+
   return (
     <>
       <UploadDocument
@@ -142,6 +152,28 @@ const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, p
             setData('defendants', _defendants);
           }
           handleHideActor()
+        }}
+      />
+
+      <CreateForm
+        header="Persona a quien se le factura"
+        visible={visiblePersonWhoBillid}
+        onHide={handleHidePersonWhoBillid}
+        onSave={(data) => {
+          setPersonWhoPays(state => [...state, { label: data.name, value: data.name }]);
+          setData('personWhoPays', data.name);
+          handleHidePersonWhoBillid();
+        }}
+      />
+
+      <CreateForm
+        header="Informacion relevante para facturación"
+        visible={visibleRelevantInformation}
+        onHide={handleHideRelevantInformation}
+        onSave={(data) => {
+          setRelevantInformation(state => [...state, { label: data.name, value: data.name }]);
+          setData('relevantInformation', data.name);
+          handleHideRelevantInformation();
         }}
       />
 
@@ -233,6 +265,7 @@ const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, p
                 value={data.personWhoPays}
                 onChange={e => setData('personWhoPays', e.value)}
                 required
+                panelFooterTemplate={dropdownFooterTemplate(handleShowPersonWhoBillid)}
               />
 
               <InputError message={errors.personWhoPays} className="mt-2" />
@@ -302,6 +335,7 @@ const CreateSingleForm = ({ className, clients, clientSelected, defaultUserId, p
                 value={data.relevantInformation}
                 onChange={e => setData('relevantInformation', e.value)}
                 required
+                panelFooterTemplate={dropdownFooterTemplate(handleShowRelevantInformation)}
               />
 
               <InputError message={errors.relevantInformation} className="mt-2" />

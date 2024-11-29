@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Data\JudicialProcessResource;
+use App\Models\PersonWhoBilled;
+use App\Models\RelevantInformation;
 use Yaza\LaravelGoogleDriveStorage\Gdrive;
 
 class ProcessController extends Controller
@@ -76,8 +78,12 @@ class ProcessController extends Controller
         $actors = JudicialInvolved::type(50)->get();
         $defendants = JudicialInvolved::type(51)->get();
 
-        $personWhoPays = Type::group('PERSON_WHO_PAYS')->get();
-        $relevantInformation = Type::group('RELEVANT_INFORMATION')->get();
+        $personWhoPays = PersonWhoBilled::where('is_visible', true)
+            ->dropdown()
+            ->get();
+        $relevantInformation = RelevantInformation::where('is_visible', true)
+            ->dropdown()
+            ->get();
         $proceduresType = ProcedureType::whereNull('parent_id')
             ->dropdown()
             ->get();
@@ -114,6 +120,18 @@ class ProcessController extends Controller
 
         DB::beginTransaction();
         try {
+            $personWhoPays = PersonWhoBilled::find($data->personWhoPays);
+            if (empty($personWhoPays)) {
+                $personWhoPays = PersonWhoBilled::create(['name' => $data->personWhoPays, 'is_visible' => false]);
+                $data->personWhoPays = $personWhoPays->id;
+            }
+
+            $relevantInformation = RelevantInformation::find($data->relevantInformation);
+            if (empty($relevantInformation)) {
+                $relevantInformation = RelevantInformation::create(['name' => $data->relevantInformation, 'is_visible' => false]);
+                $data->relevantInformation = $relevantInformation->id;
+            }
+
             $judicialProcess = Proceso::create($data->toArray());
             $judicialProcess->associates()->attach($data->responsible);
 
