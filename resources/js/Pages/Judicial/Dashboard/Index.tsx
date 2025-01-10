@@ -99,7 +99,7 @@ export default function Index({ app, auth, judicialNotification, typeNotificatio
               onRowSelect={handleRowSelect}
               rowClassName={() => "text-sm"}
             >
-              <Column header="Usuario" style={{ width: '25%' }} />
+              <Column field="data?.user_name" header="Usuario" style={{ width: '25%' }} />
               <Column field="data.proceso" header="Proceso" style={{ width: '25%' }} />
               <Column field="data.fecha" header="Fecha" style={{ width: '25%' }} />
               <Column field="data.titulo" header="Titulo/Accion - Infracción" style={{ width: '25%' }} />

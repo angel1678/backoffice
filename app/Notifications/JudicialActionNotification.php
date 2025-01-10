@@ -78,6 +78,7 @@ class JudicialActionNotification extends Notification implements ShouldQueue
             'fecha' => $fecha,
             'titulo' => $this->procesoDetalle->titulo,
             'accion_infraccion' => $this->procesoMovimiento->accion_infraccion,
+            'user_name' => $this->proceso->user_name,
         ];
     }
 }
